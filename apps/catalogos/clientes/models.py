@@ -10,6 +10,7 @@ class Cliente(models.Model):
 
     class Meta:
         verbose_name_plural = 'Clientes'
+        
     
     def __str__(self):
         return f"{self.nombres} - {self.apellidos} - {self.cedula}"

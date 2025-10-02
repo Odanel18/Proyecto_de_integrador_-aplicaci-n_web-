@@ -86,14 +86,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',  # Utilizamos el backend mssql-django
         'NAME': 'PruebaConnection',  # Nombre de la base de datos
-        'HOST': '127.0.0.1',  # IP del servidor SQL Server
+        'HOST': 'DESKTOP-3S9D6TN',  # IP del servidor SQL Server
        # 'PORT': '1220',  # Puerto del servidor SQL Server
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',  # Driver ODBC instalado
             'trusted_connection': 'yes',  # Habilita la autenticación de Windows
             'extra_params': 'TrustServerCertificate=yes',  # Útil si estás usando SSL sin un certificado de confianza
         },
-    }
+    } # Aqui puede agregar otra coneccion a una otra base utilizando coma(,) 
+
 }
 # Password validation
 # https://docs.djangopr oject.com/en/4.2/ref/settings/#auth-password-validators
