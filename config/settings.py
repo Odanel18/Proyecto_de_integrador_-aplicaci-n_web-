@@ -75,14 +75,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-#DATABASES = {
- #   'default': {
-  #      'ENGINE': 'django.db.backends.sqlite3',
-   #     'NAME': BASE_DIR / 'db.sqlite3',
-    #}
-#}
-
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+'''DATABASES = {
     'default': {
         'ENGINE': 'mssql',  # Utilizamos el backend mssql-django
         'NAME': 'PruebaConnection',  # Nombre de la base de datos
@@ -95,7 +95,7 @@ DATABASES = {
         },
     } # Aqui puede agregar otra coneccion a una otra base utilizando coma(,) 
 
-}
+}'''
 # Password validation
 # https://docs.djangopr oject.com/en/4.2/ref/settings/#auth-password-validators
 
