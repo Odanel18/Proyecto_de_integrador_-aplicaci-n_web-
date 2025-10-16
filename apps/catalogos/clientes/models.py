@@ -14,7 +14,7 @@ class Meta:
         
     
 def __str__(self):
-        return f"{self.nombres} - {self.apellidos} - {self.cedula}"
+        return f"{self.nombres} - {self.apellidos} - {self.Num_cedula}"
     
     # comentario de prueba
     #

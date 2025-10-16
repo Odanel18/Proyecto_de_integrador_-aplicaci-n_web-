@@ -4,6 +4,6 @@ from apps.catalogos.clientes.models import Cliente
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'cedula']
+    search_fields = ['id', 'Num_cedula']
     list_display = ['nombres', 'apellidos', 'Num_cedula','Num_Telefono']
 # Register your models here.
