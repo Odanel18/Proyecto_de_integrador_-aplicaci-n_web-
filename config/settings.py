@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'drf_yasg',
 ] + SEGURIDAD_SETTING_APPS + CATALOGOS_SETTING_APPS
 
 MIDDLEWARE = [
@@ -74,28 +76,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}"""
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'mssql',
+        'NAME': 'EmprendimientoBD',
+        'HOST': r'DESKTOP-P87T7BE\SQLEXPRESS',
+        # 'PORT': '',
+
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+            'trusted_connection': 'yes',
+            'extra_params': 'TrustServerCertificate=yes',
+        },
+    }
 }
 
-'''DATABASES = {
-    'default': {
-        'ENGINE': 'mssql',  # Utilizamos el backend mssql-django
-        'NAME': 'PruebaConnection',  # Nombre de la base de datos
-        'HOST': 'DESKTOP-3S9D6TN',  # IP del servidor SQL Server
-       # 'PORT': '1220',  # Puerto del servidor SQL Server
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',  # Driver ODBC instalado
-            'trusted_connection': 'yes',  # Habilita la autenticación de Windows
-            'extra_params': 'TrustServerCertificate=yes',  # Útil si estás usando SSL sin un certificado de confianza
-        },
-    } # Aqui puede agregar otra coneccion a una otra base utilizando coma(,) 
-
-}'''
 # Password validation
 # https://docs.djangopr oject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -137,4 +140,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL= 'usuarios.User'
+AUTH_USER_MODEL ='usuarios.User'

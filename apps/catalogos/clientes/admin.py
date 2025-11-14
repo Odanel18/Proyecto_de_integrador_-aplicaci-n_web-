@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from apps.catalogos.clientes.models import Cliente
+from apps.catalogos.clientes.models import Clientes
 
-@admin.register(Cliente)
+@admin.register(Clientes)
 class ClienteAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'Num_cedula']
-    list_display = ['nombres', 'apellidos', 'Num_cedula','Num_Telefono']
+    search_fields = ['id', 'NumCedula']
+    list_display = ['Nombres', 'Apellidos', 'NumCedula','NumTeléfono']
 # Register your models here.

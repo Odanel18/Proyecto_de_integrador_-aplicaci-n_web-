@@ -1,20 +1,26 @@
 from django.db import models
 
 # Create your models here.
-from apps.catalogos.empleados.models import Empleado
+from apps.catalogos.empleados.models import Empleados
 
 class Caja (models.Model):
-    Saldo_Inicial= models.IntegerField(verbose_name='Saldo inicial')
-    Ingreso = models.IntegerField(verbose_name='Ingreso')
-    Egresos = models.IntegerField(verbose_name='Egresos')
-    Saldo_Final = models.IntegerField (verbose_name='Saldo final')
+    SaldoInicial= models.DecimalField(verbose_name='Saldo inicial',  max_digits=10,decimal_places=2)
+    Ingresos = models.DecimalField(verbose_name='Ingreso',  max_digits=10,decimal_places=2)
+    Egresos = models.DecimalField(verbose_name='Egresos',  max_digits=10,decimal_places=2)
+    SaldoFinal = models.DecimalField (verbose_name='Saldo final',  max_digits=10,decimal_places=2)
     Fecha = models.DateTimeField()
-    Num_caja= models.IntegerField(verbose_name='Numero de caja')
-    empleadoid = models.ForeignKey(Empleado,verbose_name='Empleados', on_delete=models.PROTECT)
+    NumCaja= models.IntegerField(verbose_name='Numero de caja')
+    EmpleadoId = models.ForeignKey(Empleados,verbose_name='Empleados', on_delete=models.PROTECT)
     Dinero = models.DecimalField (verbose_name='Dinero',max_digits=10, decimal_places=2)
 
 class Meta:
-    verbose_name_plural='Caja'
+    managed= False
+    #app_label = 'apps.catalogos.abono'
+    verbose_name= "Caja"
+    verbose_name_plural = "Cajas"
+
+    db_table = '[Bibliotca].[Caja]' # 🔹 Nombre exacto de la tabla en SQL Server
+
 
 def __str__ (self):
-    return f"{self.Num_caja}"
+    return f"{self.NumCaja}"

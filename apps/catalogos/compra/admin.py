@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from apps.catalogos.compra.models import Compra
+from apps.catalogos.compra.models import Compras
 
-@admin.register(Compra)
+@admin.register(Compras)
 class compraAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'Num_Compra']
-    list_display = ['Num_compra', 'metodo_Pagoid', 'Fecha']
+    search_fields = ['id', 'NumCompra']
+    list_display = ['Fecha', 'MetodoPagoId', 'ProveedoresId','NumCompra','Total']
 # Register your models here.
 

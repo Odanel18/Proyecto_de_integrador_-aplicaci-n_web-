@@ -1,8 +1,8 @@
 from django.contrib import admin
-from apps.catalogos.factura.models import factura
+from apps.catalogos.factura.models import Facturas
 
-@admin.register(factura)
+@admin.register(Facturas)
 class facturaAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'num_Factura']
-    list_display = ['num_Factura', 'clienteId','total','Metodo_PagoId','cajaid','fecha']
+    search_fields = ['id', 'NumFactura']
+    list_display = ['NumFactura','Fecha', 'ClienteId','MetodoPagoId','Cajaid','Total']
 # Register your models here.

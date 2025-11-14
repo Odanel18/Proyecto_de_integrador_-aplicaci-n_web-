@@ -1,8 +1,8 @@
 from django.contrib import admin
-from apps.catalogos.marca.models import Marca
+from apps.catalogos.marca.models import Marcas
 
-@admin.register(Marca)
+@admin.register(Marcas)
 class MarcaAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'num_Factura']
-    list_display = ['nombre', 'tipoId']
+    search_fields = ['id', ]
+    list_display = ['Nombre', 'TipoId']
 # Register your models here.

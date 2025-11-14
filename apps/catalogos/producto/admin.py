@@ -1,8 +1,8 @@
 from django.contrib import admin
-from apps.catalogos.producto.models import Producto
+from apps.catalogos.producto.models import Productos
 
-@admin.register(Producto)
+@admin.register(Productos)
 class ProductoAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'codigo']
-    list_display = ['codigo', 'nombre','precio_venta','marcaId','stock','motoid','categoriaId']
+    search_fields = ['id', 'Codigo']
+    list_display = ['Codigo', 'Nombre','MarcaId','MotoId','CategoriaId','Stock','PrecioVenta']
 # Register your models here.

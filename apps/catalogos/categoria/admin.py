@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from apps.catalogos.categoria.models import Categoria
+from apps.catalogos.categoria.models import Categorias
 
-@admin.register(Categoria)
+@admin.register(Categorias)
 class categoriaAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'nombre']
-    list_display = ['nombre']
+    search_fields = ['id', 'Nombre']
+    list_display = ['Nombre']
 # Register your models here.

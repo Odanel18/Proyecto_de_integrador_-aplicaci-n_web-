@@ -1,8 +1,8 @@
 from django.contrib import admin
-from apps.catalogos.empleados.models import Empleado
+from apps.catalogos.empleados.models import Empleados
 
-@admin.register(Empleado)
+@admin.register(Empleados)
 class EmpladoAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'num_Cedula']
-    list_display = ['nombre', 'apellido','telefono','num_Cedula']
+    search_fields = ['id', 'NumCedula']
+    list_display = ['Nombres', 'Apellidos','Telefono','NumCedula']
 # Register your models here.

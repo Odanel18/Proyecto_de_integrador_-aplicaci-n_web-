@@ -4,5 +4,5 @@ from apps.catalogos.tipo.models import Tipo
 @admin.register(Tipo)
 class tipoAdmin(admin.ModelAdmin):
     search_fields = ['id']
-    list_display = ['Tipo_Marca']
+    list_display = ['TipoMarca']
 # Register your models here.
