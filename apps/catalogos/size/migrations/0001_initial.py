@@ -12,13 +12,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Categorias',
+            name='Size',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('Nombre', models.CharField(max_length=100, verbose_name='Nombre')),
+                ('descripcion', models.CharField(max_length=50, verbose_name='Tamaño')),
             ],
             options={
-                'verbose_name_plural': 'Categorias',
+                'verbose_name_plural': 'Sizes',
             },
         ),
     ]

@@ -43,4 +43,5 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('catalogos/', include('apps.catalogos.urls')),
+    path('movimiento/',include('apps.movimiento.urls')),
 ]

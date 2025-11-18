@@ -17,6 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 from apps.seguridad.setting_apps import SEGURIDAD_SETTING_APPS
 from apps.catalogos.setting_apps import CATALOGOS_SETTING_APPS
+from apps.movimiento.setting_apps import MOVIMIENTO_SETTING_APPS
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -41,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_yasg',
-] + SEGURIDAD_SETTING_APPS + CATALOGOS_SETTING_APPS
+] + SEGURIDAD_SETTING_APPS + CATALOGOS_SETTING_APPS + MOVIMIENTO_SETTING_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -87,7 +88,7 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
-        'NAME': 'EmprendimientoBD',
+        'NAME': 'NEGOCIOBD',
         'HOST': r'DESKTOP-P87T7BE\SQLEXPRESS',
         # 'PORT': '',
 

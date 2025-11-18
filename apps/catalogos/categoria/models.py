@@ -5,8 +5,8 @@ from django.db import models
 class Categorias (models.Model):
     Nombre= models.CharField (verbose_name='Nombre',max_length=100)
 
-class meta:
-    verbose_name_plural='Çategorias'
+    class Meta:
+        verbose_name_plural='Categorias'
 
-def __str__ (self):
-    return f"{self.Nombre}"
+    def __str__ (self):
+         return f"{self.Nombre}"

@@ -1,17 +1,9 @@
 CATALOGOS_SETTING_APPS=[
                             'apps.catalogos.clientes',
-                            'apps.catalogos.factura',
                             'apps.catalogos.metodoPago',
                             'apps.catalogos.empleados',
-                            'apps.catalogos.caja',
-                            'apps.catalogos.abono',
                             'apps.catalogos.categoria',
-                            'apps.catalogos.compra',
-                            'apps.catalogos.detalleCompra',
-                            'apps.catalogos.detalleFactura',
-                            'apps.catalogos.marca',
-                            'apps.catalogos.moto',
-                            'apps.catalogos.producto',
                             'apps.catalogos.proveedor',
-                            'apps.catalogos.tipo'
-                        ]
+                            'apps.catalogos.size',
+                            'apps.catalogos.tipo',
+                        ] 

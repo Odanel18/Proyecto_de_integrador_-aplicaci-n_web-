@@ -9,11 +9,11 @@ class Clientes(models.Model):
     NumCedula = models.CharField(verbose_name='Número de cédula', max_length=16,null= True, unique=True)
     NumTeléfono= models.CharField(verbose_name='Número de teléfono',null=False, max_length=8)
 
-class Meta:
+    class Meta:
         verbose_name_plural = 'Clientes'
         
     
-def __str__(self):
+    def __str__(self):
         return f"{self.Nombres} - {self.Apellidos} - {self.NumCedula}"
     
     # comentario de prueba

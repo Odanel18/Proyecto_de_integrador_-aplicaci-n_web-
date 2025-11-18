@@ -5,8 +5,8 @@ class Proveedores (models.Model):
     Nombre = models.CharField (verbose_name='Nombre', max_length=100)
     Telefono = models.CharField(verbose_name='Teléfono', max_length=10)
 
-class Meta:
-    verbose_name_plural= 'Proveedores'
+    class Meta:
+        verbose_name_plural= 'Proveedores'
 
-def __str__ (self):
-    return f"{self.Nombre}"
+    def __str__ (self):
+        return f"{self.Nombre}"
