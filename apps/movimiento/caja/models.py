@@ -12,7 +12,8 @@ class Caja (models.Model):
     NumCaja= models.IntegerField(verbose_name='Numero de caja')
     EmpleadoId = models.ForeignKey(Empleados,verbose_name='Empleados', on_delete=models.PROTECT)
     Dinero = models.DecimalField (verbose_name='Dinero',max_digits=10, decimal_places=2)
-
+    estado = models.BooleanField(default=True)
+    
     class Meta:
         verbose_name_plural = "Cajas"
 

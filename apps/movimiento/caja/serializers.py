@@ -4,6 +4,5 @@ from .models import Caja
 class CajaSerializer(ModelSerializer):
     class Meta:
         model = Caja
-        fields= '__all__'
-       # fields = ['facturaid', 'monto','cajaid','Fecha_Abono']
-                  
+       # fields= '__all__'
+        fields = ['SaldoInicial', 'Ingresos','Egresos','SaldoFinal','Fecha','NumCaja','EmpleadoId','Dinero']

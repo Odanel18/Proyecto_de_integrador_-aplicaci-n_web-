@@ -12,12 +12,11 @@ class Abonos (models.Model):
     FacturaId = models.ForeignKey(Facturas,verbose_name="factura",on_delete=models.PROTECT)
     CajaId = models.ForeignKey(Caja,verbose_name="Caja", on_delete=models.PROTECT)
     MetodoPagoId = models.ForeignKey(MetodoPago,verbose_name="Metodo de pago", on_delete=models.PROTECT)
+    estado = models.BooleanField(default=True)
 
     class Meta:
-      # verbose_name = 'Abonos'
-        #managed = False  # 🔹 Muy importante: Django no crea ni modifica esta tabla
-       # app_label = 'apps.catalogos.abono'
-        verbose_name_plural = 'Abonos' # 🔹 Nombre exacto de la tabla en SQL Server
+     
+        verbose_name_plural = 'Abonos' 
 
     def __str__ (self):
         return f"{self.Monto} - {self.FacturaId}"

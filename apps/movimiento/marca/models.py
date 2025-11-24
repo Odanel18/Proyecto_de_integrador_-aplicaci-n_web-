@@ -4,7 +4,8 @@ from apps.catalogos.tipo.models import Tipo
 class Marcas (models.Model):
     Nombre=models.CharField (verbose_name='Nombre', max_length=50)
     TipoId = models.ForeignKey(Tipo,verbose_name='Tipo', on_delete=models.PROTECT)
-
+    estado = models.BooleanField(default=True)
+    
     class Meta:
         verbose_name_plural='Marcas'
 

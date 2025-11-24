@@ -13,5 +13,5 @@ class compraAdmin(admin.ModelAdmin):
 @admin.register(DetalleCompra)
 class detalleCompraAdmin(admin.ModelAdmin):
     search_fields = ['id',"CompraId"]
-    list_display = ['Cantidad', 'ProductoId', 'CompraId','PrecioUnitario',"Subtotal"]
+    list_display = ['Cantidad', 'detallProductoId', 'CompraId','PrecioUnitario',"Subtotal"]
 # Register your models here.

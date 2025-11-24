@@ -9,6 +9,7 @@ class Productos(models.Model):
     Codigo = models.CharField(verbose_name='Código', max_length=30)
     Nombre = models.CharField(verbose_name='Nombre', max_length=50)
     CategoriaId = models.ForeignKey(Categorias, verbose_name='Categoria', on_delete=models.PROTECT)
+    estado = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Productos"
@@ -23,9 +24,10 @@ class DetalleProductos(models.Model):
     MotoId = models.ForeignKey(Motos, verbose_name='Moto', on_delete=models.PROTECT)
     PrecioVenta = models.DecimalField(verbose_name='Precio de venta', max_digits=10, decimal_places=2)
     precioCompra = models.DecimalField(verbose_name='Precio de compra', max_digits=10, decimal_places=2)
-    Stock = models.IntegerField(verbose_name='Stock')
+    Stock = models.IntegerField(verbose_name='Stock',null= True, blank=True)
     size = models.ForeignKey(Size, verbose_name='Tamaño', null=True, blank=True, on_delete=models.PROTECT)
-
+    estado = models.BooleanField(default=True)
+    
     class Meta:
         verbose_name_plural = 'Detalles del producto'
 

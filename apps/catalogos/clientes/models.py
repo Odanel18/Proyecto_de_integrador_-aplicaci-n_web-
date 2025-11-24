@@ -8,6 +8,7 @@ class Clientes(models.Model):
     Apellidos = models.CharField(verbose_name="Apellidos", max_length=100)
     NumCedula = models.CharField(verbose_name='Número de cédula', max_length=16,null= True, unique=True)
     NumTeléfono= models.CharField(verbose_name='Número de teléfono',null=False, max_length=8)
+    estado = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = 'Clientes'

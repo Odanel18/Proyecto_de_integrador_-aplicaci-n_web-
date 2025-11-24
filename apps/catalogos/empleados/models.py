@@ -7,6 +7,7 @@ class Empleados (models.Model):
     Apellidos = models.CharField(verbose_name='Apellidos', max_length=100)
     Telefono = models.CharField(verbose_name='Teléfono', max_length=8)
     NumCedula = models.CharField(verbose_name='Numero de cédula', max_length=16, unique=True)
+    estado = models.BooleanField(default=True)
 
     class Meta:
        verbose_name_plural= 'Empleados'

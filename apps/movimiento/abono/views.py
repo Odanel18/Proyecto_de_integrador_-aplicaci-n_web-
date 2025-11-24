@@ -6,48 +6,45 @@ from rest_framework import status,generics
 
 from .models import Abonos
 from .serializers import AbonoSerializer
-#from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.utils import swagger_auto_schema
 
-'''class Abonolist (generics.ListAPIView):
-    serializer_class = AbonoSerializer
-
-    def get_queryset(self):
-        return Abonos.objects.using('default').all()
-
-'''
 
 class AbonosApiView(APIView):
     def get(self, request):
-     Serializer= AbonoSerializer(Abonos.objects.using('default').all(), many=True)
+     Serializer= AbonoSerializer(Abonos.objects.using('default').filter(estado=True), many=True)
      return Response(status=status.HTTP_200_OK, data=Serializer.data)
-
-      #departamento = list(Abono.objects.values())
-       #return Response (status=status.HTTP_200_OK, data=departamento)
-
-       #return Response(status=status.HTTP_200_OK, data= 'Hola mundo desde departamento')
-        #return Response({'abonos': Abono.objects.all()})
-    #forma 1 se va a trabajar con esta formas
-   
+    
+    @swagger_auto_schema(request_body=AbonoSerializer, responses={201: AbonoSerializer})
     def post(self,request):
         Serializer= AbonoSerializer(data=request.data)
         Serializer.is_valid(raise_exception=True)
         Serializer.save()
         return Response (status=status.HTTP_201_CREATED, data=Serializer.data)
 
-    """
-    #forma 2
-    def post2(self,request):
-        Abono.objects.create(facturaid=request.data['facturaid'],monto=request.data['monto'],cajaid=request.data['cajaid'],Fecha_Abono=request.data['Fecha_Abono'])
-        return Response (status=status.HTTP_201_CREATED)
-    #forma 3
-    def post3(self,request):
-        abono= Abono
+class AbonosIDAPIView(APIView):   
+    @swagger_auto_schema(request_body=AbonoSerializer, responses={200: AbonoSerializer})
+    def patch(self, request, pk):
+        
+        try:
+            abono = Abonos.objects.get(pk=pk)
+        except Abonos.DoesNotExist:
+            return Response({'error': 'abono no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-        abono.facturaid=request.data['facturaid']
-        abono.monto=request.data['monto']
-        abono.cajaid=request.data['cajaid']
-        abono.Fecha_Abono=request.data['Fecha_Abono']
+        serializer = AbonoSerializer(abono, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(responses={204: 'No Content'})
+    def delete(self, request, pk):
+      
+        try:
+            abono = Abonos.objects.get(pk=pk)
+        except Abonos.DoesNotExist:
+            return Response({'error': 'Abono no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        abono.estado=False # Eliminado logico
         abono.save()
-        return Response (status=status.HTTP_201_CREATED)"""
-
+        return Response(status=status.HTTP_204_NO_CONTENT) 
         

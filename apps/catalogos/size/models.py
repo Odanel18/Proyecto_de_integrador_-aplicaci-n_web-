@@ -7,7 +7,7 @@ from django.db import models
 
 class Size (models.Model):
     descripcion= models.CharField(verbose_name='Tamaño', max_length=50)
-
+    estado = models.BooleanField(default=True)
     class Meta:
         verbose_name_plural= 'Sizes'
 

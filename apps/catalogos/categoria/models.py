@@ -4,6 +4,7 @@ from django.db import models
 
 class Categorias (models.Model):
     Nombre= models.CharField (verbose_name='Nombre',max_length=100)
+    estado = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural='Categorias'
