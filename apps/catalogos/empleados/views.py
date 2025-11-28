@@ -26,7 +26,7 @@ class EmpleadoIDAPIView(APIView):
         Actualizar completamente un departamento por su ID.
         """
         try:
-            empleado = Empleados.objects.get(pk=pk)
+            empleado = Empleados.objects.filter(estado=True).get(pk=pk)
         except Empleados.DoesNotExist:
             return Response({'error': 'Empleado no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -42,9 +42,9 @@ class EmpleadoIDAPIView(APIView):
         Actualizar parcialmente un departamento por su ID.
         """
         try:
-            empleado = Empleados.objects.get(pk=pk)
+            empleado = Empleados.objects.filter(estado=True).get(pk=pk)
         except Empleados.DoesNotExist:
-            return Response({'error': 'Departamento no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Empleado no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = EmpleadoSerializer(empleado, data=request.data, partial=True)
         if serializer.is_valid():
@@ -58,9 +58,9 @@ class EmpleadoIDAPIView(APIView):
         Eliminar un departamento por su ID.
         """
         try:
-            empleado = Empleados.objects.get(pk=pk)
+            empleado = Empleados.objects.filter(estado=True).get(pk=pk)
         except Empleados.DoesNotExist:
-            return Response({'error': 'Departamento no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Empleado no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         empleado.estado=False # Eliminado logico
         empleado.save()

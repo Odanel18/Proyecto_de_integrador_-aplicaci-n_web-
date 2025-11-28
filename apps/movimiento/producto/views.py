@@ -22,7 +22,7 @@ class ProductoIDAPIView(APIView):
     def patch(self, request, pk):
         
         try:
-            producto = Productos.objects.get(pk=pk)
+            producto = Productos.objects.filter(estado=True).get(pk=pk)
         except Productos.DoesNotExist:
             return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -36,7 +36,7 @@ class ProductoIDAPIView(APIView):
     def delete(self, request, pk):
       
         try:
-            producto = Productos.objects.get(pk=pk)
+            producto = Productos.objects.filter(estado=True).get(pk=pk)
         except Productos.DoesNotExist:
             return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 

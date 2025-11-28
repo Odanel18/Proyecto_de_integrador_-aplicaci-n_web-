@@ -25,7 +25,7 @@ class ProveedorIDAPIView(APIView):
     def patch(self, request, pk):
    
         try:
-            proveedor = Proveedores.objects.get(pk=pk)
+            proveedor = Proveedores.objects.filter(estado=True).get(pk=pk)
         except Proveedores.DoesNotExist:
             return Response({'error': 'Proveedor no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -39,7 +39,7 @@ class ProveedorIDAPIView(APIView):
     def delete(self, request, pk):
      
         try:
-            proveedor = Proveedores.objects.get(pk=pk)
+            proveedor = Proveedores.objects.filter(estado=True).get(pk=pk)
         except Proveedores.DoesNotExist:
             return Response({'error': 'Proveedor no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 

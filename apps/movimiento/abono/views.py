@@ -26,9 +26,9 @@ class AbonosIDAPIView(APIView):
     def patch(self, request, pk):
         
         try:
-            abono = Abonos.objects.get(pk=pk)
+            abono = Abonos.objects.filter(estado=True).get(pk=pk)
         except Abonos.DoesNotExist:
-            return Response({'error': 'abono no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Abono no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = AbonoSerializer(abono, data=request.data, partial=True)
         if serializer.is_valid():
@@ -40,7 +40,7 @@ class AbonosIDAPIView(APIView):
     def delete(self, request, pk):
       
         try:
-            abono = Abonos.objects.get(pk=pk)
+            abono = Abonos.objects.filter(estado=True).get(pk=pk)
         except Abonos.DoesNotExist:
             return Response({'error': 'Abono no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 

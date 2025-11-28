@@ -24,7 +24,7 @@ class CajaIDAPIView(APIView):
     def patch(self, request, pk):
         
         try:
-            caja = Caja.objects.get(pk=pk)
+            caja = Caja.objects.filter(estado=True).get(pk=pk)
         except Caja.DoesNotExist:
             return Response({'error': 'Caja no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -38,7 +38,7 @@ class CajaIDAPIView(APIView):
     def delete(self, request, pk):
       
         try:
-            caja = Caja.objects.get(pk=pk)
+            caja = Caja.objects.filter(estado=True).get(pk=pk)
         except Caja.DoesNotExist:
             return Response({'error': 'Caja no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 

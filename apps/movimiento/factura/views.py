@@ -27,7 +27,7 @@ class FacturaIDAPIView(APIView):
         Actualizar parcialmente un departamento por su ID.
         """
         try:
-            factura = Facturas.objects.get(pk=pk)
+            factura = Facturas.objects.filter(estado=True).get(pk=pk)
         except Facturas.DoesNotExist:
             return Response({'error': 'Factura no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -43,7 +43,7 @@ class FacturaIDAPIView(APIView):
         Eliminar un departamento por su ID.
         """
         try:
-            factura = Facturas.objects.get(pk=pk)
+            factura = Facturas.objects.filter(estado=True).get(pk=pk)
         except Facturas.DoesNotExist:
             return Response({'error': 'Factura no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 

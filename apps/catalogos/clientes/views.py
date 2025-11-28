@@ -25,7 +25,7 @@ class ClienteIDAPIView(APIView):
     def patch(self, request, pk):
         
         try:
-            cliente = Clientes.objects.get(pk=pk)
+            cliente = Clientes.objects.filter(estado=True).get(pk=pk)
         except Clientes.DoesNotExist:
             return Response({'error': 'Cliente no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -39,7 +39,7 @@ class ClienteIDAPIView(APIView):
     def delete(self, request, pk):
       
         try:
-            clientes = Clientes.objects.get(pk=pk)
+            clientes = Clientes.objects.filter(estado=True).get(pk=pk)
         except Clientes.DoesNotExist:
             return Response({'error': 'Cliente no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 

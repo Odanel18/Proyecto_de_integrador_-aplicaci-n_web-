@@ -26,7 +26,7 @@ class CategoriaIDAPIView(APIView):
     def patch(self, request, pk):
         
         try:
-            categoria = Categorias.objects.get(pk=pk)
+            categoria = Categorias.objects.filter(estado=True).get(pk=pk)
         except Categorias.DoesNotExist:
             return Response({'error': 'Categoria no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -40,10 +40,10 @@ class CategoriaIDAPIView(APIView):
     def delete(self, request, pk):
       
         try:
-            categoria = Categorias.objects.get(pk=pk)
+            categoria = Categorias.objects.filter(estado=True).get(pk=pk)
         except Categorias.DoesNotExist:
             return Response({'error': 'Categoria no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
         categoria.estado=False # Eliminado logico
         categoria.save()
-        # return Response(status=status.HTTP_204_NO_CONTENT) ¿
+        return Response(status=status.HTTP_204_NO_CONTENT) 

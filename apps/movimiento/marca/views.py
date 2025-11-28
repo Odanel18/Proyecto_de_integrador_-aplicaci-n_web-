@@ -21,7 +21,7 @@ class MarcaIDAPIView(APIView):
     @swagger_auto_schema(request_body=MarcaSerializer, responses={200: MarcaSerializer})
     def patch(self, request, pk):
         try:
-            empleado = Marcas.objects.get(pk=pk)
+            empleado = Marcas.objects.filter(estado=True).get(pk=pk)
         except Marcas.DoesNotExist:
             return Response({'error': 'Marca no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -34,7 +34,7 @@ class MarcaIDAPIView(APIView):
     @swagger_auto_schema(responses={204: 'No Content'})
     def delete(self, request, pk):
         try:
-            marca = Marcas.objects.get(pk=pk)
+            marca = Marcas.objects.filter(estado=True).get(pk=pk)
         except Marcas.DoesNotExist:
             return Response({'error': 'Marca no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 

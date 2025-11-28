@@ -15,7 +15,7 @@ class MetodoPagoIDAPIView(APIView):
     def patch(self, request, pk):
         
         try:
-            metodoPagos = MetodoPago.objects.get(pk=pk)
+            metodoPagos = MetodoPago.objects.filter(estado=True).get(pk=pk)
         except metodoPagos.DoesNotExist:
             return Response({'error': 'Metodo de pago no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -29,7 +29,7 @@ class MetodoPagoIDAPIView(APIView):
     def delete(self, request, pk):
       
         try:
-            metodoPagos = MetodoPago.objects.get(pk=pk)
+            metodoPagos = MetodoPago.objects.filter(estado=True).get(pk=pk)
         except MetodoPago.DoesNotExist:
             return Response({'error': 'Metodo de pago no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 

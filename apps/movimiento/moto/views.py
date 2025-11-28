@@ -25,7 +25,7 @@ class MotoIDAPIView(APIView):
     def patch(self, request, pk):
         
         try:
-            moto = Motos.objects.get(pk=pk)
+            moto = Motos.objects.filter(estado=True).get(pk=pk)
         except Motos.DoesNotExist:
             return Response({'error': 'Moto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -39,7 +39,7 @@ class MotoIDAPIView(APIView):
     def delete(self, request, pk):
       
         try:
-            moto = Motos.objects.get(pk=pk)
+            moto = Motos.objects.filter(estado=True).get(pk=pk)
         except Motos.DoesNotExist:
             return Response({'error': 'Moto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
