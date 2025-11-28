@@ -6,4 +6,3 @@ class EmpleadoSerializer (ModelSerializer):
         model=Empleados
         fields= ['Nombres','Apellidos','Telefono','NumCedula']
 
-
