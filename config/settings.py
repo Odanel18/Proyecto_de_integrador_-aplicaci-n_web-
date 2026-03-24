@@ -26,9 +26,9 @@ from apps.movimiento.setting_apps import MOVIMIENTO_SETTING_APPS
 SECRET_KEY = 'django-insecure-$amp(!mx3(43u%w&q6+7wetq1fgmwe48-(ivni78+7wiq_=op7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }"""
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
@@ -98,7 +98,7 @@ DATABASES = {
             'extra_params': 'TrustServerCertificate=yes',
         },
     }
-}
+}'''
 
 # Password validation
 # https://docs.djangopr oject.com/en/4.2/ref/settings/#auth-password-validators
