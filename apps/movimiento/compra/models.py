@@ -19,7 +19,7 @@ class Compras (models.Model):
         verbose_name_plural='Compras'
 
     def __str__ (self):
-        return f"{self.NumCompra} - {self.ProveedoresId}" 
+        return f"Compra número {self.NumCompra} - al proveedor {self.ProveedoresId}" 
 
    
 class DetalleCompra (models.Model):

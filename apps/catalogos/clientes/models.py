@@ -17,6 +17,4 @@ class Clientes(models.Model):
     def __str__(self):
         return f"{self.Nombres} - {self.Apellidos} - {self.NumCedula}"
     
-    # comentario de prueba
-    #
-    #
+   

@@ -5,4 +5,4 @@ class CajaSerializer(ModelSerializer):
     class Meta:
         model = Caja
        # fields= '__all__'
-        fields = ['SaldoInicial', 'Ingresos','Egresos','SaldoFinal','FechaApertura','FechaCierre','NumCaja','EmpleadoId','Dinero']
+        fields = ['SaldoInicial','Egresos','SaldoFinal','FechaApertura','FechaCierre','NumCaja','EmpleadoId','Din_efectivo','Din_digital']
