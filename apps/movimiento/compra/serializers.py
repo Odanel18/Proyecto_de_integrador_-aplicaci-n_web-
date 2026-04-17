@@ -4,7 +4,7 @@ from .models import Compras,DetalleCompra
 class CompraSerializer (ModelSerializer):
     class Meta:
         model= Compras
-        fields= ['Fecha','MetodoPagoId','ProveedoresId','NumCompra','Total']
+        fields= ['Fecha','ProveedoresId','NumCompra','Total']
 
 class DetalleCompraSerializer (ModelSerializer):
     class Meta:

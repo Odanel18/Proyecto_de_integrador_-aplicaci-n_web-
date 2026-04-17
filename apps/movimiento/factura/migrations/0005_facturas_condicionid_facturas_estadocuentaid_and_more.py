@@ -7,25 +7,13 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('estadoCuenta', '0001_initial'),
-        ('condicionPago', '0001_initial'),
+        
         ('clientes', '0002_clientes_estado'),
         ('factura', '0004_remove_facturas_cajaid'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='facturas',
-            name='condicionId',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.PROTECT, to='condicionPago.condicionpago', verbose_name='Condición del pago'),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='facturas',
-            name='estadoCuentaId',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.PROTECT, to='estadoCuenta.estadocuenta', verbose_name='Estado de la factura'),
-            preserve_default=False,
-        ),
+       
         migrations.CreateModel(
             name='FacturasCredito',
             fields=[

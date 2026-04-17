@@ -7,5 +7,6 @@ MOVIMIENTO_SETTING_APPS=[
                             'apps.movimiento.marca',
                             'apps.movimiento.moto',
                             'apps.movimiento.producto',
+                            'apps.movimiento.movimientoPago',
                         ]
 
