@@ -4,7 +4,8 @@ from .models import Facturas,DetalleFactura
 class FacturaSerializer (ModelSerializer):
     class Meta:
         model = Facturas
-        fields= ['NumFactura','Fecha','ClienteId','Total']
+        fields= ['NumFactura','Fecha','ClienteId','Total','condicionId','estadoCuentaId']
+        #Exception= ['id']
 
 class DetalleFacturaSerializer (ModelSerializer):
     class Meta:

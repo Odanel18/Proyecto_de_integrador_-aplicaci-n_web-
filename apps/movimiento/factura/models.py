@@ -1,7 +1,6 @@
 from django.db import models
 
 from apps.catalogos.clientes.models import Clientes
-#from apps.catalogos.metodoPago.models import MetodoPago
 from apps.catalogos.condicionPago.models import CondicionPago
 from apps.catalogos.estadoCuenta.models import EstadoCuenta
 from apps.movimiento.producto.models import DetalleProductos
@@ -11,7 +10,6 @@ class Facturas(models.Model):
     Fecha = models.DateTimeField(verbose_name='Fecha')
     Total = models.DecimalField(verbose_name='Total',max_digits=10, decimal_places=2)
     ClienteId = models.ForeignKey(Clientes, verbose_name='Clientes', on_delete=models.PROTECT)
-    #MetodoPagoId = models.ForeignKey(MetodoPago, verbose_name='Metodo de pago', on_delete=models.PROTECT)
     condicionId = models.ForeignKey(CondicionPago, verbose_name='Condición del pago', on_delete=models.PROTECT)
     estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)

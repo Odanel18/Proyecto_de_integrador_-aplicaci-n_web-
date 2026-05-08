@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <span class="logo-icono">⚙</span>
+                <span class="logo-texto">Menú</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-link" data-section="usuarios">
+                    <span class="nav-icono">👥</span>
+                    <span>Clientes</span>
+                </a>
+                <a href="#" class="nav-link" data-section="prueba">
+                    <span class="nav-icono">🧪</span>
+                    <span>Prueba</span>
+                </a>
+
+            </nav>
+        </aside>
+
+
+        <div class="main-wrap">
+            <header class="topbar">
+                <h1 class="topbar-titulo" id="topbarTitulo">Clientes</h1>
+            </header>
+            <!--Contenido principal-->
+            <main class="contenido">
+                <section id="cliente" class="seccion activa">
+                    <div class="tabla-contenido">
+                        <div class="tabla-cabecera">
+                            <h2>Lista de Clientes</h2>
+                            <input type="text" class="buscador" id="buscarCliente" placeholder="🔍 Buscar cliente...">
+                        </div>
+                        <div class="cargando" id="cargandoCliente">
+                            ⏳ Cargando datos desde la API...
+                        </div>
+                    </div>
+                    <table class="tabla" id="tablaCliente">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Número de cédula</th>
+                                <th>Teléfono</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyCliente">
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="seccion" id="prueba">
+                    <h3>hola</h3>
+                </section>
+
+            </main>
+
+        </div>
+    </div>
+
+    <script src="accion.js"></script>
+    
+</body>
+</html>

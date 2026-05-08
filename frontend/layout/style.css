@@ -1,0 +1,237 @@
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root{
+  --sidebar-ancho:240px;
+  --topbar-alto: 62px;
+  --fondo: #d5d5d89e; /*fondo del sider-nav*/
+  --texto1: #f1f5f9 ;
+  --texto2: #94a3b8;
+  --borde: rgba(228, 224, 224, 0.243);
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente principal (lista de alternativas) */
+  background: var(--fondo);  /* Color de fondo usando nuestra variable */
+   /* Color de texto por defecto */
+  height: 100vh;             /* Ocupa el 100% del alto visible de la pantalla (vh = viewport height) */
+  overflow: hidden;          /* Oculta el scroll del body (el scroll está solo en el área de contenido) */
+}
+/*principal div de layout*/
+.layout{
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar{
+  width: var(--sidebar-ancho);
+  background: linear-gradient(180deg, #0f172a 0%, #1a2744 100%);
+  color: var(--texto1);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;                                           /* Impide que el sidebar se encoja si la pantalla es pequeña */
+  border-radius: 1px solid var(--borde);
+}
+
+.sidebar-logo{
+  padding: 22px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.logo-icono{
+  font-size: 22px;                             /* Tamaño del símbolo */
+  background: linear-gradient(135deg, #3b82f6, #06b6d4); /* Degradado de color */
+  -webkit-background-clip: text;               /* Aplica el degradado SOLO al texto */
+  -webkit-text-fill-color: transparent;        /* Hace el texto transparente para ver el degradado */
+  background-clip: text;  
+}
+
+.logo-texto{
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.sidebar-nav{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 10px;
+}
+
+.nav-link{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  text-decoration:none;
+  color: var(--texto2);
+  font-size: 20px;
+
+}
+.nav-link:hover{
+  background: rgba(241, 245, 249, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 21px;
+  transition: 0.2s;
+}
+
+.nav-icono{
+  font-size: 22px;
+  width: 20px;
+  text-align: center;
+}
+
+.main-wrap{
+  border: #06b6d4 1px solid;
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0; /* Evita que el contenido se desborde horizontalmente */
+}
+
+.topbar{
+  height: var(--topbar-alto);
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--borde);
+  align-items: center;
+}
+
+.contenido{
+  flex:1;
+  padding: 30px 32px; 
+  background: #9fa1a49c;
+  overflow-y: auto; /* Permite scroll vertical solo en el área de contenido */
+}
+
+.seccion {
+  display: none;
+  animation: aparece 0.3s ease; /* Animación al aparecer */ 
+}
+
+/* Solo la sección con clase "activa" se muestra */
+.seccion.activa {
+  display: block; /* Cambia de none a block para hacerla visible */
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+}
+
+@keyframes aparece {
+  from { opacity: 0; transform: translateY(10px); } /* Inicio: invisible y 10px abajo */
+  to   { opacity: 1; transform: translateY(0); }    /* Fin: visible y en posición normal */
+}
+
+/* Título de la sección actual en la topbar */
+.topbar-titulo {
+  font-size: 35px;       /* Tamaño */
+  font-weight: 700;      /* Negrita */
+  color: var(--texto);   /* Color blanco */
+}
+
+/* Cabecera de la tabla (título + buscador) */
+.tabla-cabecera{
+  display: flex;
+  padding: 17px 24px;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--borde);
+  align-items: center;
+  gap: 12px;
+  background: #9fa1a4;
+  border-radius: 15px;
+
+}
+
+h2{
+  font-size: 22px;
+}
+
+
+
+
+.buscador{
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 8px 14px;
+  outline: none; 
+  width: 240px;
+  background: #fbfbfbae; 
+}
+
+.buscador:focus{
+  background: rgb(255, 253, 253);
+  transition: 0.4s;
+  font-size: 18px ;
+}
+
+.cargando{
+  padding:48px;
+  align-items: center;
+  font-size: 17px;
+  display: flex;
+  justify-content: center;
+
+}
+
+.tabla{
+
+  width: 100%;
+  border-collapse: collapse;
+  display:flex ;
+  border-radius: 15px;
+  background: #9fa1a4;
+}
+
+.tabla.visible{
+  
+  display: table;
+}
+
+.tabla thead th{
+  padding: 12px 20px;
+  font-size: 16px;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  border-bottom:4px solid  #b3b3b3;
+
+}
+
+.tabla tbody td{
+  padding: 12px 20px;
+  font-size: 20px;
+  color: black;
+  border-bottom:4px solid  #b3b3b3;
+  max-width: 260px;
+  white-space: nowrap;  
+  overflow: hidden;
+  text-overflow:ellipsis ;
+}
+
+/* La última fila no tiene línea separadora abajo */
+.tabla tbody tr:last-child td {
+  border-bottom: none; /* Quita el borde de la última fila */
+}
+
+.table tbody tr:hover td{
+  background: rgb(255, 253, 253);
+  transition: 0.4s;
+  font-size: 18px ;
+}
+
+
+
+
+
+

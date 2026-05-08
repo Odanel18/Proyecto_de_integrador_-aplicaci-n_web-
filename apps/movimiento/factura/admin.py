@@ -6,7 +6,7 @@ from apps.movimiento.factura.models import FacturasCredito
 @admin.register(Facturas)
 class facturaAdmin(admin.ModelAdmin):
     search_fields = ['id', 'NumFactura']
-    list_display = ['NumFactura','Fecha', 'ClienteId','Total']
+    list_display = ['NumFactura','Fecha', 'ClienteId','condicionId','estadoCuentaId','Total']
 # Register your models here.
 
 @admin.register(DetalleFactura)
