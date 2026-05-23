@@ -13,6 +13,8 @@ class FacturaAPIView (APIView):
     
     @swagger_auto_schema(request_body=FacturaSerializer, responses={201: FacturaSerializer})
     def post(self,request):
+       
+       
        serializer=FacturaSerializer(data=request.data)
        serializer.is_valid(raise_exception=True)
        serializer.save()

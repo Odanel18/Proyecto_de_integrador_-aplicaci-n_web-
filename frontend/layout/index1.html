@@ -15,15 +15,31 @@
                 <span class="logo-texto">Menú</span>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-link" data-section="usuarios">
+                <a href="#" class="nav-link activo" data-section="cliente">
                     <span class="nav-icono">👥</span>
                     <span>Clientes</span>
                 </a>
-                <a href="#" class="nav-link" data-section="prueba">
-                    <span class="nav-icono">🧪</span>
-                    <span>Prueba</span>
+                <a href="#" class="nav-link" data-section="facturas">
+                    <span class="nav-icono">📄</span>
+                    <span>Facturas</span>
+                </a>
+                <a href="#" class="nav-link" data-section="caja">
+                    <span class="nav-icono">💵</span>
+                    <span>Caja</span>
+                </a>
+                <a href="#" class="nav-link" data-section="compra">
+                    <span class="nav-icono">🛍️</span>
+                    <span>Compra</span>
+                </a>
+                <a href="#" class="nav-link" data-section="inventario">
+                    <span class="nav-icono">📦</span>
+                    <span>Inventario</span>
                 </a>
 
+                <a href="#" class="nav-link" data-section="empleado">
+                    <span class="na-icono"></span>
+                    <span>Empleados</span>
+                </a>
             </nav>
         </aside>
 
@@ -44,6 +60,49 @@
                             ⏳ Cargando datos desde la API...
                         </div>
                     </div>
+
+                    <!--
+                     CRUD DEL MODODULO DE CLIENTE
+                        -->
+                    <div class="botones" id="GRUD-cliente">
+                        <button type="submit" class="btn" id="btnGuardar"><span class="btn-text">Guardar</span></button>
+                        <button type="submit" class="btn" id="btnEditar"><span class="btn-text">Editar</span></button>
+                        <button type="submit" class="btn" id="btnBorrar"><span class="btn-text">Borrar</span></button>
+                    </div>
+                    <div class="formulario" id="frm-cliente">
+                        <form action="" class="form" >
+                            <div class="frm-nombre">
+                                <input type="text" required class="input-nombre" id="nombre" autocomplete="off">
+                                <label for= "nombre" class="lbl-nombre">
+                                    <span class="text-nomb">Nombre</span>
+                                </label>
+                            </div>
+
+                           <div class="frm-nombre">
+                                <input type="text" required class="input-nombre" id="apellido" autocomplete="off">
+                                <label for="nombre" class="lbl-nombre">
+                                    <span class="text-nomb">Apellidos</span>
+                                </label>
+                            </div>
+
+                            <div class="frm-nombre">
+                                <input type="text" required class="input-nombre" id="numCedula" autocomplete="off">
+                                <label for="nombre" class="lbl-nombre">
+                                    <span class="text-nomb">Número de cédula</span>
+                                </label>
+                            </div>
+                            <div class="frm-nombre">
+                                <input type="text" required class="input-nombre" id="telefono" autocomplete="off">
+                                <label for="nombre" class="lbl-nombre">
+                                    <span class="text-nomb">Teléfono</span>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!--
+                    TABLA DE CLIENTE
+                    -->
                     <table class="tabla" id="tablaCliente">
                         <thead>
                             <tr>
@@ -59,8 +118,68 @@
                     </table>
                 </section>
 
-                <section class="seccion" id="prueba">
-                    <h3>hola</h3>
+                <section id="facturas" class="seccion">
+                     <div class="tabla-contenido">
+                        <div class="tabla-cabecera">
+                            <h2>Lista de facturas</h2>
+                            <input type="text" class="buscador" id="buscarFactura" placeholder="🔍 Buscar factura...">
+                        </div>
+                        <p>Contenido de facturas</p>
+                    </div>
+                </section>
+
+                <section id="caja" class="seccion">
+                     <div class="tabla-contenido">
+                        <div class="tabla-cabecera">
+                            <h2>Caja</h2>
+                        </div>
+                        <p>Contenido de caja</p>
+                    </div>
+                </section>
+
+                <section id="compra" class="seccion">
+                     <div class="tabla-contenido">
+                        <div class="tabla-cabecera">
+                            <h2>Compras</h2>
+                        </div>
+                        <p>Contenido de compras</p>
+                    </div>
+                </section>
+
+                <section id="inventario" class="seccion">
+                     <div class="tabla-contenido">
+                        <div class="tabla-cabecera">
+                            <h2>Inventario</h2>
+                        </div>
+                        <p>Contenido de inventario</p>
+                    </div>
+                </section>
+
+                <section id="empleado" class="seccion" >
+                    <div class="tabla-contenido">
+                        <div class="tabla-cabecera">
+                            <h2>Lista de empleados</h2>
+                            <input type="text" class="buscador" id="buscarCliente" placeholder="🔍 Buscar cliente...">
+                        </div>
+                        <div class="cargando" id="cargandoEmpleado">
+                            ⏳ Cargando datos desde la API...
+                        </div>
+                    </div>
+
+                    <table class="tabla" id="tablaEmpleado">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Teléfono</th>
+                                <th>Número de cédula</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyEmpleado">
+                        </tbody>
+                    </table>
+                    </div>
                 </section>
 
             </main>
@@ -68,7 +187,9 @@
         </div>
     </div>
 
-    <script src="accion.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="/frontend/layout/accion.js"></script>
     
 </body>
 </html>
