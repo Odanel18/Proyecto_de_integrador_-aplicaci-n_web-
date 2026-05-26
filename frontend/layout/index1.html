@@ -119,13 +119,34 @@
                 </section>
 
                 <section id="facturas" class="seccion">
-                     <div class="tabla-contenido">
+                    <div class="tabla-contenido">
                         <div class="tabla-cabecera">
                             <h2>Lista de facturas</h2>
                             <input type="text" class="buscador" id="buscarFactura" placeholder="🔍 Buscar factura...">
                         </div>
-                        <p>Contenido de facturas</p>
+                        <div class="cargando" id="cargandoFactura">
+                            ⏳ Cargando datos desde la API...
+                        </div>
                     </div>
+                        
+                    <table class="tabla" id="tablaFactura">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Número de Factura</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>condicion</th>
+                                <th>estado de Cuenta</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="bodyFactura">
+                        </tbody>
+                    </table>
+
+                    
                 </section>
 
                 <section id="caja" class="seccion">
@@ -147,19 +168,24 @@
                 </section>
 
                 <section id="inventario" class="seccion">
-                     <div class="tabla-contenido">
+                    <div class="tabla-contenido">
                         <div class="tabla-cabecera">
-                            <h2>Inventario</h2>
+                            <h2>Lista de inventario </h2>
+                            <input type="text" class="buscador" id="buscarCliente" placeholder="🔍 Buscar productos...">
                         </div>
-                        <p>Contenido de inventario</p>
+                        <div class="cargando" id="cargandoInventario">
+                            ⏳ Cargando datos desde la API...
+                        </div>
                     </div>
+
+                    
                 </section>
 
                 <section id="empleado" class="seccion" >
                     <div class="tabla-contenido">
                         <div class="tabla-cabecera">
                             <h2>Lista de empleados</h2>
-                            <input type="text" class="buscador" id="buscarCliente" placeholder="🔍 Buscar cliente...">
+                            <input type="text" class="buscador" id="buscarCliente" placeholder="🔍 Buscar empleado...">
                         </div>
                         <div class="cargando" id="cargandoEmpleado">
                             ⏳ Cargando datos desde la API...
@@ -179,7 +205,7 @@
                         <tbody id="bodyEmpleado">
                         </tbody>
                     </table>
-                    </div>
+
                 </section>
 
             </main>

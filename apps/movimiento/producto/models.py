@@ -45,4 +45,4 @@ class Registro_Producto(models.Model):
         verbose_name_plural = 'Registro de productos'
 
     def __str__(self):
-        return f"Registro del producto {self.DetalleProductoId} - Cantidad: {self.Cantidad}"
+        return f"Registro del producto {self.detalleProductoId} - Cantidad: {self.Cantidad}"

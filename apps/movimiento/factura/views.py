@@ -4,6 +4,8 @@ from rest_framework import status
 from .models import Facturas,DetalleFactura
 from .serializers import FacturaSerializer,DetalleFacturaSerializer
 from drf_yasg.utils import swagger_auto_schema
+#logica validacines
+from.services.factura_service import descontar_stock
 
 class FacturaAPIView (APIView):
     @swagger_auto_schema(responses={200: FacturaSerializer(many=True)})
@@ -63,5 +65,16 @@ class DetalleFacturaAPIView (APIView):
     def post(self,request):
        serializer=DetalleFacturaSerializer(data=request.data)
        serializer.is_valid(raise_exception=True)
-       serializer.save()
+       detalle = serializer.save()#Se guarda el detalle de la factura
+       
+       detalle_producto_id = detalle.detalleProductoId.id
+       cantidad= detalle.Cantidad
+
+       print("Detalle producto: ", detalle_producto_id)
+       print("Cantidad: ",cantidad)
+
+       #llamar el servicio
+       descontar_stock( detalle_producto_id , cantidad)
+
        return Response(status=status.HTTP_201_CREATED,data=serializer.data)
+

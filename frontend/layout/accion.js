@@ -68,7 +68,6 @@ function cargarClientes() {
 
       document.getElementById('cargandoCliente').style.display = 'none';
       document.getElementById('tablaCliente').classList.add('visible');
-
     });
 }
 
@@ -162,8 +161,49 @@ function cargarEmpleados(){
 
       document.getElementById('cargandoEmpleado').style.display = 'none';
       document.getElementById('tablaEmpleado').classList.add('visible');
+
     });
 }
+
+function cargarFactura(){
+  fetch(urlAPI + '/movimiento/factura/')
+    .then(function(respuesta){
+      return respuesta.json();
+    })
+
+    .then(function(listaFactura){
+      let cuerpoTabla = document.getElementById('bodyFactura');
+      let todasLasFilas = '';
+
+      for (let  i=0; i<listaFactura.length; i++){
+
+        let factura= listaFactura[i];
+        
+        let unaFila = '<tr>';
+        unaFila += '<td>'+ (i+1)+'</td>';
+        unaFila += '<td class="td-nombreEmp">'+factura.NumFactura+'</td>';
+        unaFila += '<td>'+factura.Fecha +'</td>';
+        unaFila += '<td>'+factura.ClienteId +'</td>';
+        unaFila += '<td>'+factura.Total +'</td>';
+        unaFila += '<td>'+factura.condicionId+'</td>'
+        unaFila += '<td>'+factura.estadoCuentaId+'</td>'
+        unaFila += '</tr>';
+
+         
+
+        todasLasFilas += unaFila;
+      }
+      
+      cuerpoTabla.innerHTML = todasLasFilas;
+
+      document.getElementById('cargandoFactura').style.display = 'none';
+      document.getElementById('tablaFactura').classList.add('visible');
+
+    });
+}
+
+
 // Ejecutar
 cargarClientes();
 cargarEmpleados();
+cargarFactura();

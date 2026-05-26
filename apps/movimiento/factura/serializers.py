@@ -11,3 +11,5 @@ class DetalleFacturaSerializer (ModelSerializer):
     class Meta:
         model = DetalleFactura
         fields= ['Cantidad','Subtotal','detalleProductoId','FacturaId']
+
+   
