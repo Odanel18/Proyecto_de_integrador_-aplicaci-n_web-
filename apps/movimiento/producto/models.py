@@ -37,7 +37,7 @@ class Registro_Producto(models.Model):
     Cantidad = models.IntegerField(verbose_name='Cantidad')
     precioCompra = models.DecimalField(verbose_name='Precio de compra', max_digits=10, decimal_places=2)
     PrecioVenta = models.DecimalField(verbose_name='Precio de venta', max_digits=10, decimal_places=2)
-    FechaRegistro = models.DateTimeField(verbose_name='Fecha de registro')
+    FechaRegistro = models.DateTimeField(verbose_name='Fecha de registro',auto_now_add=True)
     detalleProductoId= models.ForeignKey(DetalleProductos, verbose_name='Descripción del producto', on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
 

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Facturas,DetalleFactura
+from .models import Facturas,DetalleFactura,FacturasCredito
 
 class FacturaSerializer (ModelSerializer):
     class Meta:
@@ -12,4 +12,8 @@ class DetalleFacturaSerializer (ModelSerializer):
         model = DetalleFactura
         fields= ['Cantidad','Subtotal','detalleProductoId','FacturaId']
 
-   
+class FacturaCreditoSerializer (ModelSerializer):
+    class Meta:
+        model= FacturasCredito
+        fields= ['ClienteId','FacturaId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito']
+        

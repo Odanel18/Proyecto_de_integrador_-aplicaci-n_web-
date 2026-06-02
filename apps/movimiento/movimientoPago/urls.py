@@ -1,6 +1,9 @@
 from django.urls import path
-from .views import MovimientoPagoApiview
+from .views import MovimientoPagoteApiview,MovimientoPagoIDAPIView
 
-urlpatterns=[
-    path("",MovimientoPagoApiview.as_view()),
+app_name= "Clientes"
+
+urlpatterns= [
+    path("",MovimientoPagoteApiview.as_view(),name="MovimientoPago"),
+    path('<int:pk>',MovimientoPagoIDAPIView.as_view())
 ]

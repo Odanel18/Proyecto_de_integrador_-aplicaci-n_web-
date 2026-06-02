@@ -2,9 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from rest_framework.exceptions import ValidationError
+
 from .models import Compras,DetalleCompra
 from .serializers import CompraSerializer,DetalleCompraSerializer
 from drf_yasg.utils import swagger_auto_schema
+
+from apps.movimiento.compra.service.compra_validacion import validar_compra,aumentar_stock
 
 class CompraAPIView (APIView):
     @swagger_auto_schema(responses={200: CompraSerializer(many=True)})
@@ -54,11 +58,39 @@ class DetallecompraAPIView (APIView):
     
     @swagger_auto_schema(request_body=DetalleCompraSerializer, responses= {201: DetalleCompraSerializer})
     def post(self, resquest):
-       serializer=DetalleCompraSerializer(data= resquest.data)
-       serializer.is_valid(raise_exception=True)
-       serializer.save()
-       return Response(status=status.HTTP_201_CREATED, data=serializer.data)
 
+
+        serializer = DetalleCompraSerializer(data= resquest.data)
+
+        if serializer.is_valid(raise_exception=True):
+            try:
+                datos_validos = serializer.validated_data
+                validar_compra(datos_validos)
+
+                detalle=serializer.save()
+                id_producto=detalle.detallProductoId.id
+                canti= detalle.Cantidad
+                precioUnitario=detalle.PrecioUnitario
+
+                aumentar_stock(id_producto,canti,precioUnitario)
+                
+                return Response(status=status.HTTP_201_CREATED, data=serializer.data)
+            except ValidationError as e:
+                return Response(e.detail,status=status.HTTP_400_BAD_REQUEST)
+            except ValidationError as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        #serializer.is_valid(raise_exception=True)
+        #serializer.validated_data["Cantidad"]
+
+        #cantidad = serializer.validated_data["Cantidad"]
+
+        #compra_validacion(cantidad)
+
+        #serializer.save()
+
+        
 
 class DetallecompraIDAPIView(APIView):   
     @swagger_auto_schema(request_body=DetalleCompraSerializer, responses={200: DetalleCompraSerializer})

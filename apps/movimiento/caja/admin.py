@@ -5,7 +5,7 @@ from apps.movimiento.caja.models import Caja , MovimientoCaja
 @admin.register(Caja)
 class CajaAdmin(admin.ModelAdmin):
     search_fields = ['id', 'NumCaja']
-    list_display = ['SaldoInicial', 'Egresos','SaldoFinal','FechaApertura','FechaCierre','NumCaja','EmpleadoId','Din_efectivo','Din_digital']
+    list_display = ['SaldoInicial', 'Egresos','SaldoFinal','FechaApertura','FechaCierre','NumCaja','EmpleadoId','Din_efectivo','Din_digital','abierta']
 # Register your models here.
 
 @admin.register(MovimientoCaja)

@@ -18,6 +18,7 @@ class Caja (models.Model):
     Din_efectivo = models.DecimalField (verbose_name='Dinero en efectivo',max_digits=10, decimal_places=2)
     Din_digital = models.DecimalField (verbose_name='Dinero en digital',max_digits=10, decimal_places=2)
     estado = models.BooleanField(default=True)
+    abierta = models.BooleanField(default=False)
     
     class Meta:
         verbose_name_plural = "Cajas"

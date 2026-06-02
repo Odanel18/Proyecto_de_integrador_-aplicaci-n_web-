@@ -7,5 +7,5 @@ urlpatterns= [
     path ("",CompraAPIView.as_view(), name="lista-compras"),
     path ("<int:pk>",CompraIDAPIView.as_view()),    
     path("detalles/",DetallecompraAPIView.as_view(), name="lista-detalles"),
-    path("detalle/<int:pk>",DetallecompraIDAPIView.as_view())
+    path("detalles/<int:pk>",DetallecompraIDAPIView.as_view())
 ]
