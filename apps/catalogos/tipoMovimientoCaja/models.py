@@ -4,6 +4,7 @@ from django.db import models
 
 class TipoMovimientoCaja (models.Model):
     Tipo=models.CharField(verbose_name='Tipo', max_length=50)
+    estado=models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = 'Tipos'

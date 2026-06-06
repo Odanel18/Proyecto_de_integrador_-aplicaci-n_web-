@@ -1,4 +1,4 @@
-var urlAPI = "http://127.0.0.1:8000";
+const urlAPI = "http://127.0.0.1:8000/";
 
 const navLinks   = document.querySelectorAll('.nav-link');
 const secciones  = document.querySelectorAll('.seccion');
@@ -132,38 +132,176 @@ function agregaCliente(){
 
 //EMPLEADO
 
-function cargarEmpleados(){
-  fetch(urlAPI + '/catalogos/empleados/')
-    .then(function(respuesta){
-      return respuesta.json();
-    })
+let empleadoID=null;
 
-    .then(function(listaEmpleado){
-      let cuerpoTabla = document.getElementById('bodyEmpleado');
-      let todasLasFilas = '';
+async function cargarEmpleados() {
+  const cargando = document.getElementById('cargandoEmpleado')
+  const tabla= document.getElementById('tablaEmpleado')
+  const tbody=document.getElementById('bodyEmpleado')
 
-      for (let  i=0; i<listaEmpleado.length; i++){
+  cargando.style.display='block';
+  tabla.classList.remove('visible')
+  
+  try {
 
-        let empleado= listaEmpleado[i];
-        
-        let unaFila = '<tr>';
-        unaFila += '<td>'+ (i+1)+'</td>';
-        unaFila += '<td class="td-nombreEmp">'+empleado.Nombres+'</td>';
-        unaFila += '<td>'+empleado.Apellidos +'</td>';
-        unaFila += '<td>'+empleado.Telefono +'</td>';
-        unaFila += '<td>'+empleado.NumCedula +'</td>';
-        unaFila += '</tr>';
+    const respuesta = await fetch(urlAPI + '/catalogos/empleados/' );
+    const dato = await respuesta.json();
 
-        todasLasFilas += unaFila;
-      }
+    const empleado = Array.isArray(dato) ? dato : dato.results;
+
+    var filas = "";
+
+    for (let i = 0; i < empleado.length; i++) {
+      var emp= empleado[i];
+    
+      filas += '<tr>'
+      filas += '<td> '+(i+1) +' </td>';
+      filas += '<td> '+ emp.Nombres +' </td>';
+      filas += '<td> '+ emp.Apellidos +' </td>';
+      filas += '<td> '+ emp.Telefono +' </td>';
+      filas += '<td> '+ emp.NumCedula +' </td>';
+
+      // botenes editar y borra
+
+      filas += '<td class= "td-acciones">'
+      filas += '<button class="btn-accion btn-editar"'
+              + 'onclick="abrirModalEmpleado (\'editar\','+emp.id+',\''+emp.Nombres+'\',\''+emp.Apellidos+'\',\''+emp.Telefono+'\',\''+emp.NumCedula+'\')">'
+              + '✏ Editar'              
+              + '</button>';
+      filas += '<button class="btn-accion btn-eliminar"'
+              + 'onclick="eliminarEmpleado ('+emp.id+',\''+emp.Nombres+'\',\''+emp.Apellidos+'\')">'
+              + '🗑 Eliminar'              
+              + '</button>';
+      filas += ' </td>'
+      filas += '</tr>'
+    }
+
+    tbody.innerHTML = filas;
+    cargando.style.display='none';
+    tabla.classList.add('visible');
+  } catch (error) {
+   cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
+    console.error('Error en cargarEmpleado:', error); 
+  }
+}
+
+
+
+// modal empleado
+function abrirModalEmpleado(modo,id,nombre,apellido,telefono,numCedula){
+
+  
+  document.getElementById('modalTextEmpleado').textContent= modo ==='crear'? 'Nuevo empleado': 'Editar Empleado';
+
+  document.getElementById('empNombre').value = nombre || '';
+  document.getElementById('empApellidos').value = apellido || '';
+  document.getElementById('empTelefono').value = telefono || '';
+  document.getElementById('empCedula').value = numCedula || '';
+  document.getElementById('error').textContent  = '';
+
+  empleadoID = modo === 'editar' ? id : null;
+
+  document.getElementById('modalEmpleado').classList.add('activo');
+}
+
+function cerrarModal(idModal) {
+
+  document.getElementById('empNombre').value = '';
+  document.getElementById('empApellidos').value = '';
+  document.getElementById('empTelefono').value= '';
+  document.getElementById('empCedula').value = '';
+  document.getElementById('error').value='';
+  
+  document.getElementById(idModal).classList.remove('activo');
+}
+
+//guardar
+
+// ── POST / PUT: Guardar departamento ─────────────────────────────────────
+// Esta función decide si crear (POST) o editar (PUT) según depIdActual.
+async function guardarEmpleado() {
+
+  // Leer los valores del formulario
+  var nombre = document.getElementById('empNombre').value.trim();
+  var apellidos = document.getElementById('empApellidos').value.trim();
+  var telefono = document.getElementById('empTelefono').value.trim();
+  var cedula = document.getElementById('empCedula').value.trim();
+  var errorEl = document.getElementById('error');
+
+  // Validación básica en el frontend antes de llamar a la API
+  if (!nombre || !apellidos || !telefono || !cedula) {
+    errorEl.textContent = 'Todos los campos son obligatorios.';
+    return;
+  }
+
+  // ── Armar el objeto que se enviará como JSON en el body ──────────────
+  // JSON.stringify() convierte el objeto JS a texto JSON:
+  //   { "codigo": "MN", "nombre": "Managua" }  → '{"codigo":"MN","nombre":"Managua"}'
+  var body = JSON.stringify({ Nombres: nombre, Apellidos: apellidos, Telefono: telefono, NumCedula: cedula });
+
+  // ── Definir método y URL según si es creación o edición ─────────────
+  // POST → /catalogos/departamentos/          (sin ID, la API lo genera)
+  // PUT  → /catalogos/departamentos/<id>      (con ID para identificar el registro)
+  var metodo = empleadoID === null ? 'POST' : 'PATCH';
+  var url    = empleadoID === null
+    ? urlAPI + '/catalogos/empleados/'
+    : urlAPI + '/catalogos/empleados/' + empleadoID;
+
+  try {
+    // ── fetch con configuración completa ────────────────────────────────
+    // A diferencia del GET, aquí pasamos un objeto de opciones:
+    //   method  → el verbo HTTP (POST, PUT, DELETE, etc.)
+    //   headers → le decimos a la API que le enviamos JSON
+    //   body    → el contenido de la petición (solo en POST/PUT/PATCH)
+    var respuesta = await fetch(url, {
+      method:  metodo,
+      headers: { 'Content-Type': 'application/json' },
+      body:    body
+    });
+
+    if (respuesta.ok) {
+      // 201 Created (POST) o 200 OK (PUT) → éxito
+      cerrarModal('modalEmpleado');
+      cargarEmpleados(); // Recargar la tabla para ver el cambio
+
       
-      cuerpoTabla.innerHTML = todasLasFilas;
+    } else {
+      // La API respondió con error (ej. 400 Bad Request por datos inválidos)
+      var errores = await respuesta.json();
+      errorEl.textContent = JSON.stringify(errores);
+    }
 
-      document.getElementById('cargandoEmpleado').style.display = 'none';
-      document.getElementById('tablaEmpleado').classList.add('visible');
+  } catch (error) {
+    errorEl.textContent = 'Error de conexión con la API.';
+    console.error('Error en guardarEmpleado:', error);
+  }
+}
+
+
+// BORRAR EMPLEADO
+async function eliminarEmpleado(id, nombre, apellido) {
+  var confirmar= window.confirm(`Seguro que quieres eliminar al empleado  ${nombre} ${apellido}`);
+  if(!confirmar)
+    return;
+
+  try {
+    var respuesta= await fetch(urlAPI + '/catalogos/empleados/'+ id,{
+      method:'DELETE'
 
     });
+
+    if (respuesta.status === 204){
+      cargarEmpleados();
+    }
+    else{
+      alert('No se puedo eliminar. Codigo: ' + respuesta.status)
+    }
+  } catch (error) {
+    alert('Error de conexión con la API.');
+    console.error('Error en eliminarEmpleado:', error);
+  }
 }
+
 
 function cargarFactura(){
   fetch(urlAPI + '/movimiento/factura/')

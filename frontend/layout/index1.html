@@ -69,34 +69,37 @@
                         <button type="submit" class="btn" id="btnEditar"><span class="btn-text">Editar</span></button>
                         <button type="submit" class="btn" id="btnBorrar"><span class="btn-text">Borrar</span></button>
                     </div>
+
                     <div class="formulario" id="frm-cliente">
                         <form action="" class="form" >
-                            <div class="frm-nombre">
+                            <div class="form-grupo">
                                 <input type="text" required class="input-nombre" id="nombre" autocomplete="off">
                                 <label for= "nombre" class="lbl-nombre">
                                     <span class="text-nomb">Nombre</span>
                                 </label>
                             </div>
 
-                           <div class="frm-nombre">
+                           <div class="form-grupo">
                                 <input type="text" required class="input-nombre" id="apellido" autocomplete="off">
                                 <label for="nombre" class="lbl-nombre">
                                     <span class="text-nomb">Apellidos</span>
                                 </label>
                             </div>
 
-                            <div class="frm-nombre">
+                            <div class="form-grupo">
                                 <input type="text" required class="input-nombre" id="numCedula" autocomplete="off">
                                 <label for="nombre" class="lbl-nombre">
                                     <span class="text-nomb">Número de cédula</span>
                                 </label>
                             </div>
-                            <div class="frm-nombre">
+                            <div class="form-grupo">
                                 <input type="text" required class="input-nombre" id="telefono" autocomplete="off">
                                 <label for="nombre" class="lbl-nombre">
                                     <span class="text-nomb">Teléfono</span>
                                 </label>
                             </div>
+
+                            
                         </form>
                     </div>
                     
@@ -171,7 +174,7 @@
                     <div class="tabla-contenido">
                         <div class="tabla-cabecera">
                             <h2>Lista de inventario </h2>
-                            <input type="text" class="buscador" id="buscarCliente" placeholder="🔍 Buscar productos...">
+                            <input type="text" class="buscador" id="buscarInventario" placeholder="🔍 Buscar productos...">
                         </div>
                         <div class="cargando" id="cargandoInventario">
                             ⏳ Cargando datos desde la API...
@@ -185,11 +188,16 @@
                     <div class="tabla-contenido">
                         <div class="tabla-cabecera">
                             <h2>Lista de empleados</h2>
-                            <input type="text" class="buscador" id="buscarCliente" placeholder="🔍 Buscar empleado...">
+                            <input type="text" class="buscador" id="buscarEmpleado" placeholder="🔍 Buscar empleado...">
                         </div>
                         <div class="cargando" id="cargandoEmpleado">
                             ⏳ Cargando datos desde la API...
                         </div>
+
+                        <button class="btn btn-primario" onclick="abrirModalEmpleado('crear')">
+                            + Nuevo empleado
+                        </button>
+
                     </div>
 
                     <table class="tabla" id="tablaEmpleado">
@@ -200,6 +208,7 @@
                                 <th>Apellidos</th>
                                 <th>Teléfono</th>
                                 <th>Número de cédula</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="bodyEmpleado">
@@ -208,6 +217,55 @@
 
                 </section>
 
+            <!--Modal empleado-->
+            <div class="modal-overlay" id="modalEmpleado">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 id="modalTextEmpleado">Nuevo empleado</h3>
+                        <button class="modal-cerrar" onclick="cerrarModal('modalEmpleado')">✕</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="empNombre" autocomplete="off">
+                            <label for= "empNombre" class="lbl-nombre">
+                                <span class="text-nomb">Nombre</span>
+                            </label>
+                        </div>
+
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="empApellidos" autocomplete="off">
+                            <label for= "empApellidos" class="lbl-nombre">
+                                <span class="text-nomb">Apellidos</span>
+                            </label>
+                        </div>
+
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="empTelefono" autocomplete="off">
+                            <label for= "empTelefono" class="lbl-nombre">
+                                <span class="text-nomb">Teléfono</span>
+                            </label>
+                        </div>
+
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="empCedula" autocomplete="off">
+                            <label for= "empCedula" class="lbl-nombre">
+                                <span class="text-nomb">Número de cédula</span>
+                            </label>
+                        </div>
+
+                        <p class="form-error" id="error"></p>
+                    </div>
+
+                    <div class="class-footer">
+                        <button class="btn btn-secundario" onclick="cerrarModal('modalEmpleado')">Cancelar</button>
+
+                        <button class="btn btn-primario" onclick="guardarEmpleado()">Guardar</button>
+                    </div>
+                    
+                </div>
+
+            </div>
             </main>
 
         </div>

@@ -5,8 +5,10 @@ urlpatterns = [
 
  path("abonos/", include('apps.movimiento.abono.urls')),
  path("caja/", include('apps.movimiento.caja.urls')),
+ path("caja/", include('apps.movimiento.caja.urls', namespace='movimientoCaja')),
  path ("compras/",include('apps.movimiento.compra.urls',namespace='compra')),
  path ("compras/", include('apps.movimiento.compra.urls',namespace='detalles')),
+ path ("compras/", include('apps.movimiento.compra.urls',namespace='compra_credito')),
  path("factura/",include('apps.movimiento.factura.urls')),
  path("factura/",include('apps.movimiento.factura.urls', namespace='detalle/')),
  path("factura/",include('apps.movimiento.factura.urls', namespace='credito/')),
@@ -14,6 +16,7 @@ urlpatterns = [
  path("moto/", include('apps.movimiento.moto.urls')),
  path("productos/",include('apps.movimiento.producto.urls')),
  path("productos/",include('apps.movimiento.producto.urls', namespace='detalle')),
+ path("productos/",include('apps.movimiento.producto.urls', namespace='inventarioLote')),
  path("movimiento_pago/",include('apps.movimiento.movimientoPago.urls')),
 
 ]

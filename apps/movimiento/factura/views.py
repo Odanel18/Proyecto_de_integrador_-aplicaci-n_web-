@@ -121,9 +121,73 @@ class DetalleFacturaAPIView (APIView):
 
        #return Response(status=status.HTTP_201_CREATED,data=serializer.data)
 
+
+class DetallaeFacturaIDAPIView(APIView):
+    
+    @swagger_auto_schema(request_body=DetalleFacturaSerializer, responses={200: DetalleFacturaSerializer})
+    def patch(self, request, pk):
+        """
+        Actualizar parcialmente un departamento por su ID.
+        """
+        try:
+            detalleFact = DetalleFactura.objects.filter(estado=True).get(pk=pk)
+        except FacturasCredito.DoesNotExist:
+            return Response({'error': 'Detalle factura no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = DetalleFacturaSerializer(detalleFact, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(responses={204: 'No Content'})
+    def delete(self, request, pk):
+        """
+        Eliminar un departamento por su ID.
+        """
+        try:
+            detalleFact = DetalleFactura.objects.filter(estado=True).get(pk=pk)
+        except DetalleFactura.DoesNotExist:
+            return Response({'error': 'Detalle factura no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        detalleFact.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT) 
+
+
 #------------------------------
 # FACTURA AL CREDITO
 #------------------------------
+class FacturaCreditoIDAPIView(APIView):
+    
+    @swagger_auto_schema(request_body=FacturaCreditoSerializer, responses={200: FacturaCreditoSerializer})
+    def patch(self, request, pk):
+        """
+        Actualizar parcialmente un departamento por su ID.
+        """
+        try:
+            facturaCred = FacturasCredito.objects.filter(estado=True).get(pk=pk)
+        except FacturasCredito.DoesNotExist:
+            return Response({'error': 'Factura al credito no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = FacturaSerializer(facturaCred, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(responses={204: 'No Content'})
+    def delete(self, request, pk):
+        """
+        Eliminar un departamento por su ID.
+        """
+        try:
+            facturaCred = FacturasCredito.objects.filter(estado=True).get(pk=pk)
+        except FacturasCredito.DoesNotExist:
+            return Response({'error': 'Factura al credito no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        facturaCred.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT) 
+
 
 
 class FacturaCreditoAPIView (APIView):

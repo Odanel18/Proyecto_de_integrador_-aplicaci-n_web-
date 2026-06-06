@@ -34,7 +34,8 @@ class MovimientoCaja (models.Model):
     facturaid= models.ForeignKey(Facturas,verbose_name='Factura', null=True, blank=True, on_delete=models.PROTECT)
     compraid= models.ForeignKey(Compras,verbose_name='Compra', null=True, blank=True, on_delete=models.PROTECT)
     descripcion = models.CharField (verbose_name='Descripcion', null=True, blank=True,  max_length=300)
-
+    estado= models.BooleanField(default=True)
+    
     class Meta:
         verbose_name_plural = "Movimientos"
 

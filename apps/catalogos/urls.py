@@ -11,5 +11,6 @@ urlpatterns = [
   path("tipo/", include ('apps.catalogos.tipo.urls')),
   path("condicionpago/",include('apps.catalogos.condicionPago.urls')),
   path("estadocuenta/",include('apps.catalogos.estadoCuenta.urls')),
-  path("origen_saldo/",include('apps.catalogos.origenSaldo.urls'))
+  path("origen_saldo/",include('apps.catalogos.origenSaldo.urls')),
+  path("tipo_ingreso_caja/", include('apps.catalogos.tipoMovimientoCaja.urls'))
     ]

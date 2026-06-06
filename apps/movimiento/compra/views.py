@@ -4,8 +4,8 @@ from rest_framework import status
 
 from rest_framework.exceptions import ValidationError
 
-from .models import Compras,DetalleCompra
-from .serializers import CompraSerializer,DetalleCompraSerializer
+from .models import Compras,DetalleCompra,ComprasCredito
+from .serializers import CompraSerializer,DetalleCompraSerializer,CompraCreditoSerialezer
 from drf_yasg.utils import swagger_auto_schema
 
 from apps.movimiento.compra.service.compra_validacion import validar_compra,aumentar_stock
@@ -117,4 +117,47 @@ class DetallecompraIDAPIView(APIView):
 
         detalle.estado=False # Eliminado logico
         detalle.save()
+        return Response(status=status.HTTP_204_NO_CONTENT) 
+
+
+
+class ComprasCreditoApiview (APIView):
+     
+    @swagger_auto_schema(responses={200: CompraCreditoSerialezer(many=True)})
+    def get(self,request):
+        serializer=CompraCreditoSerialezer(ComprasCredito.objects.filter(estado=True), many=True)
+        return Response(serializer.data)
+    
+    @swagger_auto_schema(request_body=CompraCreditoSerialezer, responses={201: CompraCreditoSerialezer})
+    def post(self,request):
+       serializer=CompraCreditoSerialezer(data=request.data)
+       serializer.is_valid(raise_exception=True)
+       serializer.save()
+       return Response(status=status.HTTP_201_CREATED,data=serializer.data)
+    
+class ComprasCreditoIDAPIView(APIView):   
+    @swagger_auto_schema(request_body=CompraCreditoSerialezer, responses={200: CompraCreditoSerialezer})
+    def patch(self, request, pk):
+        
+        try:
+            compCredito = ComprasCredito.objects.filter(estado=True).get(pk=pk)
+        except ComprasCredito.DoesNotExist:
+            return Response({'error': 'Compra al credito no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CompraCreditoSerialezer(compCredito, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(responses={204: 'No Content'})
+    def delete(self, request, pk):
+      
+        try:
+            credito = ComprasCredito.objects.filter(estado=True).get(pk=pk)
+        except ComprasCredito.DoesNotExist:
+            return Response({'error': 'Compra al credito no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        credito.estado=False # Eliminado logico
+        credito.save()
         return Response(status=status.HTTP_204_NO_CONTENT) 

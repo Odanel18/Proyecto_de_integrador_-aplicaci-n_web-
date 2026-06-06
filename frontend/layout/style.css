@@ -207,6 +207,7 @@ h2{
   border-radius: 8px;
   width: 200px;
   height: 39px;
+  letter-spacing: 0.5px;
 }
 
 .btn-text{
@@ -258,7 +259,7 @@ input{
 }
 /* input donde se va agregar el nombre*/
 
-.frm-nombre{
+.form-grupo{
   width: 300px;
   height: 60px;
   max-width: 400px;
@@ -330,7 +331,7 @@ input{
 
   width: 100%;
   border-collapse: collapse;
-  display:flex ;
+  display:none ; /*se cambio prueba era flex*/
   border-radius: 15px;
   background: #9fa1a4;
 }
@@ -376,6 +377,126 @@ input{
 
 
 
+/*empledo crear nuevo registro, btn empleado prueba*/
+.btn {
+  background-color: rgba(21, 5, 247, 0.726);
+  color: white;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  text-align: center;
+  
+}
 
+.btn:hover{opacity: 0.85;}
 
+.modal-overlay{
+  display: none;
+  position: fixed;             /* Se fija sobre todo el contenido */
+  inset: 0;                    /* top:0 right:0 bottom:0 left:0 → cubre toda la pantalla */
+  background: rgba(0,0,0,0.6); /* Fondo negro 60% de opacidad */
+  z-index: 1000;               /* Encima de todo lo demás */
+  align-items: center;
+  justify-content: center;
+}
 
+.modal-overlay.activo{
+  display: flex;
+}
+
+.modal{
+  border-radius: 4%;
+  background: var(--texto1);
+  border: 1px solid red;
+  width: 500px;
+  height: 460px;
+  max-width: 90vw;             /* En pantallas pequeñas no se sale */
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  overflow: hidden;
+}
+
+.tabla-contenido{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-error {
+  color: #f87171;
+  font-size: 0.82rem;
+  min-height: 18px;
+  margin-top: 4px;
+}
+
+/* botones de el campo acciones de la de las tablas*/
+
+.td-acciones{
+  
+   white-space: nowrap;
+}
+.btn-accion {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: opacity 0.2s;
+}
+.btn-accion:hover { opacity: 0.8; }
+
+/* Verde para editar */
+.btn-editar  { background: rgba(16, 185, 129, 0.15); color: white; border: 1px solid rgba(16, 185, 129, 0.3); }
+/* Rojo para eliminar */
+.btn-eliminar { background: rgba(239,68,68,0.15);  color: white; border: 1px solid rgba(239,68,68,0.3); }
+
+/* botones de model de Empleado*/
+
+.modal-header{
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-cerrar{
+  background: none;
+  border: blue solid 1px;
+  height: 30px;
+  width: 30px;
+  
+}
+
+.modal-cerrar:hover{
+  background: rgba(0, 0, 255, 0.149);
+  cursor: pointer;
+  
+}
+
+.class-footer{
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn-secundario{
+  background: none;
+  border: 1px solid rgba(255, 0, 0, 0.501);;
+  color: black;
+}
+.btn-secundario:hover{
+  background: rgba(255, 0, 0, 0.501);
+  color: white;
+}
+.btn-primario{
+  background: none;
+  border: 1px solid rgba(0, 128, 0, 0.501);
+  color: black;
+}
+.btn-primario:hover{
+  color: white;
+  background: rgba(0, 128, 0, 0.501);
+}
