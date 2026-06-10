@@ -19,6 +19,8 @@ from apps.seguridad.setting_apps import SEGURIDAD_SETTING_APPS
 from apps.catalogos.setting_apps import CATALOGOS_SETTING_APPS
 from apps.movimiento.setting_apps import MOVIMIENTO_SETTING_APPS
 
+from datetime import timedelta
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'corsheaders',
+    'rest_framework_simplejwt', 
 ] + SEGURIDAD_SETTING_APPS + CATALOGOS_SETTING_APPS + MOVIMIENTO_SETTING_APPS
 
 MIDDLEWARE = [
@@ -86,21 +89,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }"""
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'NEGOCIOBD',
-        'HOST': r'DESKTOP-P87T7BE\SQLEXPRESS',
-        # 'PORT': '',
-
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            'trusted_connection': 'yes',
-            'extra_params': 'TrustServerCertificate=yes',
-        },
-    }
-}'''
 
 # Password validation
 # https://docs.djangopr oject.com/en/4.2/ref/settings/#auth-password-validators
@@ -120,6 +108,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
