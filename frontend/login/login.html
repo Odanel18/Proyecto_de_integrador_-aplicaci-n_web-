@@ -17,10 +17,10 @@
 
         <section class="login_form_section">
             <h2 class="text-login">Iniciar sesión</h2>
-            <form action="post" class="fromulario">
+            <form  id="formulario">
                 <div class="username">
-                    <label for="usuario"class="txt-from">USUARIO</label>
-                    <input type="text" id="usuario"  class="input_user">
+                    <label for="username"class="txt-from" >USUARIO</label>
+                    <input type="text" id="username" class="input_user">
                 </div>
                 <div class="contrasena">
                     <label for="passwoord" class="txt-from" >CONTRASEÑA</label>
@@ -28,13 +28,23 @@
                 </div>
                 <button type="submit" class="btn_iniciar">INICIAR</button>
 
-                <p class="errorLogin">error</p>
+                <p class="errorLogin" id="errorMensaje"></p>
             </form>
         </section>
 
     </main>
+    <div id="pantalla-carga" class="overlay-carga">
+        <div class="spinner-contenedor">
+            <div class="spinner"></div>
+            <p>Autentificando, por favor espere...</p>
+        </div>
 
-    <script href="auth.js"></script>
+        </div>
+
+    </div>
+
+
+    <script type="module" src="./auth.js"></script>
 
 </body>
 </html>

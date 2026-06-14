@@ -1,5 +1,12 @@
 const urlAPI = "http://127.0.0.1:8000/";
 
+import { registrarControlInactividad,logout, fetchConAutenticacion } from "../login/auth.js";
+
+//registrarControlInactividad();
+document.addEventListener("DOMContentLoaded",() => {registrarControlInactividad();});
+
+//impot
+
 const navLinks   = document.querySelectorAll('.nav-link');
 const secciones  = document.querySelectorAll('.seccion');
 const tituloTop  = document.getElementById('topbarTitulo');
@@ -7,7 +14,7 @@ const btneditar = document.getElementById('btnEditar');
 
 
 //material para agregar clientes
-const btnAgregarCliente = document.getElementById('btnGuardar');
+//const btnAgregarCliente = document.getElementById('btnGuardar');
 
 navLinks.forEach(function(link) {
   link.addEventListener('click', function(e) {
@@ -36,265 +43,331 @@ navLinks.forEach(function(link) {
     tituloTop.textContent = link.textContent;
   });
 });
+// ==========================================
+// LOGICA DE cerrar sesion
+// ==========================================
 
+const btnCerraSesion= document.getElementById("btnCerrarSesion")
 
-function cargarClientes() {
+if(btnCerraSesion){
+  btnCerraSesion.addEventListener("click", (e)=>{
+    e.preventDefault();//evita cualquier comportamiento por default
 
-  fetch(urlAPI + '/catalogos/clientes/')
-    .then(function(respuesta) {
-      return respuesta.json();
-    })
-    .then(function(listaCliente) {
+    const confirmar= confirm("¿Estás seguro de que deseas cerrar la sesión actual?")
 
-      var cuerpoTabla = document.getElementById('bodyCliente');
-      var todasLasFilas = '';
+    if(confirmar){
+      logout(); //si el usuario acepta ejecutamos la funcion
+    }
 
-      for (var i = 0; i < listaCliente.length; i++) {
-
-        var cliente = listaCliente[i];
-
-        var unaFila = '<tr>';
-        unaFila += '<td>' + (i + 1) + '</td>';
-        unaFila += '<td class="td-nombre">' + cliente.Nombres + '</td>';
-        unaFila += '<td>' + cliente.Apellidos + '</td>';
-        unaFila += '<td>' + cliente.NumCedula + '</td>';
-        unaFila += '<td>' + cliente.NumTeléfono + '</td>';
-        unaFila += '</tr>';
-
-        todasLasFilas += unaFila;
-      }
-
-      cuerpoTabla.innerHTML = todasLasFilas;
-
-      document.getElementById('cargandoCliente').style.display = 'none';
-      document.getElementById('tablaCliente').classList.add('visible');
-    });
+  })
 }
 
-//Evento click del boton de guardar cliente
-btnAgregarCliente.addEventListener('click', agregaCliente,)
 
-//funcion para agregar cliente
-function agregaCliente(){
+// ==========================================
+// LOGICA DE CLIENTES
+// ==========================================
 
-  //Se extraen la información de los input traves del (value)
-  const nombre = document.getElementById('nombre').value;
-  const apellido = document.getElementById('apellido').value;
-  const numCedula = document.getElementById('numCedula').value;
-  const telefono = document.getElementById('telefono').value;
-  //crear objeto de cliente 
-  //Este ojeto sera enviado a la api ejemplo avariable en el bakend (Nombres), en javaScrit (nombre)
-  // ejemplo Nombre:nombre, es decir Nombre:Odanel, inserta informacion del input
-  const cliente = {
-    Nombres: nombre,
-    Apellidos: apellido,
-    NumCedula:numCedula,
-    NumTeléfono: telefono
-  };
-  //enviar datos a la api
-  fetch(urlAPI + '/catalogos/clientes/',{
-    //Se utiliza el metodo POST para guardar
-    method: 'POST',
-    //se le asigna el tipo de información enviada
-    headers:{
-      'Content-Type': 'application/json'
-    },
-    // Convierte el objeto js a json
-    body: JSON.stringify(cliente)
+let clienteID = null;
 
-  })
+// Hacemos la función exportable por si otro módulo necesita refrescar la tabla
+export async function cargarClientes() {
+  const cargando = document.getElementById('cargandoCliente');
+  const tabla = document.getElementById('tablaCliente');
+  const tbody = document.getElementById('bodyCliente');
 
-  //Respuesta del servidor
-  .then(function(response){
-    return response.json();
-  })
-
-  //datos recibidos
-  .then(function(data){
-
-    console.log(data);
-
-    //usa la funcion cargarClientes(); para recarga la tabla
-    cargarClientes();
-
-    //limpia los input una vez guardada la información
-    const nombre = document.getElementById('nombre').value = '';
-    const apellido = document.getElementById('apellido').value = '';
-    const numCedula = document.getElementById('numCedula').value= '';
-    const telefono = document.getElementById('telefono').value = '';
-  })
-
-  //captura los errores
-  .catch(function(error){
-    console.log("Error: ", error)
-  });
-}
-
-//EMPLEADO
-
-let empleadoID=null;
-
-async function cargarEmpleados() {
-  const cargando = document.getElementById('cargandoEmpleado')
-  const tabla= document.getElementById('tablaEmpleado')
-  const tbody=document.getElementById('bodyEmpleado')
-
-  cargando.style.display='block';
-  tabla.classList.remove('visible')
+  cargando.style.display = 'block';
+  tabla.classList.remove('visible');
   
   try {
+    // REEMPLAZO 1: Usamos tu función con autenticación automática.
+    // Ojo: fetchConAutenticacion ya concatena urlAPI internamente según tu diseño previo.
+    let respuesta = await fetchConAutenticacion('catalogos/clientes/');
+    const dato = await respuesta.json();
 
-    const respuesta = await fetch(urlAPI + '/catalogos/empleados/' );
+    const cliente = Array.isArray(dato) ? dato : dato.results;
+    let filas = "";
+
+    for (let i = 0; i < cliente.length; i++) {
+      let cli = cliente[i];
+    
+      filas += '<tr>';
+      filas += '<td> '+(i+1) +' </td>';
+      filas += '<td> '+ cli.Nombres +' </td>';
+      filas += '<td> '+ cli.Apellidos +' </td>';
+      filas += '<td> '+ cli.NumCedula +' </td>';
+      filas += '<td> '+ cli.NumTeléfono +' </td>';
+
+      // Botones editar y borrar
+      filas += '<td class="td-acciones">';
+      filas += '<button class="btn-accion btn-editar" '
+              + `onclick="abrirModalCliente('editar', ${cli.id}, '${cli.Nombres}', '${cli.Apellidos}', '${cli.NumTeléfono}', '${cli.NumCedula}')">`
+              + '✏ Editar'              
+              + '</button>';
+      filas += '<button class="btn-accion btn-eliminar" '
+              + `onclick="eliminarCliente(${cli.id}, '${cli.Nombres}', '${cli.Apellidos}')">`
+              + '🗑 Eliminar'              
+              + '</button>';
+      filas += ' </td>';
+      filas += '</tr>';
+    }
+
+    tbody.innerHTML = filas;
+    cargando.style.display = 'none';
+    tabla.classList.add('visible');
+  } catch (error) {
+    cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
+    console.error('Error en cargarClientes:', error); 
+  }
+}
+
+// modal cliente
+window.abrirModalCliente = function(modo, id, nombre, apellido, telefono, numCedula) {
+  document.getElementById('modalTextCliente').textContent = modo === 'crear' ? 'Nuevo cliente' : 'Editar Cliente';
+
+  document.getElementById('clienNombre').value = nombre || '';
+  document.getElementById('clienApellidos').value = apellido || '';
+  document.getElementById('clienTelefono').value = telefono || '';
+  document.getElementById('clienCedula').value = numCedula || '';
+  
+  const errorEl = document.getElementById('error');
+  if (errorEl) errorEl.textContent = '';
+
+  clienteID = modo === 'editar' ? id : null;
+  document.getElementById('modalCliente').classList.add('activo');
+}
+
+window.cerrarModalCliente = function(idModal) {
+  document.getElementById('clienNombre').value = '';
+  document.getElementById('clienApellidos').value = '';
+  document.getElementById('clienTelefono').value = '';
+  document.getElementById('clienCedula').value = '';
+  
+  const errorEl = document.getElementById('error');
+  if (errorEl) errorEl.textContent = '';
+  
+  document.getElementById(idModal).classList.remove('activo');
+}
+
+// ── POST / PUT: Guardar cliente ─────────────────────────────────────
+window.guardarCliente = async function guardarCliente() {
+  let nombre = document.getElementById('clienNombre').value.trim();
+  let apellidos = document.getElementById('clienApellidos').value.trim();
+  let telefono = document.getElementById('clienTelefono').value.trim();
+  let cedula = document.getElementById('clienCedula').value.trim();
+  let errorEl = document.getElementById('error');
+
+  if (!nombre || !apellidos || !telefono || !cedula) {
+    errorEl.textContent = 'Todos los campos son obligatorios.';
+    return;
+  }
+
+  let body = JSON.stringify({ Nombres: nombre, Apellidos: apellidos, Telefono: telefono, NumCedula: cedula });
+
+  let metodo = clienteID === null ? 'POST' : 'PATCH';
+  // Pasamos solo la ruta relativa porque fetchConAutenticacion le pega la urlAPI
+  let url = clienteID === null
+    ? 'catalogos/clientes/'
+    : 'catalogos/clientes/' + clienteID;
+
+  try {
+    // REEMPLAZO 2: Removimos la validación manual del token.
+    // Tu función 'fetchConAutenticacion' inyectará el Header 'Authorization' automáticamente.
+    let respuesta = await fetchConAutenticacion(url, {
+      method: metodo,
+      body: body
+    });
+
+    if (respuesta.ok) {
+      cerrarModalCliente('modalCliente');
+      cargarClientes(); 
+    } else {
+      let errores = await respuesta.json();
+      errorEl.textContent = JSON.stringify(errores);
+    }
+  } catch (error) {
+    errorEl.textContent = 'Error de conexión con la API.';
+    console.error('Error en guardarCliente:', error);
+  }
+}
+
+// BORRAR CLIENTE
+window.eliminarCliente = async function(id, nombre, apellido) {
+  let confirmar = window.confirm(`Seguro que quieres eliminar al cliente ${nombre} ${apellido}`);
+  if (!confirmar) return;
+
+  try {
+    // REEMPLAZO 3: Petición DELETE limpia usando tu interceptor automático
+    let url = 'catalogos/clientes/' + id;
+    let respuesta = await fetchConAutenticacion(url, {
+      method: 'DELETE'
+    });
+
+    if (respuesta.status === 204 || respuesta.ok) {
+      cargarClientes();
+    } else {
+      alert('No se pudo eliminar. Código: ' + respuesta.status);
+    }
+  } catch (error) {
+    alert('Error de conexión con la API.');
+    console.error('Error en eliminarCliente:', error);
+  }
+}
+
+
+// ==========================================
+// 1. IMPORTACIONES AL INICIO DEL ARCHIVO
+// ==========================================
+// Importamos la función estrella de tu auth.js y la URL base si la tienes ahí
+//import { fetchConAutenticacion, iniciarRefrescoAutomatico } from './auth.js'; 
+
+//const urlAPI = "http://127.0.0.1:8000"; // Asegúrate de que no choque con las barras diagonales /
+
+// Reavivamos el temporizador automático en esta página
+//iniciarRefrescoAutomatico();
+
+// ==========================================
+// LOGICA DE EMPLEADOS
+// ==========================================
+
+let empleadoID = null;
+
+// Hacemos la función exportable por si otro módulo necesita refrescar la tabla
+export async function cargarEmpleados() {
+  const cargando = document.getElementById('cargandoEmpleado');
+  const tabla = document.getElementById('tablaEmpleado');
+  const tbody = document.getElementById('bodyEmpleado');
+
+  cargando.style.display = 'block';
+  tabla.classList.remove('visible');
+  
+  try {
+    // REEMPLAZO 1: Usamos tu función con autenticación automática.
+    // Ojo: fetchConAutenticacion ya concatena urlAPI internamente según tu diseño previo.
+    let respuesta = await fetchConAutenticacion('catalogos/empleados/');
     const dato = await respuesta.json();
 
     const empleado = Array.isArray(dato) ? dato : dato.results;
-
-    var filas = "";
+    let filas = "";
 
     for (let i = 0; i < empleado.length; i++) {
-      var emp= empleado[i];
+      let emp = empleado[i];
     
-      filas += '<tr>'
+      filas += '<tr>';
       filas += '<td> '+(i+1) +' </td>';
       filas += '<td> '+ emp.Nombres +' </td>';
       filas += '<td> '+ emp.Apellidos +' </td>';
       filas += '<td> '+ emp.Telefono +' </td>';
       filas += '<td> '+ emp.NumCedula +' </td>';
 
-      // botenes editar y borra
-
-      filas += '<td class= "td-acciones">'
-      filas += '<button class="btn-accion btn-editar"'
-              + 'onclick="abrirModalEmpleado (\'editar\','+emp.id+',\''+emp.Nombres+'\',\''+emp.Apellidos+'\',\''+emp.Telefono+'\',\''+emp.NumCedula+'\')">'
+      // Botones editar y borrar
+      filas += '<td class="td-acciones">';
+      filas += '<button class="btn-accion btn-editar" '
+              + `onclick="abrirModalEmpleado('editar', ${emp.id}, '${emp.Nombres}', '${emp.Apellidos}', '${emp.Telefono}', '${emp.NumCedula}')">`
               + '✏ Editar'              
               + '</button>';
-      filas += '<button class="btn-accion btn-eliminar"'
-              + 'onclick="eliminarEmpleado ('+emp.id+',\''+emp.Nombres+'\',\''+emp.Apellidos+'\')">'
+      filas += '<button class="btn-accion btn-eliminar" '
+              + `onclick="eliminarEmpleado(${emp.id}, '${emp.Nombres}', '${emp.Apellidos}')">`
               + '🗑 Eliminar'              
               + '</button>';
-      filas += ' </td>'
-      filas += '</tr>'
+      filas += ' </td>';
+      filas += '</tr>';
     }
 
     tbody.innerHTML = filas;
-    cargando.style.display='none';
+    cargando.style.display = 'none';
     tabla.classList.add('visible');
   } catch (error) {
-   cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
+    cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
     console.error('Error en cargarEmpleado:', error); 
   }
 }
 
-
-
 // modal empleado
-function abrirModalEmpleado(modo,id,nombre,apellido,telefono,numCedula){
-
-  
-  document.getElementById('modalTextEmpleado').textContent= modo ==='crear'? 'Nuevo empleado': 'Editar Empleado';
+window.abrirModalEmpleado = function(modo, id, nombre, apellido, telefono, numCedula) {
+  document.getElementById('modalTextEmpleado').textContent = modo === 'crear' ? 'Nuevo empleado' : 'Editar Empleado';
 
   document.getElementById('empNombre').value = nombre || '';
   document.getElementById('empApellidos').value = apellido || '';
   document.getElementById('empTelefono').value = telefono || '';
   document.getElementById('empCedula').value = numCedula || '';
-  document.getElementById('error').textContent  = '';
+  
+  const errorEl = document.getElementById('error');
+  if (errorEl) errorEl.textContent = '';
 
   empleadoID = modo === 'editar' ? id : null;
-
   document.getElementById('modalEmpleado').classList.add('activo');
 }
 
-function cerrarModal(idModal) {
-
+window.cerrarModal = function(idModal) {
   document.getElementById('empNombre').value = '';
   document.getElementById('empApellidos').value = '';
-  document.getElementById('empTelefono').value= '';
+  document.getElementById('empTelefono').value = '';
   document.getElementById('empCedula').value = '';
-  document.getElementById('error').value='';
+  
+  const errorEl = document.getElementById('error');
+  if (errorEl) errorEl.textContent = '';
   
   document.getElementById(idModal).classList.remove('activo');
 }
 
-//guardar
+// ── POST / PUT: Guardar empleado ─────────────────────────────────────
+window.guardarEmpleado = async function guardarEmpleado() {
+  let nombre = document.getElementById('empNombre').value.trim();
+  let apellidos = document.getElementById('empApellidos').value.trim();
+  let telefono = document.getElementById('empTelefono').value.trim();
+  let cedula = document.getElementById('empCedula').value.trim();
+  let errorEl = document.getElementById('error');
 
-// ── POST / PUT: Guardar departamento ─────────────────────────────────────
-// Esta función decide si crear (POST) o editar (PUT) según depIdActual.
-async function guardarEmpleado() {
-
-  // Leer los valores del formulario
-  var nombre = document.getElementById('empNombre').value.trim();
-  var apellidos = document.getElementById('empApellidos').value.trim();
-  var telefono = document.getElementById('empTelefono').value.trim();
-  var cedula = document.getElementById('empCedula').value.trim();
-  var errorEl = document.getElementById('error');
-
-  // Validación básica en el frontend antes de llamar a la API
   if (!nombre || !apellidos || !telefono || !cedula) {
     errorEl.textContent = 'Todos los campos son obligatorios.';
     return;
   }
 
-  // ── Armar el objeto que se enviará como JSON en el body ──────────────
-  // JSON.stringify() convierte el objeto JS a texto JSON:
-  //   { "codigo": "MN", "nombre": "Managua" }  → '{"codigo":"MN","nombre":"Managua"}'
-  var body = JSON.stringify({ Nombres: nombre, Apellidos: apellidos, Telefono: telefono, NumCedula: cedula });
+  let body = JSON.stringify({ Nombres: nombre, Apellidos: apellidos, Telefono: telefono, NumCedula: cedula });
 
-  // ── Definir método y URL según si es creación o edición ─────────────
-  // POST → /catalogos/departamentos/          (sin ID, la API lo genera)
-  // PUT  → /catalogos/departamentos/<id>      (con ID para identificar el registro)
-  var metodo = empleadoID === null ? 'POST' : 'PATCH';
-  var url    = empleadoID === null
-    ? urlAPI + '/catalogos/empleados/'
-    : urlAPI + '/catalogos/empleados/' + empleadoID;
+  let metodo = empleadoID === null ? 'POST' : 'PATCH';
+  // Pasamos solo la ruta relativa porque fetchConAutenticacion le pega la urlAPI
+  let url = empleadoID === null
+    ? 'catalogos/empleados/'
+    : 'catalogos/empleados/' + empleadoID;
 
   try {
-    // ── fetch con configuración completa ────────────────────────────────
-    // A diferencia del GET, aquí pasamos un objeto de opciones:
-    //   method  → el verbo HTTP (POST, PUT, DELETE, etc.)
-    //   headers → le decimos a la API que le enviamos JSON
-    //   body    → el contenido de la petición (solo en POST/PUT/PATCH)
-    var respuesta = await fetch(url, {
-      method:  metodo,
-      headers: { 'Content-Type': 'application/json' },
-      body:    body
+    // REEMPLAZO 2: Removimos la validación manual del token.
+    // Tu función 'fetchConAutenticacion' inyectará el Header 'Authorization' automáticamente.
+    let respuesta = await fetchConAutenticacion(url, {
+      method: metodo,
+      body: body
     });
 
     if (respuesta.ok) {
-      // 201 Created (POST) o 200 OK (PUT) → éxito
       cerrarModal('modalEmpleado');
-      cargarEmpleados(); // Recargar la tabla para ver el cambio
-
-      
+      cargarEmpleados(); 
     } else {
-      // La API respondió con error (ej. 400 Bad Request por datos inválidos)
-      var errores = await respuesta.json();
+      let errores = await respuesta.json();
       errorEl.textContent = JSON.stringify(errores);
     }
-
   } catch (error) {
     errorEl.textContent = 'Error de conexión con la API.';
     console.error('Error en guardarEmpleado:', error);
   }
 }
 
-
 // BORRAR EMPLEADO
-async function eliminarEmpleado(id, nombre, apellido) {
-  var confirmar= window.confirm(`Seguro que quieres eliminar al empleado  ${nombre} ${apellido}`);
-  if(!confirmar)
-    return;
+window.eliminarEmpleado = async function(id, nombre, apellido) {
+  let confirmar = window.confirm(`Seguro que quieres eliminar al empleado ${nombre} ${apellido}`);
+  if (!confirmar) return;
 
   try {
-    var respuesta= await fetch(urlAPI + '/catalogos/empleados/'+ id,{
-      method:'DELETE'
-
+    // REEMPLAZO 3: Petición DELETE limpia usando tu interceptor automático
+    let url = 'catalogos/empleados/' + id;
+    let respuesta = await fetchConAutenticacion(url, {
+      method: 'DELETE'
     });
 
-    if (respuesta.status === 204){
+    if (respuesta.status === 204 || respuesta.ok) {
       cargarEmpleados();
-    }
-    else{
-      alert('No se puedo eliminar. Codigo: ' + respuesta.status)
+    } else {
+      alert('No se pudo eliminar. Código: ' + respuesta.status);
     }
   } catch (error) {
     alert('Error de conexión con la API.');
@@ -303,8 +376,23 @@ async function eliminarEmpleado(id, nombre, apellido) {
 }
 
 
-function cargarFactura(){
-  fetch(urlAPI + '/movimiento/factura/')
+
+
+
+function cargarFactura1(){
+  const token = localStorage.getItem("access");
+
+  console.log("Token de acceso:", token); // Verificar que el token se está obteniendo correctamente
+  if (!token) {
+    alert('No se encontró token de acceso. Por favor, inicia sesión.');
+    return;
+  }
+
+  fetch(urlAPI + '/movimiento/factura/', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
     .then(function(respuesta){
       return respuesta.json();
     })
@@ -320,11 +408,11 @@ function cargarFactura(){
         let unaFila = '<tr>';
         unaFila += '<td>'+ (i+1)+'</td>';
         unaFila += '<td class="td-nombreEmp">'+factura.NumFactura+'</td>';
-        unaFila += '<td>'+factura.Fecha +'</td>';
-        unaFila += '<td>'+factura.ClienteId +'</td>';
+        unaFila += '<td>'+factura.fecha_formateada +'</td>';
+        unaFila += '<td>'+factura.cliente_nombre +'</td>';
         unaFila += '<td>'+factura.Total +'</td>';
-        unaFila += '<td>'+factura.condicionId+'</td>'
-        unaFila += '<td>'+factura.estadoCuentaId+'</td>'
+        unaFila += '<td>'+factura.condicion_nombre+'</td>'
+        unaFila += '<td>'+factura.estadoCuenta_nommbre+'</td>'
         unaFila += '</tr>';
 
          
@@ -340,8 +428,62 @@ function cargarFactura(){
     });
 }
 
+async function cargarFactura() {
+  const cargando = document.getElementById('cargandoFactura');
+  const tabla = document.getElementById('tablaFactura');
+  const tbody = document.getElementById('bodyFactura');
+
+  cargando.style.display = 'block';
+  tabla.classList.remove('visible');
+  
+  try {
+    // REEMPLAZO 1: Usamos tu función con autenticación automática.
+    // Ojo: fetchConAutenticacion ya concatena urlAPI internamente según tu diseño previo.
+    let respuesta = await fetchConAutenticacion('/movimiento/factura/');
+    const dato = await respuesta.json();
+
+    const facturas = Array.isArray(dato) ? dato : dato.results;
+    let filas = "";
+
+    for (let i = 0; i < facturas.length; i++) {
+      let factura = facturas[i];
+
+      filas += '<tr>';
+      filas += '<td>'+ (i+1)+'</td>';
+      filas += '<td class="td-nombreEmp">'+factura.NumFactura+'</td>';
+      filas += '<td>'+factura.fecha_formateada +'</td>';
+      filas += '<td>'+factura.cliente_nombre +'</td>';
+      filas += '<td>'+factura.Total +'</td>';
+      filas += '<td>'+factura.condicion_nombre+'</td>'
+      filas += '<td>'+factura.estadoCuenta_nommbre+'</td>'
+
+      // Botones editar y borrar
+      /*filas += '<td class="td-acciones">';
+      filas += '<button class="btn-accion btn-editar" '
+              + `onclick="abrirModalEmpleado('editar', ${emp.id}, '${emp.Nombres}', '${emp.Apellidos}', '${emp.Telefono}', '${emp.NumCedula}')">`
+              + '✏ Editar'              
+              + '</button>';
+      filas += '<button class="btn-accion btn-eliminar" '
+              + `onclick="eliminarEmpleado(${emp.id}, '${emp.Nombres}', '${emp.Apellidos}')">`
+              + '🗑 Eliminar'              
+              + '</button>';
+      filas += ' </td>';*/
+      filas += '</tr>';
+    }
+
+    tbody.innerHTML = filas;
+    cargando.style.display = 'none';
+    tabla.classList.add('visible');
+  } catch (error) {
+    cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
+    console.error('Error en cargarEmpleado:', error); 
+  }
+}
+
 
 // Ejecutar
 cargarClientes();
 cargarEmpleados();
 cargarFactura();
+
+

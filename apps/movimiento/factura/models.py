@@ -26,7 +26,7 @@ class DetalleFactura (models.Model):
     Cantidad = models.IntegerField(verbose_name="Cantidad")
     Subtotal= models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
     detalleProductoId = models.ForeignKey (DetalleProductos,verbose_name='Detalle de productos',on_delete=models.PROTECT)
-    FacturaId= models.ForeignKey (Facturas,verbose_name="Factura",on_delete=models.PROTECT)
+    FacturaId= models.ForeignKey (Facturas,related_name='detalles',verbose_name="Factura",on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
     class Meta:
         verbose_name_plural="Detalles de factura"

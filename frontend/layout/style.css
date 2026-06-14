@@ -64,6 +64,7 @@ body {
   flex-direction: column;
   gap: 10px;
   padding: 16px 10px;
+  flex: 1;
 }
 
 .nav-link{
@@ -98,7 +99,20 @@ body {
   width: 20px;
   text-align: center;
 }
+.btn-cerrarSesion{
+  background-color: #f86b33;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 25px;
+  width: 100%;
+  margin-top: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 19px;
+  margin: 0px 0px 16px 0px;
 
+}
 .main-wrap{
   border: #06b6d4 1px solid;
   flex:1;
@@ -202,12 +216,20 @@ h2{
 }
 
 .btn{
- 
-  padding:10px;
+  display: block;
+  margin-left: auto;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  padding:10px 20px;
   border-radius: 8px;
-  width: 200px;
-  height: 39px;
+  width: 250px;
+  height: 46px;
   letter-spacing: 0.5px;
+  justify-content: space-between;
+}
+.btn-modal{
+  display: flex;
+  justify-content: space-between;
 }
 
 .btn-text{
@@ -407,9 +429,8 @@ input{
 
 .modal{
   border-radius: 4%;
-  background: var(--texto1);
-  border: 1px solid red;
-  width: 500px;
+  background: rgb(208, 207, 207);
+  width: 570px;
   height: 460px;
   max-width: 90vw;             /* En pantallas pequeñas no se sale */
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);

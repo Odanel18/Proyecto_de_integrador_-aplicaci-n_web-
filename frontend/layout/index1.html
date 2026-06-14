@@ -41,6 +41,7 @@
                     <span>Empleados</span>
                 </a>
             </nav>
+            <button id="btnCerrarSesion" class="btn-cerrarSesion">Cerrar Sesión</button>
         </aside>
 
 
@@ -59,48 +60,9 @@
                         <div class="cargando" id="cargandoCliente">
                             ⏳ Cargando datos desde la API...
                         </div>
-                    </div>
-
-                    <!--
-                     CRUD DEL MODODULO DE CLIENTE
-                        -->
-                    <div class="botones" id="GRUD-cliente">
-                        <button type="submit" class="btn" id="btnGuardar"><span class="btn-text">Guardar</span></button>
-                        <button type="submit" class="btn" id="btnEditar"><span class="btn-text">Editar</span></button>
-                        <button type="submit" class="btn" id="btnBorrar"><span class="btn-text">Borrar</span></button>
-                    </div>
-
-                    <div class="formulario" id="frm-cliente">
-                        <form action="" class="form" >
-                            <div class="form-grupo">
-                                <input type="text" required class="input-nombre" id="nombre" autocomplete="off">
-                                <label for= "nombre" class="lbl-nombre">
-                                    <span class="text-nomb">Nombre</span>
-                                </label>
-                            </div>
-
-                           <div class="form-grupo">
-                                <input type="text" required class="input-nombre" id="apellido" autocomplete="off">
-                                <label for="nombre" class="lbl-nombre">
-                                    <span class="text-nomb">Apellidos</span>
-                                </label>
-                            </div>
-
-                            <div class="form-grupo">
-                                <input type="text" required class="input-nombre" id="numCedula" autocomplete="off">
-                                <label for="nombre" class="lbl-nombre">
-                                    <span class="text-nomb">Número de cédula</span>
-                                </label>
-                            </div>
-                            <div class="form-grupo">
-                                <input type="text" required class="input-nombre" id="telefono" autocomplete="off">
-                                <label for="nombre" class="lbl-nombre">
-                                    <span class="text-nomb">Teléfono</span>
-                                </label>
-                            </div>
-
-                            
-                        </form>
+                        <button class="btn btn-primario" onclick="abrirModalCliente('crear')">
+                            + Nuevo cliente
+                        </button>
                     </div>
                     
                     <!--
@@ -114,6 +76,7 @@
                                 <th>Apellidos</th>
                                 <th>Número de cédula</th>
                                 <th>Teléfono</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="bodyCliente">
@@ -130,6 +93,9 @@
                         <div class="cargando" id="cargandoFactura">
                             ⏳ Cargando datos desde la API...
                         </div>
+                        <button class="btn btn-primario" onclick="abrirModalfactura('crear')">
+                            + Nuevo cliente
+                        </button>
                     </div>
                         
                     <table class="tabla" id="tablaFactura">
@@ -140,8 +106,9 @@
                                 <th>Fecha</th>
                                 <th>Cliente</th>
                                 <th>Total</th>
-                                <th>condicion</th>
-                                <th>estado de Cuenta</th>
+                                <th>Condicion</th>
+                                <th>Estado de Cuenta</th>
+                                <th>Acciones</th>
 
                             </tr>
                         </thead>
@@ -216,6 +183,104 @@
                     </table>
 
                 </section>
+            
+            <!--Modal Cliente-->
+            <div class="modal-overlay" id="modalCliente">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 id="modalTextCliente">Nuevo Cliente</h3>
+                        <button class="modal-cerrar" onclick="cerrarModalCliente('modalCliente')">✕</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="clienNombre" autocomplete="off">
+                            <label for= "clienNombre" class="lbl-nombre">
+                                <span class="text-nomb">Nombre</span>
+                            </label>
+                        </div>
+
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="clienApellidos" autocomplete="off">
+                            <label for= "clienApellidos" class="lbl-nombre">
+                                <span class="text-nomb">Apellidos</span>
+                            </label>
+                        </div>
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="clienCedula" autocomplete="off">
+                            <label for= "clienCedula" class="lbl-nombre">
+                                <span class="text-nomb">Número de cédula</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="clienTelefono" autocomplete="off">
+                            <label for= "clienTelefono" class="lbl-nombre">
+                                <span class="text-nomb">Teléfono</span>
+                            </label>
+                        </div>
+
+
+                        <p class="form-error" id="error"></p>
+                    </div>
+
+                    <div class="class-footer">
+                        <button class="btn btn-secundario" onclick="cerrarModalCliente('modalCliente')">Cancelar</button>
+
+                        <button class="btn btn-primario" onclick="guardarCliente()">Guardar</button>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!--Modal de crear una factura-->
+            <div class="modal-overlay" id="modalFactura">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 id="modalTextCliente">Nuevo Cliente</h3>
+                        <button class="modal-cerrar" onclick="cerrarModalCliente('modalCliente')">✕</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="clienNombre" autocomplete="off">
+                            <label for= "clienNombre" class="lbl-nombre">
+                                <span class="text-nomb">Nombre</span>
+                            </label>
+                        </div>
+
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="clienApellidos" autocomplete="off">
+                            <label for= "clienApellidos" class="lbl-nombre">
+                                <span class="text-nomb">Apellidos</span>
+                            </label>
+                        </div>
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="clienCedula" autocomplete="off">
+                            <label for= "clienCedula" class="lbl-nombre">
+                                <span class="text-nomb">Número de cédula</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-grupo">
+                            <input type="text" required class="input-nombre" id="clienTelefono" autocomplete="off">
+                            <label for= "clienTelefono" class="lbl-nombre">
+                                <span class="text-nomb">Teléfono</span>
+                            </label>
+                        </div>
+
+
+                        <p class="form-error" id="error"></p>
+                    </div>
+
+                    <div class="class-footer">
+                        <button class="btn btn-secundario" onclick="cerrarModalCliente('modalCliente')">Cancelar</button>
+
+                        <button class="btn btn-primario" onclick="guardarCliente()">Guardar</button>
+                    </div>
+                    
+                </div>
+            </div>
 
             <!--Modal empleado-->
             <div class="modal-overlay" id="modalEmpleado">
@@ -273,7 +338,8 @@
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script src="/frontend/layout/accion.js"></script>
+    
+    <script type="module" src="./accion.js"></script>
     
 </body>
 </html>

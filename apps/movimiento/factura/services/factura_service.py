@@ -37,6 +37,22 @@ def suma_total(factura_id):
         print(f'Factura {factura_id} actualizada. Nuevo total: {factura.Total}')
     else:
         print('No se encontro factura')
+
+
+def suma_subtotal (id, detalleProducto, cantidad):
+    lotes = Registro_Producto.objects.filter(detalleProductoId_id = detalleProducto, Cantidad__gt=0, PrecioVenta__gt=0).order_by('FechaRegistro')
+
+    cantidadVendida = cantidad 
+    
+    Detalle = DetalleFactura.objects.filter(id=id)
+
+    if (Detalle):
+        Detalle.Subtotal = cantidadVendida * lotes.first().PrecioVenta
+        Detalle.save()
+    
+    
+
+
 def descontar_stock(detalle_producto_id, cantidad_vendida):
     #Buscar lotes antiguos
     # lotes es una variables= busca los productos solicitados en detalle de factura, busca los lotes con una cantidad mayor a 0
