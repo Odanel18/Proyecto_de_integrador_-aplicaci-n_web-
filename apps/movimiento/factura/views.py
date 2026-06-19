@@ -6,7 +6,7 @@ from .serializers import FacturaSerializer,DetalleFacturaSerializer,FacturaCredi
 from drf_yasg.utils import swagger_auto_schema
 #logica validacines
 from rest_framework.exceptions import ValidationError
-from.services.factura_service import descontar_stock,validar_existencia,Validar_datos,suma_total
+from.services.factura_service import descontar_stock,validar_existencia,Validar_datos,suma_total,calcular_subtotal
 from django.db import transaction
 
 from django.shortcuts import get_object_or_404
@@ -19,9 +19,80 @@ from .models import Clientes, CondicionPago,EstadoCuenta
 class FacturaAPIView (APIView):
     @swagger_auto_schema(responses={200: FacturaSerializer(many=True)})
     def get (self,request):
-        serializer= FacturaSerializer(Facturas.objects.filter(estado=True), many = True)
+        serializer= FacturaSerializer(Facturas.objects.filter(estado=True).order_by('-id'), many = True)
         return Response (data=serializer.data)
     
+    @swagger_auto_schema(request_body=FacturaSerializer)
+    def post(self, request):
+        # 1. Pasamos los datos para validar tipos de datos y estructuras básicas
+        serializer = FacturaSerializer(data=request.data)
+
+        if serializer.is_valid():
+            try:
+                with transaction.atomic():
+                    # Extraemos las instancias validadas por Django
+                    cliente = serializer.validated_data.get('ClienteId')
+                    condicion = serializer.validated_data.get('condicionId')
+                    estadofactura = serializer.validated_data.get('estadoCuentaId')
+                    numFactura = serializer.validated_data.get('NumFactura')
+                    fecha = serializer.validated_data.get('Fecha')
+                    
+                    # Extraemos los detalles directo del request
+                    detalles_data = request.data.get('detalles', [])
+
+                    # 2. Creamos la factura a mano. 
+                    # Aquí NO incluimos CajaId ni MetodoPagoId porque tu DB no los tiene en esta tabla.
+                    factura = Facturas.objects.create(
+                        NumFactura=numFactura, 
+                        Fecha=fecha, 
+                        ClienteId=cliente, 
+                        Total=0, 
+                        condicionId=condicion,
+                        estadoCuentaId=estadofactura
+                    )
+                   
+                    # 3. Procesamos los artículos uno a uno
+                    for item in detalles_data:
+
+                        id_prod = item["detalleProductoId"]
+                        canti = item['Cantidad']
+
+                        Validar_datos(item)
+                        validar_existencia(id_prod, canti)
+                        subtotal = calcular_subtotal(id_prod, canti)                        
+
+                        DetalleFactura.objects.create(
+                            Cantidad=canti,
+                            Subtotal=subtotal,
+                            detalleProductoId_id=id_prod,
+                            FacturaId=factura
+                        )
+                        
+                        descontar_stock(id_prod, canti)
+
+                    # 4. Cálculo final del total de la factura
+                    suma_total(factura.id)
+                    factura.refresh_from_db()
+                                            
+                # 5. Devolvemos la factura creada perfectamente limpia
+                venta_serializer = FacturaSerializer(factura)
+                #return Response(status=status.HTTP_201_CREATED,data=venta_serializer.data)
+                return Response(venta_serializer.data, status=status.HTTP_201_CREATED)
+
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    ''''
+    @swagger_auto_schema(request_body=FacturaSerializer, responses={201: FacturaSerializer})
+    def post(self,request):
+       
+       
+       serializer=FacturaSerializer(data=request.data)
+       serializer.is_valid(raise_exception=True)
+       serializer.save()
+       return Response(status=status.HTTP_201_CREATED,data=serializer.data)
     @swagger_auto_schema(request_body=FacturaSerializer)
     def post(self,request):
         serializer=FacturaSerializer(data=request.data)
@@ -30,45 +101,50 @@ class FacturaAPIView (APIView):
             try:
                 with transaction.atomic():
                     #numFactura= get_object_or_404(NumFactura, id=serializer.validated_data.get('NumFactura'))
-                    cliente= get_object_or_404(Clientes, id=serializer.validated_data.get('ClienteId'))
-                    condicion= get_object_or_404(CondicionPago, id=serializer.validated_data.get('condicionId'))
-                    estadofactura= get_object_or_404(EstadoCuenta,id=serializer.validated_data.get('estadoCuentaId'))
+                    cliente= get_object_or_404(Clientes, id=serializer.validated_data.get('ClienteId').id)
+                    condicion= get_object_or_404(CondicionPago, id=serializer.validated_data.get('condicionId').id)
+                    estadofactura= get_object_or_404(EstadoCuenta,id=serializer.validated_data.get('estadoCuentaId').id)
                     numFactura = serializer.validated_data.get('NumFactura')
                     fecha= serializer.validated_data.get('Fecha')
-                    detalles_data = serializer.validated_data.get('detalles')
+                    detalles_data = request.data.get('detalles', [])
 
-                    factura= Facturas.objects.create(NumFactura= numFactura, Fecha =fecha, ClienteId= cliente, Total=0, condicionId= condicion, estadoCuentaId= estadofactura)
+                    factura= Facturas.objects.create(NumFactura= numFactura, Fecha =fecha, 
+                                                     ClienteId= cliente, Total=0, condicionId= condicion,
+                                                     estadoCuentaId= estadofactura)
                    
                     for item in detalles_data:
 
-                        id_prod= item["detalleProductoId"].id
+                        id_prod= item["detalleProductoId"]
                         canti= item['Cantidad']
 
-                        subtotalv= id_prod.precio
+                        Validar_datos(canti)
 
                         validar_existencia(id_prod,canti)
+                
+                        subtotal= calcular_subtotal(id_prod,canti)                        
 
-                        detalle_serializer = DetalleFacturaSerializer(data={**item, "FacturaId": factura.id})
-
-                        detalle_serializer.is_valid(raise_exception=True)
-
-                        detalle= detalle_serializer.save()
-                        
-                        descontar_stock(detalle.detalleProductoId.id, detalle.Cantidad)
-
-                        '''' DetalleFactura.objects.create(
+                        DetalleFactura.objects.create(
                             Cantidad= canti,
-                            Subtotal= 
-                        )'''
-                    
-                    suma_total(factura.id)
+                            Subtotal= subtotal,
+                            detalleProductoId_id = id_prod,
+                            FacturaId= factura
+                        )
+                        
+                        #descontar_stock(id_prod, canti)
+
+                        #suma_total(factura.id)
+
+                        #factura.refresh_from_db()
+                                            
                 venta_seializer = FacturaSerializer(factura)
+                #detalle_serializer = DetalleFacturaSerializer(detalle)   
+
                 return Response(venta_seializer.data, status=status.HTTP_201_CREATED)
                #return Response( FacturaSerializer(factura).data, status=status.HTTP_201_CREATED)
 
             except Exception as e:
-                Response({"Error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST )
+               return Response({"Error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST )'''
     
     ''''@swagger_auto_schema(request_body=FacturaSerializer, responses={201: FacturaSerializer})
     def post(self,request):

@@ -3,5 +3,5 @@ from .models import CondicionPago
 
 class CondicionPagoSerializer (ModelSerializer):
     class Meta:
-        model= CondicionPago
-        fields= ['descripcion']
+        model = CondicionPago
+        fields = ['id', 'descripcion']

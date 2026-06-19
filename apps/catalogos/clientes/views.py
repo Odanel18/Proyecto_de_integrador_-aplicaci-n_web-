@@ -10,7 +10,7 @@ class ClienteApiview (APIView):
      
     @swagger_auto_schema(responses={200: ClienteSerializer(many=True)})
     def get(self,request):
-        serializer=ClienteSerializer(Clientes.objects.filter(estado=True), many=True)
+        serializer=ClienteSerializer(Clientes.objects.filter(estado=True).order_by('-id'), many=True)
         return Response(serializer.data)
     
     @swagger_auto_schema(request_body=ClienteSerializer, responses={201: ClienteSerializer})

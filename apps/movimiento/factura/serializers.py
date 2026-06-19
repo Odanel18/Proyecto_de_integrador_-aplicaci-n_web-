@@ -1,18 +1,5 @@
-from rest_framework.serializers import ModelSerializer,CharField,DateTimeField
+from rest_framework.serializers import ModelSerializer,CharField,DateTimeField,JSONField
 from .models import Facturas,DetalleFactura,FacturasCredito
-
-class FacturaSerializer (ModelSerializer):
-    cliente_nombre = CharField(source='ClienteId.Nombres', read_only=True)
-    condicion_nombre= CharField(source="condicionId.descripcion", read_only=True)
-    estadoCuenta_nommbre= CharField(source='estadoCuentaId.descripcion', read_only=True )
-    fecha_formateada= DateTimeField(source='Fecha',format='%d/%m/%Y %I:%M:%S %p',read_only=True)
-
-    ##detalles= DetalleFacturaSerializer(many=True)
-
-    class Meta:
-        model = Facturas
-        fields= ['NumFactura','Fecha','fecha_formateada','ClienteId','Total','condicionId','estadoCuentaId','cliente_nombre','condicion_nombre','estadoCuenta_nommbre','detalles']
-        #Exception= ['id']
 
 class DetalleFacturaSerializer (ModelSerializer):
     producto_nombre = CharField(source='detalleProductoId.producto', read_only=True)
@@ -20,7 +7,26 @@ class DetalleFacturaSerializer (ModelSerializer):
 
     class Meta:
         model = DetalleFactura
-        fields= ['Cantidad','Subtotal','detalleProductoId','producto_nombre','FacturaId']
+        fields= ['Cantidad','detalleProductoId','producto_nombre',]
+
+
+class FacturaSerializer (ModelSerializer):
+    cliente_nombre = CharField(source='ClienteId.Nombres', read_only=True)
+    cliente_cedula = CharField(source='ClienteId.NumCedula', read_only=True)
+    condicion_nombre= CharField(source="condicionId.descripcion", read_only=True)
+    estadoCuenta_nommbre= CharField(source='estadoCuentaId.descripcion', read_only=True )
+    fecha_formateada= DateTimeField(source='Fecha',format='%d/%m/%Y %I:%M:%S %p',read_only=True)
+    #facturaId = CharField(source='id', read_only=True)
+
+    #detalles= DetalleFacturaSerializer(many=True)
+    detalles= JSONField(write_only=True, required=False)
+
+    class Meta:
+        model = Facturas
+        fields= ['NumFactura','Fecha','fecha_formateada','ClienteId','condicionId'
+                 ,'estadoCuentaId','cliente_nombre','cliente_cedula','condicion_nombre','estadoCuenta_nommbre','detalles','Total']
+        #read_only_fields = ['id', 'Total', 'fecha_formateada']
+
 
 class FacturaCreditoSerializer (ModelSerializer):
     class Meta:

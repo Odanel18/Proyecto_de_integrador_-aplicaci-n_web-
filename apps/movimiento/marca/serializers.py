@@ -4,4 +4,4 @@ from .models import Marcas
 class MarcaSerializer (ModelSerializer):
     class Meta:
         model=Marcas
-        fields=['Nombre','TipoId']
+        fields=['id','Nombre','TipoId']

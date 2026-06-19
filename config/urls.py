@@ -53,4 +53,7 @@ urlpatterns = [
     path('catalogos/', include('apps.catalogos.urls')),
     path('movimiento/',include('apps.movimiento.urls')),
     path('seguridad/',include('apps.seguridad.urls')),
+
+    # Ventas
+    path('dashboard/',include('apps.dashboard.urls')),
 ]

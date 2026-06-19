@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Layout</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="graficos.css">
 
 </head>
 <body>
@@ -15,7 +16,11 @@
                 <span class="logo-texto">Menú</span>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-link activo" data-section="cliente">
+                <a href="#" class="nav-link activo" data-section="dashboard">
+                    <span class="nav-icono">📊</span>
+                    <span>Dashoboard</span>
+                </a>
+                <a href="#" class="nav-link" data-section="cliente">
                     <span class="nav-icono">👥</span>
                     <span>Clientes</span>
                 </a>
@@ -37,7 +42,7 @@
                 </a>
 
                 <a href="#" class="nav-link" data-section="empleado">
-                    <span class="na-icono"></span>
+                    <span class="nav-icono">👨‍💼</span>
                     <span>Empleados</span>
                 </a>
             </nav>
@@ -47,11 +52,77 @@
 
         <div class="main-wrap">
             <header class="topbar">
-                <h1 class="topbar-titulo" id="topbarTitulo">Clientes</h1>
+                <h1 class="topbar-titulo" id="topbarTitulo">Dashboard</h1>
             </header>
             <!--Contenido principal-->
             <main class="contenido">
-                <section id="cliente" class="seccion activa">
+
+                <!-- ===== DASHBOARD ===== -->
+                <section id="dashboard" class="seccion activa">
+
+                    <div class="tarjetas">
+
+                        <div class="tarjeta tarjeta-azul">
+                            <div class="tarjeta-icono">💰</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Ingresos Totales</p>
+                                <p class="tarjeta-numero" id="totalIngresos">—</p>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta tarjeta-verde">
+                            <div class="tarjeta-icono">📦</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Unidades Vendidas</p>
+                                <p class="tarjeta-numero" id="totalUnidades">—</p>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta tarjeta-amarilla">
+                            <div class="tarjeta-icono">📝</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Transacciones</p>
+                                <p class="tarjeta-numero" id="totalTransacciones">—</p>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta tarjeta-roja">
+                            <div class="tarjeta-icono">👥</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Clientes Atendidos</p>
+                                <p class="tarjeta-numero" id="totalClientesAtendidos">—</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="graficos-grid">
+
+                        <div class="grafico-box">
+                            <h3>Ventas por mes</h3>
+                            <canvas id="graficoVentas"></canvas>
+                        </div>
+
+                        <div class="grafico-box">
+                            <h3>Métodos de Pago</h3>
+                            <canvas id="graficoMetodosPago"></canvas>
+                        </div>
+
+                        <div class="grafico-box">
+                            <h3>Top 10 Productos</h3>
+                            <canvas id="graficoCategorias"></canvas>
+                        </div>
+
+                        <div class="grafico-box">
+                            <h3>Rendimiento por Empleado</h3>
+                            <canvas id="graficoEmpleados"></canvas>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section id="cliente" class="seccion">
                     <div class="tabla-contenido">
                         <div class="tabla-cabecera">
                             <h2>Lista de Clientes</h2>
@@ -94,7 +165,7 @@
                             ⏳ Cargando datos desde la API...
                         </div>
                         <button class="btn btn-primario" onclick="abrirModalfactura('crear')">
-                            + Nuevo cliente
+                            + Nuevo factura
                         </button>
                     </div>
                         
@@ -103,11 +174,12 @@
                             <tr>
                                 <th>#</th>
                                 <th>Número de Factura</th>
-                                <th>Fecha</th>
                                 <th>Cliente</th>
+                                <th>Fecha</th>
                                 <th>Total</th>
                                 <th>Condicion</th>
-                                <th>Estado de Cuenta</th>
+                                <th>Estado</th>
+                                <th>Detalle de factura</th>
                                 <th>Acciones</th>
 
                             </tr>
@@ -128,27 +200,107 @@
                     </div>
                 </section>
 
+                <!--
+                
                 <section id="compra" class="seccion">
-                     <div class="tabla-contenido">
+                    <div class="tabla-contenido">
                         <div class="tabla-cabecera">
-                            <h2>Compras</h2>
+                            <h2>Historial de Compras a Proveedores</h2>
+                            <input type="text" class="buscador" id="buscarCompra" placeholder="🔍 Buscar compra...">
                         </div>
-                        <p>Contenido de compras</p>
+                        <div class="cargando" id="cargandoCompra">
+                            ⏳ Cargando datos desde la API...
+                        </div>
+                        <button class="btn btn-primario" onclick="abrirModalNuevaCompra('crear')">
+                            + Nueva compra
+                        </button>
                     </div>
+
+                    <table class="tabla" id="tablaCompra">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>N° Compra</th>
+                                <th>Proveedor</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Condición</th>
+                                <th>Estado</th>
+                                <th>Detalle de compra</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyCompra">
+                        </tbody>
+                    </table>
+                </section>
+                -->
+
+                <section id="compra" class="seccion">
+                    <div class="tabla-contenido">
+                        <div class="tabla-cabecera">
+                            <h2>Historial de Compras a Proveedores</h2>
+                            <input type="text" class="buscador" id="buscarCompra" placeholder="🔍 Buscar compra...">
+                        </div>
+                        <div class="cargando" id="cargandoCompra">
+                            ⏳ Cargando datos desde la API...
+                        </div>
+                        
+                        <button class="btn btn-primario" onclick="abrirModalNuevaCompra('crear')"> + Nueva compra </button>
+                    </div>
+                    
+                    
+                    <table class="tabla" id="tablaCompra">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>N° Compra</th>
+                                <th>Proveedor</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Condición</th>
+                                <th>Estado</th>
+                                <th>Detalle de compra</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyCompra">
+                        </tbody>
+                    </table>
                 </section>
 
+                <!-- ================================================
+                    SECCIÓN INVENTARIO
+                ================================================ -->
                 <section id="inventario" class="seccion">
                     <div class="tabla-contenido">
                         <div class="tabla-cabecera">
-                            <h2>Lista de inventario </h2>
-                            <input type="text" class="buscador" id="buscarInventario" placeholder="🔍 Buscar productos...">
+                            <h2>Historial de Inventario</h2>
+                            <input type="text" class="buscador" id="buscarInventario" placeholder="🔍 Buscar producto...">
                         </div>
                         <div class="cargando" id="cargandoInventario">
                             ⏳ Cargando datos desde la API...
                         </div>
+                        <button class="btn btn-primario" onclick="abrirModalInventario('crear')">
+                            + Nuevo registro
+                        </button>
                     </div>
 
-                    
+                    <table class="tabla" id="tablaInventario">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Descripción del producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Compra</th>
+                                <th>Precio Venta</th>
+                                <th>Fecha Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyInventario">
+                        </tbody>
+                    </table>
                 </section>
 
                 <section id="empleado" class="seccion" >
@@ -184,153 +336,506 @@
 
                 </section>
             
-            <!--Modal Cliente-->
-            <div class="modal-overlay" id="modalCliente">
-                <div class="modal">
-                    <div class="modal-header">
-                        <h3 id="modalTextCliente">Nuevo Cliente</h3>
-                        <button class="modal-cerrar" onclick="cerrarModalCliente('modalCliente')">✕</button>
-                    </div>
+                <!--Modal Cliente
+                -------------------------------------------------------------------------------------------------------------------------->
 
-                    <div class="modal-body">
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="clienNombre" autocomplete="off">
-                            <label for= "clienNombre" class="lbl-nombre">
-                                <span class="text-nomb">Nombre</span>
-                            </label>
+
+
+                <div class="modal-overlay" id="modalCliente">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3 id="modalTextCliente">Nuevo Cliente</h3>
+                            <button class="modal-cerrar" onclick="cerrarModalCliente('modalCliente')">✕</button>
                         </div>
 
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="clienApellidos" autocomplete="off">
-                            <label for= "clienApellidos" class="lbl-nombre">
-                                <span class="text-nomb">Apellidos</span>
-                            </label>
-                        </div>
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="clienCedula" autocomplete="off">
-                            <label for= "clienCedula" class="lbl-nombre">
-                                <span class="text-nomb">Número de cédula</span>
-                            </label>
-                        </div>
-                        
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="clienTelefono" autocomplete="off">
-                            <label for= "clienTelefono" class="lbl-nombre">
-                                <span class="text-nomb">Teléfono</span>
-                            </label>
-                        </div>
+                        <div class="modal-body">
+                            <div class="form-grupo">
+                                <input type="text" required class="input-nombre" id="clienNombre" autocomplete="off">
+                                <label for= "clienNombre" class="lbl-nombre">
+                                    <span class="text-nomb">Nombre</span>
+                                </label>
+                            </div>
+
+                            <div class="form-grupo">
+                                <input type="text" required class="input-nombre" id="clienApellidos" autocomplete="off">
+                                <label for= "clienApellidos" class="lbl-nombre">
+                                    <span class="text-nomb">Apellidos</span>
+                                </label>
+                            </div>
+                            <div class="form-grupo">
+                                <input type="text" required class="input-nombre" id="clienCedula" autocomplete="off">
+                                <label for= "clienCedula" class="lbl-nombre">
+                                    <span class="text-nomb">Número de cédula</span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-grupo">
+                                <input type="text" required class="input-nombre" id="clienTelefono" autocomplete="off">
+                                <label for= "clienTelefono" class="lbl-nombre">
+                                    <span class="text-nomb">Teléfono</span>
+                                </label>
+                            </div>
 
 
-                        <p class="form-error" id="error"></p>
-                    </div>
-
-                    <div class="class-footer">
-                        <button class="btn btn-secundario" onclick="cerrarModalCliente('modalCliente')">Cancelar</button>
-
-                        <button class="btn btn-primario" onclick="guardarCliente()">Guardar</button>
-                    </div>
-                    
-                </div>
-            </div>
-
-            <!--Modal de crear una factura-->
-            <div class="modal-overlay" id="modalFactura">
-                <div class="modal">
-                    <div class="modal-header">
-                        <h3 id="modalTextCliente">Nuevo Cliente</h3>
-                        <button class="modal-cerrar" onclick="cerrarModalCliente('modalCliente')">✕</button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="clienNombre" autocomplete="off">
-                            <label for= "clienNombre" class="lbl-nombre">
-                                <span class="text-nomb">Nombre</span>
-                            </label>
+                            <p class="form-error" id="error"></p>
                         </div>
 
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="clienApellidos" autocomplete="off">
-                            <label for= "clienApellidos" class="lbl-nombre">
-                                <span class="text-nomb">Apellidos</span>
-                            </label>
-                        </div>
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="clienCedula" autocomplete="off">
-                            <label for= "clienCedula" class="lbl-nombre">
-                                <span class="text-nomb">Número de cédula</span>
-                            </label>
+                        <div class="class-footer">
+                            <button class="btn btn-secundario" onclick="cerrarModalCliente('modalCliente')">Cancelar</button>
+
+                            <button class="btn btn-primario" onclick="guardarCliente()">Guardar</button>
                         </div>
                         
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="clienTelefono" autocomplete="off">
-                            <label for= "clienTelefono" class="lbl-nombre">
-                                <span class="text-nomb">Teléfono</span>
-                            </label>
-                        </div>
-
-
-                        <p class="form-error" id="error"></p>
                     </div>
-
-                    <div class="class-footer">
-                        <button class="btn btn-secundario" onclick="cerrarModalCliente('modalCliente')">Cancelar</button>
-
-                        <button class="btn btn-primario" onclick="guardarCliente()">Guardar</button>
-                    </div>
-                    
-                </div>
-            </div>
-
-            <!--Modal empleado-->
-            <div class="modal-overlay" id="modalEmpleado">
-                <div class="modal">
-                    <div class="modal-header">
-                        <h3 id="modalTextEmpleado">Nuevo empleado</h3>
-                        <button class="modal-cerrar" onclick="cerrarModal('modalEmpleado')">✕</button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="empNombre" autocomplete="off">
-                            <label for= "empNombre" class="lbl-nombre">
-                                <span class="text-nomb">Nombre</span>
-                            </label>
-                        </div>
-
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="empApellidos" autocomplete="off">
-                            <label for= "empApellidos" class="lbl-nombre">
-                                <span class="text-nomb">Apellidos</span>
-                            </label>
-                        </div>
-
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="empTelefono" autocomplete="off">
-                            <label for= "empTelefono" class="lbl-nombre">
-                                <span class="text-nomb">Teléfono</span>
-                            </label>
-                        </div>
-
-                        <div class="form-grupo">
-                            <input type="text" required class="input-nombre" id="empCedula" autocomplete="off">
-                            <label for= "empCedula" class="lbl-nombre">
-                                <span class="text-nomb">Número de cédula</span>
-                            </label>
-                        </div>
-
-                        <p class="form-error" id="error"></p>
-                    </div>
-
-                    <div class="class-footer">
-                        <button class="btn btn-secundario" onclick="cerrarModal('modalEmpleado')">Cancelar</button>
-
-                        <button class="btn btn-primario" onclick="guardarEmpleado()">Guardar</button>
-                    </div>
-                    
                 </div>
 
-            </div>
+            
+                <!--Modal empleado-->
+                <div class="modal-overlay" id="modalEmpleado">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3 id="modalTextEmpleado">Nuevo empleado</h3>
+                            <button class="modal-cerrar" onclick="cerrarModal('modalEmpleado')">✕</button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="form-grupo">
+                                <input type="text" required class="input-nombre" id="empNombre" autocomplete="off">
+                                <label for= "empNombre" class="lbl-nombre">
+                                    <span class="text-nomb">Nombre</span>
+                                </label>
+                            </div>
+
+                            <div class="form-grupo">
+                                <input type="text" required class="input-nombre" id="empApellidos" autocomplete="off">
+                                <label for= "empApellidos" class="lbl-nombre">
+                                    <span class="text-nomb">Apellidos</span>
+                                </label>
+                            </div>
+
+                            <div class="form-grupo">
+                                <input type="text" required class="input-nombre" id="empTelefono" autocomplete="off">
+                                <label for= "empTelefono" class="lbl-nombre">
+                                    <span class="text-nomb">Teléfono</span>
+                                </label>
+                            </div>
+
+                            <div class="form-grupo">
+                                <input type="text" required class="input-nombre" id="empCedula" autocomplete="off">
+                                <label for= "empCedula" class="lbl-nombre">
+                                    <span class="text-nomb">Número de cédula</span>
+                                </label>
+                            </div>
+
+                            <p class="form-error" id="error"></p>
+                        </div>
+
+                        <div class="class-footer">
+                            <button class="btn btn-secundario" onclick="cerrarModal('modalEmpleado')">Cancelar</button>
+
+                            <button class="btn btn-primario" onclick="guardarEmpleado()">Guardar</button>
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+         
+                <!--Modal de crear una factura-
+            ----------------------------------------------------------------------------------------------------------------------------------->
+                
+                <div class="modal-overlay" id="modalfactura">
+                    <div class="modal_detalles">
+                        
+                        <div class="modal-header">
+                            <h3 id="modalTextCompra">Nueva factura</h3>
+                            <button class="modal-cerrar" onclick="cerrarModalFactura('modalfactura')">✕</button>
+                        </div>
+
+                        <div class="contenedor-detalle">
+                            
+                            <div class="modal-body-detalle">
+
+                                <div class="modal-compra">
+                                    <div class="text-encabezado">
+                                        <span class="texto-encabezado">Datos de factura</span>
+                                    </div>
+
+                                    <div class="modal-formulario">
+
+                                        <div>
+                                            <div class="form-grupo">
+                                                <input type="number" required class="input-nombre" id="facturaNumero" autocomplete="off">
+                                                <label for="facturaNumero" class="lbl-nombre">
+                                                    <span class="text-nomb">N° de factura</span>
+                                                </label>
+                                            </div>
+                                            
+                                            <div class="form-grupo">
+                                                <select id="facturaCliente" class="input-nombre">
+                                                    <option value="">-- Seleccione un cliente --</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-grupo">
+                                                <input type="date" required class="input-nombre" id="facturaFecha" autocomplete="off">
+                                                <label for="facturaFecha" class="lbl-nombre lbl-activo">
+                                                    <span class="text-nomb">Fecha</span>
+                                                </label>
+                                            </div>
+                                                                                       
+                                        </div>
+                                        
+                                        <div>
+                                            
+                                            <div class="form-grupo">
+                                                <select id="facturaCondicion" class="input-nombre">
+                                                    <option value="">-- Seleccione una condicion --</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-grupo">
+                                                <select id="facturaEstado" class="input-nombre">
+                                                    <option value="">-- Seleccione un estado --</option>
+                                                </select>
+                                            </div>
+                                            
+                                           
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+                                
+                                <p class="form-error" id="errorfactura"></p>
+                            </div>
+
+
+
+                            <div class="modal-body-detalle">
+
+                                <div class="modal-compra">
+                                    <div class="text-encabezado">
+                                        <span class="texto-encabezado">Agregar detalles a la factura</span>
+                                    </div>
+
+                                    <div>
+
+                                        <div>
+                                            <div class="form-grupo">
+                                                <select id="facturaProducto" class="input-nombre">
+                                                    <option value="">-- Seleccione un producto --</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-grupo">
+                                                <input type="number" required class="input-nombre" id="facturaCantidad" autocomplete="off">
+                                                <label for="facturaCantidad" class="lbl-nombre">
+                                                    <span class="text-nomb">Cantidad</span>
+                                                </label>
+                                            </div>
+                                            <div class="form-grupo">
+                                                <input type="number" required class="input-nombre" id="facturaPrecio" autocomplete="off">
+                                                <label for="facturaPrecio" class="lbl-nombre">
+                                                    <span class="text-nomb">Precio unitario</span>
+                                                </label>
+                                            </div>
+                                            
+                                        </div>
+                                
+                                    </div>
+                                    <div class="btn-agregar-wrap">
+                                        <div>
+                                            <p class="form-error"  id="errorMensajeFacturaProducto"></p>
+
+                                        </div>
+                                        <button class="btn btn-primario" onclick="ncAgregarFacturaProducto()">
+                                            + Agregar
+                                        </button>
+                                    </div>
+
+
+                                </div>
+
+                                
+                                <p class="form-error" id="errorCompra"></p>
+                            </div>
+                        </div>
+                        <div id="TablaDetalleFac" class="contenador_tabla_detalleProducto">
+                            <div class="tabla_detalleCompra_producto">
+
+                                <table class="tabla" id="tablaDetalleFactura">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nombre</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Unitario</th>
+                                            <th>Subtotal</th>
+                                            <th>Quitar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyDetalleCompra">
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="nc-total-row">
+                                            <td colspan="5" style="text-align:right; font-weight:700; padding:10px 12px; color:#fefefe;">
+                                                TOTAL:
+                                            </td>
+                                            <td id="facTotal" style="font-weight:700; padding:10px 12px; color:#fefefe; letter-spacing: 0.5px;">
+                                                C$ 0.00
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            
+                        </div>
+                        <div class="class-footer btn_detales">
+                            <button class="btn btn-secundario" onclick="cerrarModalFactura('modalfactura')">🚫 Anular factura</button>
+                            <button class="btn btn-primario" onclick="guardarNuevaFactura()">💾 Guardar factura</button>
+                        </div>
+                    </div>
+                </div>
+             
+
+                
+                
+
+                <!-- ============================================================
+                    MODAL: NUEVA COMPRA CON DETALLE TEMPORAL
+                    Pega este bloque ANTES del cierre </main> en index1.html,
+                    reemplazando el <!-- Modal Compra (Crear/Editar) -->
+                
+                <!-- Modal Nueva Compra (con detalle temporal) -->
+                <div class="modal-overlay" id="modalNuevaCompra">
+                    <div class="modal_detalles">
+                
+                        <!-- Cabecera -->
+                        <div class="modal-header">
+                            <h3 id="modalTextNuevaCompra">Nueva Compra</h3>
+                            <button class="modal-cerrar" onclick="cerrarModalNuevaCompra()">✕</button>
+                        </div>
+                
+                        <div class="contenedor-detalle">
+                
+                            <!-- ── Sección 1: Datos generales de la compra ── -->
+                            <div class="modal-body-detalle">
+                                <div class="modal-compra">
+                                    <div class="text-encabezado">
+                                        <legend class="texto-encabezado">Datos de la Compra</legend>
+                                        
+                                    </div>
+
+                                    <div class="modal-formulario">
+                                        <div>
+    
+                                            <div class="form-grupo">
+                                                <input type="number" required class="input-nombre" id="nc_numero" autocomplete="off" min="1">
+                                                <label for="nc_numero" class="lbl-nombre">
+                                                    <span class="text-nomb">N° de Compra</span>
+                                                </label>
+                                            </div>
+                        
+                                            <div class="form-grupo">
+                                                <input type="date" required class="input-nombre" id="nc_fecha">
+                                                <label for="nc_fecha" class="lbl-nombre lbl-activo">
+                                                    <span class="text-nomb">Fecha</span>
+                                                </label>
+                                            </div>
+                        
+                                            <div class="form-grupo">
+                                                <input type="number" required class="input-nombre" id="nc_proveedor" autocomplete="off" min="1">
+                                                <label for="nc_proveedor" class="lbl-nombre">
+                                                    <span class="text-nomb">ID Proveedor</span>
+                                                </label>
+                                            </div>
+                                        </div>
+    
+                                        <div>
+    
+                                            <div class="form-grupo">
+                                                <input type="number" required class="input-nombre" id="nc_condicion" autocomplete="off" min="1">
+                                                <label for="nc_condicion" class="lbl-nombre">
+                                                    <span class="text-nomb">ID Condición de Pago</span>
+                                                </label>
+                                            </div>
+                        
+                                            <div class="form-grupo">
+                                                <input type="number" required class="input-nombre" id="nc_estado" autocomplete="off" min="1">
+                                                <label for="nc_estado" class="lbl-nombre">
+                                                    <span class="text-nomb">ID Estado de Cuenta</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                    
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- ── Sección 2: Agregar productos ── -->
+
+                            <div class="modal-body-detalle" >
+                                <div class="modal-compra">
+                                    <div class="text-encabezado">
+                                        <legend class="texto-encabezado">Datos de la Compra</legend>
+                                        
+                                    </div>
+
+                                    <div class="modal-formulario">
+                                        <div>
+                                            <div class="form-grupo">
+                                                <input type="number" class="input-nombre" id="nc_prod_id" autocomplete="off" min="1">
+                                                <label for="nc_prod_id" class="lbl-nombre">
+                                                    <span class="text-nomb">ID Producto</span>
+                                                </label>
+                                            </div>
+                        
+                                            <div class="form-grupo">
+                                                <input type="text" class="input-nombre" id="nc_prod_nombre" autocomplete="off">
+                                                <label for="nc_prod_nombre" class="lbl-nombre">
+                                                    <span class="text-nomb">Nombre del Producto</span>
+                                                </label>
+                                            </div>
+                        
+                                            <div class="form-grupo">
+                                                <input type="number" class="input-nombre" id="nc_prod_cantidad" autocomplete="off" min="1">
+                                                <label for="nc_prod_cantidad" class="lbl-nombre">
+                                                    <span class="text-nomb">Cantidad</span>
+                                                </label>
+                                            </div>
+                        
+                                            <div class="form-grupo">
+                                                <input type="number" class="input-nombre" id="nc_prod_precio" autocomplete="off" min="0" step="0.01">
+                                                <label for="nc_prod_precio" class="lbl-nombre">
+                                                    <span class="text-nomb">Precio Unitario (C$)</span>
+                                                </label>
+                                            </div>
+                        
+                                        </div>
+                                        <div class="btn-agregar-wrap">
+                                            <button class="btn btn-primario" onclick="ncAgregarProducto()">
+                                                + Agregar
+                                            </button>
+
+                                            <p class="form-error" id="nc_error_prod"></p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                
+
+                            </div>
+                    
+                           
+                        </div>    
+
+                        <div  id="nc_tabla_wrap" style="display:none;"  class="contenador_tabla_detalleProducto">
+                            <div lass="tabla_detalleCompra_producto">
+                                <table class="tabla visible" id="nc_tabla_productos">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>ID Producto</th>
+                                            <th>Nombre</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Unit.</th>
+                                            <th>Subtotal</th>
+                                            <th>Quitar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="nc_tbody_productos"></tbody>
+                                    <tfoot>
+                                        <tr class="nc-total-row">
+                                            <td colspan="5" style="text-align:right; font-weight:700; padding:10px 12px;">
+                                                TOTAL:
+                                            </td>
+                                            <td id="nc_total_display" style="font-weight:700; padding:10px 12px; color:#0f766e;">
+                                                C$ 0.00
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                </div>
+                    
+                                    <p id="nc_sin_productos" style="text-align:center; padding:10px; color:#94a3b8; font-size:0.9rem;">
+                                        Aún no has agregado productos a esta compra.
+                                    </p>
+                        
+                                    <p class="form-error" id="nc_error_compra"></p>
+                                </div>
+                                <div class="class-footer btn_detales">
+                                    <button class="btn btn-secundario" onclick="cerrarModalFactura('modalfactura')">🚫 Anular factura</button>
+                                    <button class="btn btn-primario" onclick="guardarFactura()">💾 Guardar factura</button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- ── Sección 3: Tabla de productos temporales ── -->
+                        
+                
+                        
+                    </div>
+                </div>
+                <!-- ================================================
+                    MODAL INVENTARIO
+                    
+                ================================================ -->
+                <div class="modal-overlay" id="modalInventario">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3 id="modalTextInventario">Nuevo Registro de Inventario</h3>
+                            <button class="modal-cerrar" onclick="cerrarModalInventario('modalInventario')">✕</button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <!-- Descripción del producto (DetalleProductos) -->
+                            <div class="form-grupo">
+                                <select class="input-nombre" id="invDetalleProducto" required>
+                                    <option value="">-- Seleccione un producto --</option>
+                                </select>
+                               
+                            </div>
+
+                            <!-- Cantidad -->
+                            <div class="form-grupo">
+                                <input type="number" min="1" required class="input-nombre" id="invCantidad" autocomplete="off">
+                                <label for="invCantidad" class="lbl-nombre">
+                                    <span class="text-nomb">Cantidad</span>
+                                </label>
+                            </div>
+
+                            <!-- Precio de Compra -->
+                            <div class="form-grupo">
+                                <input type="number" min="0" step="0.01" required class="input-nombre" id="invPrecioCompra" autocomplete="off">
+                                <label for="invPrecioCompra" class="lbl-nombre">
+                                    <span class="text-nomb">Precio de Compra</span>
+                                </label>
+                            </div>
+
+                            <!-- Precio de Venta -->
+                            <div class="form-grupo">
+                                <input type="number" min="0" step="0.01" required class="input-nombre" id="invPrecioVenta" autocomplete="off">
+                                <label for="invPrecioVenta" class="lbl-nombre">
+                                    <span class="text-nomb">Precio de Venta</span>
+                                </label>
+                            </div>
+
+                            <p class="form-error" id="errorInventario"></p>
+                        </div>
+
+                        <div class="class-footer">
+                            <button class="btn btn-secundario" onclick="cerrarModalInventario('modalInventario')">Cancelar</button>
+                            <button class="btn btn-primario" onclick="guardarInventario()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+
+
             </main>
 
         </div>
@@ -339,6 +844,10 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="module" src="./app_graficos.js"></script>
+
     <script type="module" src="./accion.js"></script>
     
 </body>

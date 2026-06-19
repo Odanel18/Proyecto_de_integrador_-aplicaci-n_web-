@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 class EmpleadosAPIView (APIView):
     @swagger_auto_schema(responses={200: EmpleadoSerializer(many=True)})
     def get (self,request):
-        serializer= EmpleadoSerializer(Empleados.objects.filter(estado=True), many= True)
+        serializer= EmpleadoSerializer(Empleados.objects.filter(estado=True).order_by('-id'), many= True)
         return Response (status=status.HTTP_200_OK, data=serializer.data)
     
     @swagger_auto_schema(request_body=EmpleadoSerializer, responses= {201: EmpleadoSerializer})

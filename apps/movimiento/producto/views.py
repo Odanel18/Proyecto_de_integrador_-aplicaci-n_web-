@@ -88,7 +88,7 @@ class DetalleProductosIDAPIView(APIView):
 
 class Registro_ProductoApiView(APIView):
     def get(self, request):
-     Serializer= Registro_ProductoSerialezer(Registro_Producto.objects.using('default').filter(estado=True), many=True)
+     Serializer= Registro_ProductoSerialezer(Registro_Producto.objects.using('default').filter(estado=True).order_by('-id'), many=True)
      return Response(status=status.HTTP_200_OK, data=Serializer.data)
     
     @swagger_auto_schema(request_body=Registro_ProductoSerialezer, responses={201: Registro_ProductoSerialezer})

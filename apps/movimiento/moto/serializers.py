@@ -4,4 +4,4 @@ from .models import Motos
 class MotoSerializer (ModelSerializer):
     class Meta:
         model = Motos
-        fields= ['Modelo','Año','MarcaId']
+        fields= ['id','Modelo','Año','MarcaId']

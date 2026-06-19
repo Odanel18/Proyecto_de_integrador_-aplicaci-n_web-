@@ -1,4 +1,4 @@
-from django.db import transaction
+''''from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
@@ -164,4 +164,4 @@ def registrar_pago(
 
     caja.save()
 
-    return movimiento_pago
+    return movimiento_pago '''

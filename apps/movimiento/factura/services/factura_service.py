@@ -39,16 +39,14 @@ def suma_total(factura_id):
         print('No se encontro factura')
 
 
-def suma_subtotal (id, detalleProducto, cantidad):
-    lotes = Registro_Producto.objects.filter(detalleProductoId_id = detalleProducto, Cantidad__gt=0, PrecioVenta__gt=0).order_by('FechaRegistro')
+def calcular_subtotal (detalle_producto_id, cantidad):
+    lote = Registro_Producto.objects.filter(detalleProductoId_id = detalle_producto_id, PrecioVenta__gt=0).first()
 
-    cantidadVendida = cantidad 
+
+    if not lote:
+        return 0
     
-    Detalle = DetalleFactura.objects.filter(id=id)
-
-    if (Detalle):
-        Detalle.Subtotal = cantidadVendida * lotes.first().PrecioVenta
-        Detalle.save()
+    return cantidad * lote.PrecioVenta
     
     
 

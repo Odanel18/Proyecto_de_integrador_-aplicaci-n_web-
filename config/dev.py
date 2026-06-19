@@ -18,5 +18,17 @@ DATABASES = {
             'trusted_connection': 'yes',
             'extra_params': 'TrustServerCertificate=yes',
         },
-    }
+    },
+    'dashboard': {
+        'ENGINE': 'mssql',
+        'NAME': config('DB_NAME_DASHBOARD'),
+        'HOST': config('DB_HOST'),
+        # 'PORT': '',
+
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+            'trusted_connection': 'yes',
+            'extra_params': 'TrustServerCertificate=yes',
+        },
+    },
 }

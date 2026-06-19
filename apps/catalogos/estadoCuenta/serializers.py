@@ -4,4 +4,4 @@ from .models import EstadoCuenta
 class EstadoCuentaSerializer (ModelSerializer):
     class Meta:
         model = EstadoCuenta
-        fields=['descripcion']
+        fields = ['id', 'descripcion']

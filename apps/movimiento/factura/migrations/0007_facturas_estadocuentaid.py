@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='facturas',
             name='estadoCuentaId',
-            field=models.ForeignKey(default=5, on_delete=django.db.models.deletion.PROTECT, to='estadoCuenta.estadocuenta', verbose_name='Estado de la factura'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.PROTECT, to='estadoCuenta.estadocuenta', verbose_name='Estado de la factura'),
             preserve_default=False,
         ),
     ]
