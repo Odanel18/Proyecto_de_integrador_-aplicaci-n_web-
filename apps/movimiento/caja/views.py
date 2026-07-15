@@ -9,7 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 class CajaApiView(APIView):
     def get(self, request):
-     Serializer= CajaSerializer(Caja.objects.using('default').filter(estado=True), many=True)
+     Serializer= CajaSerializer(Caja.objects.using('default').filter(estado=True).order_by('-FechaCierre'), many=True)
      return Response(status=status.HTTP_200_OK, data=Serializer.data)
     
     @swagger_auto_schema(request_body=CajaSerializer, responses={201: CajaSerializer})

@@ -409,7 +409,7 @@ input{
 .tabla tbody tr:hover td{
   background: #bdbfc2;
   transition: 0.5s;
-  font-size: 19px ;
+  /*font-size: 19px ;*/
   color: blue;
 }
 
@@ -614,76 +614,70 @@ input{
 
 /* ===== TARJETAS DEL DASHBOARD ===== */
 
-/* Contenedor de las 4 tarjetas */
+
 .tarjetas {
-  display: grid;                          /* Grid layout */
-  grid-template-columns: repeat(4, 1fr);  /* 4 columnas iguales (1fr = 1 fracción del espacio) */
-  gap: 20px;                              /* Espacio de 20px entre tarjetas */
-  margin-bottom: 28px;                    /* Espacio debajo del grupo de tarjetas */
+  display: grid;                         
+  grid-template-columns: repeat(4, 1fr);  
+  gap: 20px;                              
+  margin-bottom: 28px;                   
 }
 
 /* Cada tarjeta individual */
 .tarjeta {
-  background: var(--fondo2);          /* Fondo oscuro */
-  border: 1px solid var(--borde);     /* Borde sutil */
-  border-radius: var(--radio);        /* Bordes redondeados */
-  padding: 22px 20px;                 /* Espacio interior */
-  display: flex;                      /* Flexbox en fila (ícono + datos lado a lado) */
-  align-items: center;                /* Centra verticalmente */
-  gap: 18px;                          /* Espacio entre ícono y datos */
-  transition: transform 0.2s, box-shadow 0.2s; /* Anima el movimiento y la sombra */
-  border-top: 3px solid transparent;  /* Borde superior invisible (se colorea con las clases de color) */
+  background: var(--fondo2);          
+  border: 1px solid var(--borde);     
+  border-radius: var(--radio);        
+  padding: 22px 20px;                 
+  display: flex;                     
+  align-items: center;                
+  gap: 18px;                          
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-top: 3px solid transparent; 
 }
 
-/* Efecto al pasar el mouse: la tarjeta sube 3px y aparece sombra */
+
 .tarjeta:hover {
-  transform: translateY(-3px);                   /* Mueve 3px hacia arriba */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);    /* Sombra: 0 horizontal, 8px vertical, 24px difuminado */
+  transform: translateY(-3px);                  
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);    
 }
 
-/* Colores del borde superior según el tipo de tarjeta */
-.tarjeta-azul    { border-top-color: var(--azul); }    /* Borde azul */
-.tarjeta-verde   { border-top-color: var(--verde); }   /* Borde verde */
-.tarjeta-amarilla{ border-top-color: var(--amarillo); }/* Borde amarillo */
-.tarjeta-roja    { border-top-color: var(--rojo); }    /* Borde rojo */
+.tarjeta-azul    { border-top-color: var(--azul); }   
+.tarjeta-verde   { border-top-color: var(--verde); }   
+.tarjeta-amarilla{ border-top-color: var(--amarillo); }
+.tarjeta-roja    { border-top-color: var(--rojo); }   
 
-/* El ícono grande dentro de la tarjeta */
+
 .tarjeta-icono {
-  font-size: 28px;          /* Tamaño del emoji */
-  background: var(--fondo3);/* Fondo del cuadro del ícono */
-  width: 58px;              /* Ancho fijo del cuadro */
-  height: 58px;             /* Alto fijo del cuadro */
-  border-radius: 14px;      /* Bordes redondeados del cuadro */
-  display: flex;            /* Para centrar el emoji dentro del cuadro */
-  align-items: center;      /* Centra verticalmente */
-  justify-content: center;  /* Centra horizontalmente */
-  flex-shrink: 0;           /* No se encoge */
+  font-size: 28px;         
+  background: var(--fondo3);
+  width: 58px;             
+  height: 58px;            
+  border-radius: 14px;     
+  display: flex;            
+  align-items: center;      
+  justify-content: center;  
+  flex-shrink: 0;           
 }
 
-/* La etiqueta pequeña (texto descriptivo) */
+
 .tarjeta-etiqueta {
-  font-size: 14px;            /* Letra muy pequeña */
-  color: black;       /* Color gris */
-  text-transform: uppercase;  /* Todo en mayúsculas */
-  letter-spacing: 0.8px;      /* Espacio entre letras */
-  font-weight: 600;           /* Semi-negrita */
-  margin-bottom: 5px;         /* Espacio abajo antes del número */
+  font-size: 14px;            
+  color: black;       
+  text-transform: uppercase;  
+  letter-spacing: 0.8px;      
+  font-weight: 600;           
+  margin-bottom: 5px;         
 }
 
-/* El número grande de la tarjeta */
+
 .tarjeta-numero {
-  font-size: 30px;   /* Letra grande */
-  font-weight: 900;  /* El peso más grueso posible */
-  line-height: 1;    /* Sin espacio extra arriba/abajo */
+  font-size: 30px;   
+  font-weight: 900;  
+  line-height: 1;    
 }
 
-/* Cada tipo de tarjeta tiene su propio color de número */
-.tarjeta-azul     .tarjeta-numero { color: black; } /* Número azul claro */
-.tarjeta-verde    .tarjeta-numero { color: black; } /* Número verde */
-.tarjeta-amarilla .tarjeta-numero { color: black; } /* Número amarillo */
-.tarjeta-roja     .tarjeta-numero { color: black; } /* Número rojo suave */
 
-/*.tarjeta-azul     .tarjeta-numero { color: #4a99fb; } /* Número azul claro */
-/*.tarjeta-verde    .tarjeta-numero { color: #42e1a7; } /* Número verde */
-/*.tarjeta-amarilla .tarjeta-numero { color: #fbbf24; } /* Número amarillo */
-/*.tarjeta-roja     .tarjeta-numero { color: #f87171; } /* Número rojo suave */
+.tarjeta-azul     .tarjeta-numero { color: black; } 
+.tarjeta-verde    .tarjeta-numero { color: black; } 
+.tarjeta-amarilla .tarjeta-numero { color: black; } 
+.tarjeta-roja     .tarjeta-numero { color: black; } 

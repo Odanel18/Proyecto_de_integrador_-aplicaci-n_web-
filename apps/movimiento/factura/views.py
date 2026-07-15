@@ -41,7 +41,6 @@ class FacturaAPIView (APIView):
                     detalles_data = request.data.get('detalles', [])
 
                     # 2. Creamos la factura a mano. 
-                    # Aquí NO incluimos CajaId ni MetodoPagoId porque tu DB no los tiene en esta tabla.
                     factura = Facturas.objects.create(
                         NumFactura=numFactura, 
                         Fecha=fecha, 
@@ -59,7 +58,8 @@ class FacturaAPIView (APIView):
 
                         Validar_datos(item)
                         validar_existencia(id_prod, canti)
-                        subtotal = calcular_subtotal(id_prod, canti)                        
+                        #subtotal = calcular_subtotal(id_prod, canti)  
+                        subtotal= item["Subtotal"]                      
 
                         DetalleFactura.objects.create(
                             Cantidad=canti,

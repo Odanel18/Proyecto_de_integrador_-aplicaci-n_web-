@@ -1,4 +1,5 @@
 const urlAPI = "http://127.0.0.1:8000/";
+//const urlAPI = "https://qv0zgr4k-8000.use2.devtunnels.ms/"
 const formLogin = document.getElementById("formulario");
 
 if (formLogin) {
@@ -45,7 +46,7 @@ async function login(e) {
       localStorage.setItem("refresh", datos.refresh);
       
       // NOTA: El refresco automático y el detector de actividad 
-      // se iniciarán automáticamente al cargar index1.html si importas este script.
+      // se iniciarán automáticamente al cargar index1.html
       window.location.href = "../layout/index1.html";
 
       document.getElementById("username").value = "";
@@ -185,14 +186,11 @@ function ejecutarCierreSesionInactividad() {
   
   // Redirección
   window.location.href = "../login/login.html"; // Asegúrate de que esta ruta apunte bien a tu login
+ // window.location.href = "https://qv0zgr4k-5501.use2.devtunnels.ms/frontend/login/login.html";
 }
 
-/**
- * Escucha los movimientos del usuario. 
- * ¡Debes llamar a esta función cuando cargues tus páginas principales (como index1.html)!
- */
 export function registrarControlInactividad() {
-  const eventos = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+  const eventos = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];// se agrega los eventos
   
   // Cada interacción reiniciará los 5 minutos de gracia
   eventos.forEach(evento => {

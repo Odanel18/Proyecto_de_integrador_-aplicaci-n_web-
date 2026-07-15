@@ -192,50 +192,46 @@
                 </section>
 
                 <section id="caja" class="seccion">
-                     <div class="tabla-contenido">
-                        <div class="tabla-cabecera">
-                            <h2>Caja</h2>
-                        </div>
-                        <p>Contenido de caja</p>
-                    </div>
-                </section>
-
-                <!--
-                
-                <section id="compra" class="seccion">
                     <div class="tabla-contenido">
                         <div class="tabla-cabecera">
-                            <h2>Historial de Compras a Proveedores</h2>
-                            <input type="text" class="buscador" id="buscarCompra" placeholder="🔍 Buscar compra...">
+                            <h2>Lista de caja</h2>
+                            <input type="text" class="buscador" id="buscarCaja" placeholder="🔍 Buscar caja...">
                         </div>
-                        <div class="cargando" id="cargandoCompra">
+                        <div class="cargando" id="cargandoCaja">
                             ⏳ Cargando datos desde la API...
                         </div>
-                        <button class="btn btn-primario" onclick="abrirModalNuevaCompra('crear')">
-                            + Nueva compra
+                        <button class="btn btn-primario" onclick="abrirModalcaja('crear')">
+                            + Nuevo Caja
                         </button>
                     </div>
-
-                    <table class="tabla" id="tablaCompra">
+                        
+                    <table class="tabla" id="tablaCaja">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>N° Compra</th>
-                                <th>Proveedor</th>
-                                <th>Fecha</th>
-                                <th>Total</th>
-                                <th>Condición</th>
-                                <th>Estado</th>
-                                <th>Detalle de compra</th>
+                                <th>Número de caja</th>
+                                <th>Empleado</th>
+                                <th>Saldo inicial</th>
+                                <th>Egreso</th>
+                                <th>Ingreso en efectivo</th>
+                                <th>Ingreso en digital</th>
+                                <th>Saldo final</th>
+                                <th>Fecha de apertura</th>
+                                <th>Fecha de cierre</th>
+                                <th>Detalles</th>
                                 <th>Acciones</th>
+
                             </tr>
                         </thead>
-                        <tbody id="bodyCompra">
+                        <tbody id="bodyCaja">
                         </tbody>
                     </table>
-                </section>
-                -->
 
+                    
+                </section>
+
+
+               
                 <section id="compra" class="seccion">
                     <div class="tabla-contenido">
                         <div class="tabla-cabecera">

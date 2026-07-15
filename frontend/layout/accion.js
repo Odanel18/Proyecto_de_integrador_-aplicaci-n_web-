@@ -62,6 +62,28 @@ if(btnCerraSesion){
   })
 }
 
+// ===== BUSCADOR GLOBAL =====
+
+function activarBuscadorGlobal(idInput, selectorFilas){
+  const buscador = document.getElementById(idInput);
+
+  if (!buscador) return;
+
+  buscador.addEventListener('input', function(){
+    const textoBusqueda = buscador.value.toLowerCase();
+    const filas = document.querySelectorAll(selectorFilas);
+
+    filas.forEach(function(fila){
+      const textoDeFila = fila.textContent.toLowerCase();
+
+      if (textoDeFila.includes(textoBusqueda)){
+        fila.style.display= '';
+      }else{
+        fila.style.display= 'none';
+      }
+    });
+  });
+}
 
 // ==========================================
 // LOGICA DE CLIENTES
@@ -75,12 +97,15 @@ export async function cargarClientes() {
   const tabla = document.getElementById('tablaCliente');
   const tbody = document.getElementById('bodyCliente');
 
+  //parametro para la funcion buscador global
+  const buscadorCliente = document.getElementById('buscarCliente');
+
   cargando.style.display = 'block';
   tabla.classList.remove('visible');
   
   try {
     // REEMPLAZO 1: Usamos tu función con autenticación automática.
-    // Ojo: fetchConAutenticacion ya concatena urlAPI internamente según tu diseño previo.
+    // Ojo: fetchConAutenticacion ya concatena urlAPI internamente según el diseño previo.
     let respuesta = await fetchConAutenticacion('catalogos/clientes/');
     const dato = await respuesta.json();
 
@@ -114,11 +139,19 @@ export async function cargarClientes() {
     tbody.innerHTML = filas;
     cargando.style.display = 'none';
     tabla.classList.add('visible');
+
+    //activar
+    activarBuscadorGlobal('buscarCliente','#bodyCliente tr')
+    
   } catch (error) {
     cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
     console.error('Error en cargarClientes:', error); 
   }
 }
+
+
+
+
 
 // modal cliente
 window.abrirModalCliente = function(modo, id, nombre, apellido, telefono, numCedula) {
@@ -217,10 +250,9 @@ window.eliminarCliente = async function(id, nombre, apellido) {
 // ==========================================
 // 1. IMPORTACIONES AL INICIO DEL ARCHIVO
 // ==========================================
-// Importamos la función estrella de tu auth.js y la URL base si la tienes ahí
+// Importamos la función en el auth.js y la URL base
 //import { fetchConAutenticacion, iniciarRefrescoAutomatico } from './auth.js'; 
 
-//const urlAPI = "http://127.0.0.1:8000"; // Asegúrate de que no choque con las barras diagonales /
 
 // Reavivamos el temporizador automático en esta página
 //iniciarRefrescoAutomatico();
@@ -241,8 +273,8 @@ export async function cargarEmpleados() {
   tabla.classList.remove('visible');
   
   try {
-    // REEMPLAZO 1: Usamos tu función con autenticación automática.
-    // Ojo: fetchConAutenticacion ya concatena urlAPI internamente según tu diseño previo.
+    // Usamos tu función con autenticación automática.
+    // fetchConAutenticacion ya concatena urlAPI internamente según el diseño previo.
     let respuesta = await fetchConAutenticacion('catalogos/empleados/');
     const dato = await respuesta.json();
 
@@ -276,6 +308,10 @@ export async function cargarEmpleados() {
     tbody.innerHTML = filas;
     cargando.style.display = 'none';
     tabla.classList.add('visible');
+
+    //activar
+    activarBuscadorGlobal('buscarEmpleado','#bodyEmpleado tr')
+
   } catch (error) {
     cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
     console.error('Error en cargarEmpleado:', error); 
@@ -332,8 +368,7 @@ window.guardarEmpleado = async function guardarEmpleado() {
     : 'catalogos/empleados/' + empleadoID;
 
   try {
-    // REEMPLAZO 2: Removimos la validación manual del token.
-    // Tu función 'fetchConAutenticacion' inyectará el Header 'Authorization' automáticamente.
+    //la función 'fetchConAutenticacion' inyectará el Header 'Authorization' automáticamente.
     let respuesta = await fetchConAutenticacion(url, {
       method: metodo,
       body: body
@@ -358,7 +393,6 @@ window.eliminarEmpleado = async function(id, nombre, apellido) {
   if (!confirmar) return;
 
   try {
-    // REEMPLAZO 3: Petición DELETE limpia usando tu interceptor automático
     let url = 'catalogos/empleados/' + id;
     let respuesta = await fetchConAutenticacion(url, {
       method: 'DELETE'
@@ -387,8 +421,8 @@ async function cargarFactura() {
   tabla.classList.remove('visible');
   
   try {
-    // REEMPLAZO 1: Usamos tu función con autenticación automática.
-    // Ojo: fetchConAutenticacion ya concatena urlAPI internamente según tu diseño previo.
+    // Usamos tu función con autenticación automática.
+    //fetchConAutenticacion ya concatena urlAPI internamente según el diseño previo.
     let respuesta = await fetchConAutenticacion('movimiento/factura/');
     const dato = await respuesta.json();
 
@@ -418,7 +452,7 @@ async function cargarFactura() {
       // aciones
       filas += '<td class="td-acciones">';
       filas += '<button class="btn-accion btn-editar" '
-              + `onclick="abrirModalFactura('editar', ${factura.id}, '${factura.NumFactura}','${factura.ClienteId}', '${factura.Fecha}','${factura.Total}', '${factura.condicionId}', '${factura.estadoCuentaId}')">`
+              + `onclick="abrirModalfactura('editar', ${factura.id}, '${factura.NumFactura}','${factura.ClienteId}', '${factura.Fecha}','${factura.Total}', '${factura.condicionId}', '${factura.estadoCuentaId}')">`
               + '✏ Editar'              
               + '</button>';
       filas += '<button class="btn-accion btn-eliminar" '
@@ -432,6 +466,9 @@ async function cargarFactura() {
     tbody.innerHTML = filas;
     cargando.style.display = 'none';
     tabla.classList.add('visible');
+
+    activarBuscadorGlobal('buscarFactura','#bodyFactura tr')
+
   } catch (error) {
     cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
     console.error('Error en cargarFactura:', error); 
@@ -453,7 +490,7 @@ async function cargarOpcionesClientes () {
     // value = id (lo que se envía al API como FK)
     // textContent = nombre (lo que ve el usuario)
 
-    //console.log('datos recibidos de la api: ', cliente);
+    //console.log('datos recibidos de la api: ', cliente); //visualizar cuales son los datos enviados
     
     
     for (var i = 0; i < cliente.length; i++) {
@@ -490,7 +527,7 @@ async function cargarOpcionesCondicion () {
     for (var i = 0; i < condicion.length; i++) {
       var c     = condicion[i];
       var option = document.createElement('option');
-      option.value       = c.id;     // ← esto es lo que se envía como "departamento" en el body
+      option.value       = c.id;     // ← esto es lo que se envía como  en el body
       option.textContent =`${c.descripcion}`; // ← esto es lo que ve el usuario
       select.appendChild(option);
     }
@@ -521,7 +558,7 @@ async function cargarOpcionesEstados () {
     for (var i = 0; i < estado.length; i++) {
       var c     = estado[i];
       var option = document.createElement('option');
-      option.value       = c.id;     // ← esto es lo que se envía como "departamento" en el body
+      option.value       = c.id;     // ← esto es lo que se envía en el body
       option.textContent =`${c.descripcion}`; // ← esto es lo que ve el usuario
       select.appendChild(option);
     }
@@ -552,7 +589,7 @@ async function cargarOpcionesDetalles () {
     for (var i = 0; i < detallesP.length; i++) {
       var f      = detallesP[i];
       var option = document.createElement('option');
-      option.value       = f.id;     // ← esto es lo que se envía como "departamento" en el body
+      option.value       = f.id;     // ← esto es lo que se envía  en el body
       option.textContent =`${f.producto_nombre}-marca: ${f.marca_nombre}-Moto: ${f.moto_modelo}`; // ← esto es lo que ve el usuario
       select.appendChild(option);
     }
@@ -598,7 +635,7 @@ window.abrirModalfactura = async function(modo, id, numFactura, clienteId, Fecha
 window.cerrarModalFactura = function(modalfactura) {
 
 
-  let confirmar = window.confirm(`Seguro que quieres anunar la factura`);
+  let confirmar = window.confirm(`Seguro que quieres salirte`);
   if (!confirmar) return;
 
   document.getElementById('facturaNumero').value = '';
@@ -691,7 +728,7 @@ window.ncAgregarFacturaProducto = function() {
         return;
     }
 
-    // 2. CORRECCIÓN DEL ERROR: Buscar en el array temporal usando el ID del producto (prodId)
+    // Buscar en el array temporal usando el ID del producto (prodId)
     const yaExiste = ncFacturaProductosTemp.find(p => String(p.prodId) === String(prodId));
     if (yaExiste) {
         errorEl.textContent = `El producto "${nombreProducto}" ya está en la lista. Quítalo primero si quieres modificarlo.`;
@@ -701,7 +738,7 @@ window.ncAgregarFacturaProducto = function() {
     const subtotal = cantidad * precio;
     ncFacturaContadorFila++;
 
-    // 3. Guardar las propiedades correctas en el objeto (incluyendo una clave única _key para poder borrarlo)
+    // Guardar las propiedades correctas en el objeto (incluyendo una clave única _key para poder borrarlo)
     ncFacturaProductosTemp.push({
         _key: ncFacturaContadorFila,
         prodId: prodId,
@@ -711,7 +748,7 @@ window.ncAgregarFacturaProducto = function() {
         subtotal: subtotal
     });
 
-    // 4. Limpiar campos usando los IDs reales de tu HTML
+    // Limpiar campos usando los IDs reales de tu HTML
     document.getElementById('facturaProducto').value = '';
     document.getElementById('facturaCantidad').value = '';
     document.getElementById('facturaPrecio').value = '';
@@ -758,10 +795,12 @@ window.guardarNuevaFactura = async function() {
 
     // Calcular total directamente desde la tabla temporal
     const totalCalculado = ncFacturaProductosTemp.reduce((acc, p) => acc + p.subtotal, 0);
+    //const totalSu
 
     const detallesFormateados = ncFacturaProductosTemp.map(p => ({
         detalleProductoId: parseInt(p.prodId),
-        Cantidad: parseFloat(p.cantidad)
+        Cantidad: parseFloat(p.cantidad),
+        Subtotal: (p.subtotal),
     }));
 
     const payload = {
@@ -805,6 +844,77 @@ window.guardarNuevaFactura = async function() {
     }
 };
 
+//---------------------------------------------------------------------
+// MODULO DE CAJA
+//----------------------------------------------------------------------
+
+let CajaID=null;
+
+async function cargarCaja() {
+  const cargando = document.getElementById('cargandoCaja');
+  const tabla = document.getElementById('tablaCaja');
+  const tbody = document.getElementById('bodyCaja');
+
+  cargando.style.display = 'block';
+  tabla.classList.remove('visible');
+  
+  try {
+    // Usamos tu función con autenticación automática.
+    //fetchConAutenticacion ya concatena urlAPI internamente según el diseño previo.
+    let respuesta = await fetchConAutenticacion('movimiento/caja/');
+    const dato = await respuesta.json();
+
+    const Caja = Array.isArray(dato) ? dato : dato.results;
+    let filas = "";
+
+    for (let i = 0; i < Caja.length; i++) {
+      let caja = Caja[i];
+
+      filas += '<tr>';
+      filas += '<td>'+ (i+1)+'</td>';
+      filas += '<td class="td-nombreEmp">'+caja.NumCaja+'</td>';
+      filas += '<td>'+caja.Empleado_nombre+'</td>';
+      filas += `<td>C$ ${caja.SaldoInicial}</td>`;
+      filas += `<td>C$ ${caja.Egresos}</td>`;
+      filas += `<td>C$ ${caja.Din_efectivo}</td>`;
+      filas += `<td>C$ ${caja.Din_digital}</td>`;
+      filas += `<td>C$ ${caja.SaldoFinal}</td>`;
+      filas += '<td>'+caja.fecha_incio_formateada+'</td>'
+      filas += '<td>'+caja.fecha_cierre_formateada+'</td>'
+      filas += '<td class="td-acciones">';
+
+      filas += `<button class="btn-accion" style="background:rgba(6,182,212,0.15);color:#0e7490;border:1px solid rgba(6,182,212,0.4);"
+                  ">
+                  🔍 Detalles
+                </button>`;
+      filas += '</td>';
+      
+
+      // aciones
+      filas += '<td class="td-acciones">';
+      filas += '<button class="btn-accion btn-editar" '
+              + `onclick="abrirModalfactura('editar')">`
+              + '✏ Editar'              
+              + '</button>';
+      filas += '<button class="btn-accion btn-eliminar" '
+              + `onclick="eliminarFactura()">`
+              + '🗑 Eliminar'              
+              + '</button>';
+      filas += ' </td>';
+      filas += '</tr>';
+    }
+
+    tbody.innerHTML = filas;
+    cargando.style.display = 'none';
+    tabla.classList.add('visible');
+
+    activarBuscadorGlobal('buscarCaja','#bodyCaja tr')
+
+  } catch (error) {
+    cargando.textContent = '⚠ Error al conectar con la API local. ¿Está corriendo el servidor Django?';
+    console.error('Error en cargarFactura:', error); 
+  }
+}
 
 //------------------------------------------------
 // MODULO DE COMPRA
@@ -869,44 +979,14 @@ export async function cargarCompras() {
     tbody.innerHTML = filas || '<tr><td colspan="9" style="text-align:center;padding:20px;">Sin registros</td></tr>';
     cargando.style.display = 'none';
     tabla.classList.add('visible');
+
+    activarBuscadorGlobal('buscarCompra','#bodyCompra tr')
+    
   } catch (error) {
     cargando.textContent = '⚠ Error al conectar con la API. ¿Está corriendo el servidor Django?';
     console.error('Error en cargarCompras:', error);
   }
 }
-/*
-
-// Abrir modal compra (crear / editar)
-window.modalNuevaCompra = function(modo, id, numCompra, provId, total, condId, estId) {
-
-  //const tablaDetalleCompra = document.getElementById('tablaDetalleCompra')
-
-  //tablaDetalleCompra.classList.add('visible');
-
-  document.getElementById('modalTextCompra').textContent =
-    modo === 'crear' ? 'Nueva Compra' : 'Editar Compra';
-
-  document.getElementById('compraNumero').value    = numCompra  || '';
-  document.getElementById('compraProveedor').value = provId     || '';
-  document.getElementById('compraTotal').value     = total      || '';
-  document.getElementById('compraCondicion').value = condId     || '';
-  document.getElementById('compraEstado').value    = estId      || '';
-
-  const errorEl = document.getElementById('errorCompra');
-  if (errorEl) errorEl.textContent = '';
-
-  compraID = modo === 'editar' ? id : null;
-  document.getElementById('modalCompra').classList.add('activo');
-};
-
-window.cerrarModalCompra = function(idModal) {
-  ['compraNumero','compraProveedor','compraTotal','compraCondicion','compraEstado']
-    .forEach(id => { document.getElementById(id).value = ''; });
-  const errorEl = document.getElementById('errorCompra');
-  if (errorEl) errorEl.textContent = '';
-  document.getElementById(idModal).classList.remove('activo');
-};*/
-
 
 
 // ============================================================
@@ -1211,10 +1291,7 @@ window.guardarNuevaCompra = async function() {
     cargarCompras();   // Refresca el historial de compras
 };
 
-// ============================================================
-//  CSS ADICIONAL (inyectado en <head> automáticamente)
-//  Si prefieres, mueve estos estilos a tu style.css
-// ============================================================
+
 (function inyectarEstilosNuevaCompra() {
     const style = document.createElement('style');
     style.textContent = `
@@ -1305,14 +1382,7 @@ window.guardarNuevaCompra = async function() {
 // ==========================================
 // LÓGICA DE INVENTARIO (Registro_Producto)
 // ==========================================
-// INSTRUCCIÓN: Pega este bloque completo al final de accion.js,
-// y en la línea de ejecución final agrega: cargarInventario();
-// Ejemplo:
-//   cargarClientes();
-//   cargarEmpleados();
-//   cargarFactura();
-//   cargarInventario();   <-- agregar esta línea
-// ==========================================
+
 
 let inventarioID = null;
 
@@ -1394,6 +1464,7 @@ export async function cargarInventario() {
     tbody.innerHTML = filas || '<tr><td colspan="7" style="text-align:center">Sin registros</td></tr>';
     cargando.style.display = 'none';
     tabla.classList.add('visible');
+    activarBuscadorGlobal('buscarInventario','#bodyInventario tr')
 
   } catch (error) {
     cargando.textContent = '⚠ Error al conectar con la API. ¿Está corriendo el servidor Django?';
@@ -1520,6 +1591,7 @@ cargarInventario();
 cargarClientes();
 cargarEmpleados();
 cargarFactura();
+cargarCaja();
 cargarCompras();
 
 

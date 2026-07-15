@@ -38,7 +38,7 @@ def suma_total(factura_id):
     else:
         print('No se encontro factura')
 
-
+# se va omitir por el momento
 def calcular_subtotal (detalle_producto_id, cantidad):
     lote = Registro_Producto.objects.filter(detalleProductoId_id = detalle_producto_id, PrecioVenta__gt=0).first()
 

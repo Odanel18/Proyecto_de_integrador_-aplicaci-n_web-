@@ -47,9 +47,9 @@ class CompraSerializer(ModelSerializer):
 class DetalleCompraSerializer (ModelSerializer):
     class Meta:
         model = DetalleCompra
-        fields= ['Cantidad','detallProductoId','CompraId','PrecioUnitario','Subtotal']
+        fields= ['id','Cantidad','detallProductoId','CompraId','PrecioUnitario','Subtotal']
 
 class CompraCreditoSerialezer (ModelSerializer):
     class Meta:
         model=ComprasCredito
-        fields=['ProveedoresId','CompraId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito']
+        fields=['id','ProveedoresId','CompraId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito']

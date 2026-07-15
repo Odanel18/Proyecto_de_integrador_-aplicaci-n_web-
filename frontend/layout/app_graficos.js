@@ -69,7 +69,7 @@ async function cargarGraficos() {
 
     // 4. INYECTAR DATOS EN LAS TARJETAS HTML
     if (document.getElementById('totalIngresos')) {
-        document.getElementById('totalIngresos').textContent = `$${totalIngresos.toFixed(2)}`;
+        document.getElementById('totalIngresos').textContent = `C$${totalIngresos.toFixed(2)}`;
         document.getElementById('totalUnidades').textContent = totalUnidades;
         document.getElementById('totalTransacciones').textContent = transacciones;
         document.getElementById('totalClientesAtendidos').textContent = clientesUnicos.size;
@@ -89,7 +89,7 @@ async function cargarGraficos() {
         data: {
           labels: Object.keys(agrupadoMes), // Códigos de mes ej: ["202512", "202511"]
           datasets: [{
-            label: 'Ingresos ($)',
+            label: 'Ingresos (C$)',
             data: Object.values(agrupadoMes),
             backgroundColor: 'rgba(59,130,246,0.75)',
             borderRadius: 4
@@ -144,7 +144,7 @@ async function cargarGraficos() {
       
       document.getElementById('graficoCategorias'),
       {
-        // doughnut, para que el digrama tenga un ueco
+        // doughnut, para que el digrama tenga un hueco en el centro
         //pie caso contrario
         type: 'doughnut',
         data: {
@@ -187,7 +187,7 @@ async function cargarGraficos() {
         data: {
           labels: Object.keys(agrupadoEmpleado).map(id => `Empleado ${id}`),
           datasets: [{
-            label: 'Total Vendido ($)',
+            label: 'Total Vendido (C$)',
             data: Object.values(agrupadoEmpleado),
             backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
             borderRadius: 4
