@@ -8,7 +8,7 @@ from .models import Compras,DetalleCompra,ComprasCredito
 from .serializers import CompraSerializer,DetalleCompraSerializer,CompraCreditoSerialezer
 from drf_yasg.utils import swagger_auto_schema
 
-from apps.movimiento.compra.service.compra_validacion import validar_compra,aumentar_stock
+from apps.movimiento.compra.service.compra_validacion import validar_compra
 
 from django.db import transaction
 
@@ -55,7 +55,7 @@ class CompraAPIView (APIView):
                     num_compra = serializer.validated_data.get('NumCompra')
                     fecha = serializer.validated_data.get('Fecha')
 
-                    detalles_data = request.data.get('detalles', [])
+                    detalles_data = request.data.get('detallesCompra', [])
 
                     if not detalles_data:
                         raise ValidationError({"detalles": "Debes incluir al menos un producto en la compra."})

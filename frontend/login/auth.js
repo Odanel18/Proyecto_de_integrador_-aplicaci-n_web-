@@ -197,9 +197,9 @@ export function registrarControlInactividad() {
     document.addEventListener(evento, reiniciarTemporizadorInactividad, true);
   });
 
-  // Iniciar por primera vez el flujo
+  
+}// Iniciar por primera vez el flujo
   reiniciarTemporizadorInactividad();
-}
 
 /**
  * Realiza logout manual (botón cerrar sesión convencional)

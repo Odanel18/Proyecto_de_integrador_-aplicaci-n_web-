@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, SerializerMethodField,JSONField
 from .models import Compras,DetalleCompra,ComprasCredito
 
 
@@ -9,6 +9,8 @@ class CompraSerializer(ModelSerializer):
     condicion_descripcion = SerializerMethodField()
     # Devuelve la descripción del estado de cuenta en lugar del ID
     estado_cuenta_descripcion = SerializerMethodField()
+
+    detallesCompra = JSONField(write_only=True, required=False)  # Campo para recibir los detalles de la compra
 
     class Meta:
         model = Compras
@@ -23,6 +25,7 @@ class CompraSerializer(ModelSerializer):
             'condicion_descripcion',
             'estadoCuentaId',
             'estado_cuenta_descripcion',
+            'detallesCompra'
         ]
 
     def get_proveedor_nombre(self, obj):

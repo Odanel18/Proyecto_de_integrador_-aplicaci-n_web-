@@ -26,7 +26,7 @@ class Compras (models.Model):
 class DetalleCompra (models.Model):
     Cantidad = models.IntegerField(verbose_name="Cantidad")
     detallProductoId = models.ForeignKey (DetalleProductos,verbose_name='Detalle de Productos',on_delete=models.PROTECT)
-    CompraId= models.ForeignKey (Compras,verbose_name="Compra",on_delete=models.PROTECT)
+    CompraId= models.ForeignKey (Compras,related_name='detallesCompra',verbose_name="Compra",on_delete=models.PROTECT)
     PrecioUnitario = models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
     Subtotal= models.DecimalField (verbose_name='Subtotal', max_digits=7, decimal_places=2)
     estado = models.BooleanField(default=True)
