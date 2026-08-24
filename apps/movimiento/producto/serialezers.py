@@ -12,17 +12,19 @@ class DetalleProductoSerializer (ModelSerializer):
     producto_nombre = CharField(source='producto.Nombre', read_only=True)
     marca_nombre = CharField(source='MarcaId.Nombre', read_only=True)
     moto_modelo = CharField(source='MotoId.MarcaId.Nombre', read_only=True)
+    color_nombre = CharField(source='colorId.Color', read_only=True)
 
     class Meta:
         model = DetalleProductos
-        fields = ['id','producto','producto_nombre','MarcaId','marca_nombre','MotoId','moto_modelo','size']
+        fields = ['id','producto','producto_nombre','MarcaId','marca_nombre','MotoId','moto_modelo','size','ColorId','color_nombre']
 
-class Registro_ProductoSerialezer(ModelSerializer):
- nombreProducto = CharField(source = 'detalleProductoId.producto.Nombre', read_only=True)
+class Registro_ProductoSerializer(ModelSerializer):
+ #nombreProducto = CharField(source = 'DetalleCompraId.detalleProductoId.producto.Nombre', read_only=True)
+ #DetalleCompraIdProducto = CharField(source='DetalleCompraId.detalleProductoId.producto.Nombre', read_only=True)
  nombreMarca = CharField(source = 'detalleProductoId.MarcaId.Nombre', read_only=True)
  nombreMoto = CharField(source = 'detalleProductoId.MotoId.MarcaId.Nombre', read_only=True)
  
  
  class Meta:
     model=Registro_Producto
-    fields= ['id','Cantidad','precioCompra','PrecioVenta','FechaRegistro','detalleProductoId','nombreProducto','nombreMarca','nombreMoto']
+    fields= ['id','Cantidad','precioCompra','PrecioVenta','FechaRegistro','DetalleCompraId','nombreMarca','nombreMoto']

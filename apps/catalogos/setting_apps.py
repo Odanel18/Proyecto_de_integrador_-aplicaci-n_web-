@@ -10,4 +10,5 @@ CATALOGOS_SETTING_APPS=[
                             'apps.catalogos.estadoCuenta',
                             'apps.catalogos.condicionPago',
                             'apps.catalogos.origenSaldo',
+                            'apps.catalogos.ColorProducto',
                         ] 

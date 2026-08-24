@@ -12,7 +12,7 @@ class facturaAdmin(admin.ModelAdmin):
 @admin.register(DetalleFactura)
 class detalleFacturaAdmin(admin.ModelAdmin):
     search_fields = ['id','FacturaId']
-    list_display = ['Cantidad', 'Subtotal','detalleProductoId','FacturaId']
+    list_display = ['Cantidad', 'Subtotal','loteId','FacturaId']
 # Register your models here.i
 
 @admin.register(FacturasCredito)

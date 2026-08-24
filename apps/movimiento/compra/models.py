@@ -2,7 +2,6 @@ from django.db import models
 from apps.catalogos.proveedor.models import Proveedores
 from apps.catalogos.condicionPago.models import CondicionPago
 from apps.catalogos.estadoCuenta.models import EstadoCuenta
-from apps.movimiento.producto.models import DetalleProductos
 
 
 # Create your models here.
@@ -25,7 +24,7 @@ class Compras (models.Model):
    
 class DetalleCompra (models.Model):
     Cantidad = models.IntegerField(verbose_name="Cantidad")
-    detallProductoId = models.ForeignKey (DetalleProductos,verbose_name='Detalle de Productos',on_delete=models.PROTECT)
+    detallProductoId = models.ForeignKey('producto.DetalleProductos', verbose_name='Detalle de Productos', on_delete=models.PROTECT)
     CompraId= models.ForeignKey (Compras,related_name='detallesCompra',verbose_name="Compra",on_delete=models.PROTECT)
     PrecioUnitario = models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
     Subtotal= models.DecimalField (verbose_name='Subtotal', max_digits=7, decimal_places=2)

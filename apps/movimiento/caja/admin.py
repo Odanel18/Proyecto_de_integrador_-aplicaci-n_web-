@@ -1,16 +1,21 @@
 from django.contrib import admin
 
-from apps.movimiento.caja.models import Caja , MovimientoCaja
+from apps.movimiento.caja.models import TurnoCaja , MovimientoCaja,Caja
 
 @admin.register(Caja)
 class CajaAdmin(admin.ModelAdmin):
     search_fields = ['id', 'NumCaja']
-    list_display = ['SaldoInicial', 'Egresos','SaldoFinal','FechaApertura','FechaCierre','NumCaja','EmpleadoId','Din_efectivo','Din_digital']
-# Register your models here.
+    list_display = ['NumCaja']
+
+@admin.register(TurnoCaja)
+class TurnoCajaAdmin(admin.ModelAdmin):
+    search_fields = ['id']
+    list_display = ['FechaApertura', 'FechaCierre', 'SaldoInicial', 'Egresos', 'SaldoFinal']
 
 @admin.register(MovimientoCaja)
 class MovimientoCajaAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'cajaId']
-    list_display = ['fecha','tipoMovimientoCajaId', 'monto','facturaid', 'compraid', 'descripcion']
+    search_fields = ['id', 'turnoCajaId']
+    list_display = ['fecha','turnoCajaId','tipoMovimientoCajaId', 'monto','facturaid', 'compraid', 'descripcion']
                     
+               
 

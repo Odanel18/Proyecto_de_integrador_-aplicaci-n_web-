@@ -12,9 +12,9 @@ class ProductoAdmin(admin.ModelAdmin):
 @admin.register(DetalleProductos)
 class DetalleProductosAdmin(admin.ModelAdmin):
     search_fields = ['id', 'producto']
-    list_display = ['producto', 'MarcaId','MotoId',"size"]
+    list_display = ['producto', 'MarcaId','MotoId',"size", 'ColorId']
 
 @admin.register(Registro_Producto)
 class RegistroProductoAdmin(admin.ModelAdmin):
-    search_fields=['id','detalleProductoId']
-    list_display=['detalleProductoId','Cantidad','FechaRegistro','PrecioVenta','precioCompra']
+    search_fields=['id','DetalleCompraId']
+    list_display=['DetalleCompraId','Cantidad','FechaRegistro','PrecioVenta','precioCompra']

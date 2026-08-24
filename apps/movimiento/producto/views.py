@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Productos, DetalleProductos,Registro_Producto
-from .serialezers import ProductoSerializer,DetalleProductoSerializer,Registro_ProductoSerialezer
+from .serialezers import ProductoSerializer,DetalleProductoSerializer,Registro_ProductoSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 class ProductoAPIView (APIView):
@@ -88,18 +88,18 @@ class DetalleProductosIDAPIView(APIView):
 
 class Registro_ProductoApiView(APIView):
     def get(self, request):
-     Serializer= Registro_ProductoSerialezer(Registro_Producto.objects.using('default').filter(estado=True).order_by('-id'), many=True)
+     Serializer= Registro_ProductoSerializer(Registro_Producto.objects.using('default').filter(estado=True).order_by('-id'), many=True)
      return Response(status=status.HTTP_200_OK, data=Serializer.data)
     
-    @swagger_auto_schema(request_body=Registro_ProductoSerialezer, responses={201: Registro_ProductoSerialezer})
+    @swagger_auto_schema(request_body=Registro_ProductoSerializer, responses={201: Registro_ProductoSerializer})
     def post(self,request):
-        Serializer= Registro_ProductoSerialezer(data=request.data)
+        Serializer= Registro_ProductoSerializer(data=request.data)
         Serializer.is_valid(raise_exception=True)
         Serializer.save()
         return Response (status=status.HTTP_201_CREATED, data=Serializer.data)
 
 class Registro_ProductoIDAPIView(APIView):   
-    @swagger_auto_schema(request_body=Registro_ProductoSerialezer, responses={200: Registro_ProductoSerialezer})
+    @swagger_auto_schema(request_body=Registro_ProductoSerializer, responses={200: Registro_ProductoSerializer})
     def patch(self, request, pk):
         
         try:
@@ -107,7 +107,7 @@ class Registro_ProductoIDAPIView(APIView):
         except Registro_Producto.DoesNotExist:
             return Response({'error': 'Lote no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = Registro_ProductoSerialezer(inventarioLote, data=request.data, partial=True)
+        serializer = Registro_ProductoSerializer(inventarioLote, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

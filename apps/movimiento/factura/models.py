@@ -3,7 +3,7 @@ from django.db import models
 from apps.catalogos.clientes.models import Clientes
 from apps.catalogos.condicionPago.models import CondicionPago
 from apps.catalogos.estadoCuenta.models import EstadoCuenta
-from apps.movimiento.producto.models import DetalleProductos
+from apps.movimiento.producto.models import Registro_Producto
 
 class Facturas(models.Model):
     NumFactura= models.IntegerField(verbose_name='Número de factura')
@@ -25,7 +25,7 @@ class Facturas(models.Model):
 class DetalleFactura (models.Model):
     Cantidad = models.IntegerField(verbose_name="Cantidad")
     Subtotal= models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
-    detalleProductoId = models.ForeignKey (DetalleProductos,verbose_name='Detalle de productos',on_delete=models.PROTECT)
+    loteId = models.ForeignKey (Registro_Producto,verbose_name='Detalle de productos',on_delete=models.PROTECT)
     FacturaId= models.ForeignKey (Facturas,related_name='detalles',verbose_name="Factura",on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
     class Meta:

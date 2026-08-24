@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status,generics
 
-from .models import Caja,MovimientoCaja
-from .serializers import CajaSerializer,MovimientoCajaSerialiezer
+from .models import TurnoCaja,MovimientoCaja,Caja
+from .serializers import CajaSerializer,TurnoCajaSerializer,MovimientoCajaSerialiezer
 from drf_yasg.utils import swagger_auto_schema
 
 class CajaApiView(APIView):
@@ -41,6 +41,45 @@ class CajaIDAPIView(APIView):
             caja = Caja.objects.filter(estado=True).get(pk=pk)
         except Caja.DoesNotExist:
             return Response({'error': 'Caja no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        caja.estado=False # Eliminado logico
+        caja.save()
+        return Response(status=status.HTTP_204_NO_CONTENT) 
+
+class TurnoCajaApiView(APIView):
+    def get(self, request):
+     Serializer= TurnoCajaSerializer(TurnoCaja.objects.using('default').filter(estado=True).order_by('-FechaCierre'), many=True)
+     return Response(status=status.HTTP_200_OK, data=Serializer.data)
+    
+    @swagger_auto_schema(request_body=TurnoCajaSerializer, responses={201: TurnoCajaSerializer})
+    def post(self, resquest):
+       serializer=TurnoCajaSerializer(data= resquest.data)
+       serializer.is_valid(raise_exception=True)
+       serializer.save()
+       return Response(data=serializer.data)
+    
+class TurnoCajaIDAPIView(APIView):   
+    @swagger_auto_schema(request_body=TurnoCajaSerializer, responses={200: TurnoCajaSerializer})
+    def patch(self, request, pk):
+        
+        try:
+            caja = TurnoCaja.objects.filter(estado=True).get(pk=pk)
+        except TurnoCaja.DoesNotExist:
+            return Response({'error': 'Turno de caja no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = TurnoCajaSerializer(caja, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(responses={204: 'No Content'})
+    def delete(self, request, pk):
+      
+        try:
+            caja = TurnoCaja.objects.filter(estado=True).get(pk=pk)
+        except TurnoCaja.DoesNotExist:
+            return Response({'error': 'Turno de caja no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         caja.estado=False # Eliminado logico
         caja.save()
