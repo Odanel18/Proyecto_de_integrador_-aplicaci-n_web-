@@ -3,8 +3,8 @@ from django.db import models
 # Create your models here.
 from apps.catalogos.empleados.models import Empleados
 from apps.catalogos.tipoMovimientoCaja.models import TipoMovimientoCaja
-from apps.movimiento.factura.models import Facturas
-from apps.movimiento.compra.models import Compras
+from apps.movimiento.factura.models import Facturas,FacturasCredito
+from apps.movimiento.compra.models import Compras,ComprasCredito
 
 class Caja (models.Model):
     NumCaja= models.IntegerField(verbose_name='Numero de caja')
@@ -44,6 +44,8 @@ class MovimientoCaja (models.Model):
     facturaid= models.ForeignKey(Facturas,verbose_name='Factura', null=True, blank=True, on_delete=models.PROTECT)
     compraid= models.ForeignKey(Compras,verbose_name='Compra', null=True, blank=True, on_delete=models.PROTECT)
     descripcion = models.CharField (verbose_name='Descripcion', null=True, blank=True,  max_length=300)
+    compraCreditoId= models.ForeignKey(ComprasCredito, verbose_name='Compra al credito', null=True, blank=True, on_delete=models.PROTECT)
+    facturaCreditoId = models.ForeignKey(FacturasCredito, verbose_name='Factura al credito', null=True, blank=True, on_delete=models.PROTECT)
     estado= models.BooleanField(default=True)
     
     class Meta:

@@ -6,16 +6,16 @@ from apps.movimiento.factura.models import FacturasCredito
 @admin.register(Facturas)
 class facturaAdmin(admin.ModelAdmin):
     search_fields = ['id', 'NumFactura']
-    list_display = ['NumFactura','Fecha', 'ClienteId','condicionId','estadoCuentaId','Total']
+    list_display = ['NumFactura','Fecha','condicionId','Total']
 # Register your models here.
 
 @admin.register(DetalleFactura)
 class detalleFacturaAdmin(admin.ModelAdmin):
     search_fields = ['id','FacturaId']
-    list_display = ['Cantidad', 'Subtotal','loteId','FacturaId']
-# Register your models here.i
+    list_display = ['Cantidad','PrecioUnitario', 'Subtotal','loteId','FacturaId']
+# Register your models here.
 
 @admin.register(FacturasCredito)
 class FacturasCreditoAdmin(admin.ModelAdmin):
     search_fields=['id', 'FacturaId']
-    list_display = ['ClienteId', 'FechaInicioCredito', 'montoTotalCredito', 'saldoPendiente', 'FechaLimiteCredito']
+    list_display = ['FechaInicioCredito', 'montoTotalCredito', 'saldoPendiente', 'FechaLimiteCredito']

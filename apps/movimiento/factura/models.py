@@ -11,7 +11,7 @@ class Facturas(models.Model):
     Total = models.DecimalField(verbose_name='Total',max_digits=10, decimal_places=2)
     ClienteId = models.ForeignKey(Clientes, verbose_name='Clientes', on_delete=models.PROTECT)
     condicionId = models.ForeignKey(CondicionPago, verbose_name='Condición del pago', on_delete=models.PROTECT)
-    estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
+    #estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
     
     class Meta :
@@ -24,6 +24,7 @@ class Facturas(models.Model):
 # Create your models here.
 class DetalleFactura (models.Model):
     Cantidad = models.IntegerField(verbose_name="Cantidad")
+    PrecioUnitario = models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
     Subtotal= models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
     loteId = models.ForeignKey (Registro_Producto,verbose_name='Detalle de productos',on_delete=models.PROTECT)
     FacturaId= models.ForeignKey (Facturas,related_name='detalles',verbose_name="Factura",on_delete=models.PROTECT)
@@ -34,12 +35,14 @@ class DetalleFactura (models.Model):
         return f"{self.FacturaId}"
 
 class FacturasCredito (models.Model):
-    ClienteId = models.ForeignKey(Clientes, verbose_name='Clientes', on_delete=models.PROTECT)
+    #se va eliminar el campo de clienteID ?
+    #ClienteId = models.ForeignKey(Clientes, verbose_name='Clientes', on_delete=models.PROTECT)
     FacturaId= models.ForeignKey (Facturas,verbose_name="Factura",on_delete=models.PROTECT)
     FechaInicioCredito = models.DateTimeField(verbose_name='Fecha de inicio')
     montoTotalCredito = models.DecimalField(verbose_name='Monto total del credito', max_digits=10, decimal_places=2)
     saldoPendiente = models.DecimalField(verbose_name='Saldo pendiente',max_digits=10, decimal_places=2)
     FechaLimiteCredito = models.DateTimeField(verbose_name='Fecha limite')
+    estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
 
     class Meta:

@@ -8,7 +8,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('empleados', '0003_empleados_estado'),
-        ('abono', '0003_remove_abonos_cajaid'),
         ('caja', '0010_remove_caja_abierta'),
     ]
 

@@ -8,7 +8,7 @@ class CompraSerializer(ModelSerializer):
     # Devuelve la descripción de la condición de pago en lugar del ID
     condicion_descripcion = SerializerMethodField()
     # Devuelve la descripción del estado de cuenta en lugar del ID
-    estado_cuenta_descripcion = SerializerMethodField()
+    #estado_cuenta_descripcion = SerializerMethodField()
 
     detallesCompra = JSONField(write_only=True, required=False)  # Campo para recibir los detalles de la compra
 
@@ -23,7 +23,6 @@ class CompraSerializer(ModelSerializer):
             'proveedor_nombre',
             'condicionId',
             'condicion_descripcion',
-            'estadoCuentaId',
             'estado_cuenta_descripcion',
             'detallesCompra'
         ]
@@ -40,7 +39,7 @@ class CompraSerializer(ModelSerializer):
             return obj.condicionId.descripcion
         return '-'
 
-    def get_estado_cuenta_descripcion(self, obj):
+    #def get_estado_cuenta_descripcion(self, obj):
         # Retorna la descripción del estado de cuenta relacionado
         if obj.estadoCuentaId:
             # Ajusta el nombre del campo según tu modelo EstadoCuenta
@@ -55,4 +54,4 @@ class DetalleCompraSerializer (ModelSerializer):
 class CompraCreditoSerialezer (ModelSerializer):
     class Meta:
         model=ComprasCredito
-        fields=['id','ProveedoresId','CompraId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito']
+        fields=['id','CompraId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito','estadoCuentaId']

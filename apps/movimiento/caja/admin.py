@@ -15,7 +15,7 @@ class TurnoCajaAdmin(admin.ModelAdmin):
 @admin.register(MovimientoCaja)
 class MovimientoCajaAdmin(admin.ModelAdmin):
     search_fields = ['id', 'turnoCajaId']
-    list_display = ['fecha','turnoCajaId','tipoMovimientoCajaId', 'monto','facturaid', 'compraid', 'descripcion']
+    list_display = ['fecha','turnoCajaId','tipoMovimientoCajaId', 'monto','facturaid', 'compraid', 'descripcion','compraCreditoId','facturaCreditoId']
                     
                
 

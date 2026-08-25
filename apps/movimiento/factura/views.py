@@ -33,7 +33,7 @@ class FacturaAPIView (APIView):
                     # Extraemos las instancias validadas por Django
                     cliente = serializer.validated_data.get('ClienteId')
                     condicion = serializer.validated_data.get('condicionId')
-                    estadofactura = serializer.validated_data.get('estadoCuentaId')
+                    #estadofactura = serializer.validated_data.get('estadoCuentaId')
                     numFactura = serializer.validated_data.get('NumFactura')
                     fecha = serializer.validated_data.get('Fecha')
                     
@@ -47,7 +47,7 @@ class FacturaAPIView (APIView):
                         ClienteId=cliente, 
                         Total=0, 
                         condicionId=condicion,
-                        estadoCuentaId=estadofactura
+                        #estadoCuentaId=estadofactura
                     )
                    
                     # 3. Procesamos los artículos uno a uno

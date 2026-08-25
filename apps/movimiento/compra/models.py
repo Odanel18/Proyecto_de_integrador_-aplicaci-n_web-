@@ -11,7 +11,7 @@ class Compras (models.Model):
     Fecha= models.DateTimeField()
     Total = models.IntegerField(verbose_name="Total de la compra")
     condicionId = models.ForeignKey(CondicionPago, verbose_name='Condición del pago', on_delete=models.PROTECT)
-    estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
+    #estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
     ProveedoresId= models.ForeignKey(Proveedores,verbose_name='Proveedor',on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
     
@@ -37,12 +37,14 @@ class DetalleCompra (models.Model):
         return f"{self.CompraId}"
 
 class ComprasCredito (models.Model):
-    ProveedoresId = models.ForeignKey(Proveedores, verbose_name='Proveedores', on_delete=models.PROTECT)
+    #productoID se va a eliminar 
+    #ProveedoresId = models.ForeignKey(Proveedores, verbose_name='Proveedores', on_delete=models.PROTECT)
     CompraId= models.ForeignKey (Compras,verbose_name="Compra",on_delete=models.PROTECT)
     FechaInicioCredito = models.DateTimeField(verbose_name='Fecha de inicio')
     montoTotalCredito = models.DecimalField(verbose_name='Monto total del credito', max_digits=10, decimal_places=2)
     saldoPendiente = models.DecimalField(verbose_name='Saldo pendiente',max_digits=10, decimal_places=2)
     FechaLimiteCredito = models.DateTimeField(verbose_name='Fecha limite')
+    estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
 
     class Meta:

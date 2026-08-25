@@ -14,7 +14,7 @@ class FacturaSerializer (ModelSerializer):
     cliente_nombre = CharField(source='ClienteId.Nombres', read_only=True)
     cliente_cedula = CharField(source='ClienteId.NumCedula', read_only=True)
     condicion_nombre= CharField(source="condicionId.descripcion", read_only=True)
-    estadoCuenta_nommbre= CharField(source='estadoCuentaId.descripcion', read_only=True )
+    #estadoCuenta_nommbre= CharField(source='estadoCuentaId.descripcion', read_only=True )
     fecha_formateada= DateTimeField(source='Fecha',format='%d/%m/%Y %I:%M:%S %p',read_only=True)
     #facturaId = CharField(source='id', read_only=True)
 
@@ -24,12 +24,12 @@ class FacturaSerializer (ModelSerializer):
     class Meta:
         model = Facturas
         fields= ['NumFactura','Fecha','fecha_formateada','ClienteId','condicionId'
-                 ,'estadoCuentaId','cliente_nombre','cliente_cedula','condicion_nombre','estadoCuenta_nommbre','detalles','Total']
+                 ,'cliente_nombre','cliente_cedula','condicion_nombre','detalles','Total']
         #read_only_fields = ['id', 'Total', 'fecha_formateada']
 
 
 class FacturaCreditoSerializer (ModelSerializer):
     class Meta:
         model= FacturasCredito
-        fields= ['ClienteId','FacturaId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito']
+        fields= ['FacturaId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito']
         
