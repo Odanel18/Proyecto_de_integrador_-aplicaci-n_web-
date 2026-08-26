@@ -9,6 +9,5 @@ CATALOGOS_SETTING_APPS=[
                             'apps.catalogos.tipoMovimientoCaja',
                             'apps.catalogos.estadoCuenta',
                             'apps.catalogos.condicionPago',
-                            'apps.catalogos.origenSaldo',
                             'apps.catalogos.ColorProducto',
                         ] 

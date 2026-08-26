@@ -1,9 +1,8 @@
 from django.db import models
-
 from apps.catalogos.clientes.models import Clientes
 from apps.catalogos.condicionPago.models import CondicionPago
 from apps.catalogos.estadoCuenta.models import EstadoCuenta
-from apps.movimiento.producto.models import Registro_Producto
+from apps.movimiento.producto.models import RegistroProducto
 
 class Facturas(models.Model):
     NumFactura= models.IntegerField(verbose_name='Número de factura')
@@ -11,7 +10,6 @@ class Facturas(models.Model):
     Total = models.DecimalField(verbose_name='Total',max_digits=10, decimal_places=2)
     ClienteId = models.ForeignKey(Clientes, verbose_name='Clientes', on_delete=models.PROTECT)
     condicionId = models.ForeignKey(CondicionPago, verbose_name='Condición del pago', on_delete=models.PROTECT)
-    #estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
     
     class Meta :
@@ -21,12 +19,11 @@ class Facturas(models.Model):
         return f"Facturara {self.NumFactura} -  al cliente {self.ClienteId}"
     
 
-# Create your models here.
 class DetalleFactura (models.Model):
     Cantidad = models.IntegerField(verbose_name="Cantidad")
     PrecioUnitario = models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
     Subtotal= models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
-    loteId = models.ForeignKey (Registro_Producto,verbose_name='Detalle de productos',on_delete=models.PROTECT)
+    loteId = models.ForeignKey (RegistroProducto,verbose_name='Detalle de productos',on_delete=models.PROTECT)
     FacturaId= models.ForeignKey (Facturas,related_name='detalles',verbose_name="Factura",on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
     class Meta:
@@ -35,8 +32,6 @@ class DetalleFactura (models.Model):
         return f"{self.FacturaId}"
 
 class FacturasCredito (models.Model):
-    #se va eliminar el campo de clienteID ?
-    #ClienteId = models.ForeignKey(Clientes, verbose_name='Clientes', on_delete=models.PROTECT)
     FacturaId= models.ForeignKey (Facturas,verbose_name="Factura",on_delete=models.PROTECT)
     FechaInicioCredito = models.DateTimeField(verbose_name='Fecha de inicio')
     montoTotalCredito = models.DecimalField(verbose_name='Monto total del credito', max_digits=10, decimal_places=2)

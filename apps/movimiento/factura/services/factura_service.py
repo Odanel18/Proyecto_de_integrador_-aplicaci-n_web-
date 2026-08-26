@@ -1,4 +1,4 @@
-from apps.movimiento.producto.models import Registro_Producto
+from apps.movimiento.producto.models import RegistroProducto
 from apps.movimiento.factura.models import Facturas, DetalleFactura
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
@@ -17,7 +17,7 @@ def Validar_datos(datos_cantidad):
     return True
 
 def validar_existencia (detalle_Produto_Id, stock_solicitado):
-    resultado= Registro_Producto.objects.filter(detalleProductoId_id=detalle_Produto_Id, Cantidad__gt=0, PrecioVenta__gt=0).aggregate(total=Sum('Cantidad'))
+    resultado= RegistroProducto.objects.filter(detalleProductoId_id=detalle_Produto_Id, Cantidad__gt=0, PrecioVenta__gt=0).aggregate(total=Sum('Cantidad'))
 
     total_stock=resultado['total'] or 0
 
@@ -40,7 +40,7 @@ def suma_total(factura_id):
 
 # se va omitir por el momento
 def calcular_subtotal (detalle_producto_id, cantidad):
-    lote = Registro_Producto.objects.filter(detalleProductoId_id = detalle_producto_id, PrecioVenta__gt=0).first()
+    lote = RegistroProducto.objects.filter(detalleProductoId_id = detalle_producto_id, PrecioVenta__gt=0).first()
 
 
     if not lote:
@@ -55,7 +55,7 @@ def descontar_stock(detalle_producto_id, cantidad_vendida):
     #Buscar lotes antiguos
     # lotes es una variables= busca los productos solicitados en detalle de factura, busca los lotes con una cantidad mayor a 0
     # Y todos estos registros ordenados por fecha de registro, que a parece en la tabla registro_Producto
-    lotes = Registro_Producto.objects.filter(detalleProductoId_id = detalle_producto_id, Cantidad__gt=0, PrecioVenta__gt=0).order_by('FechaRegistro')
+    lotes = RegistroProducto.objects.filter(detalleProductoId_id = detalle_producto_id, Cantidad__gt=0, PrecioVenta__gt=0).order_by('FechaRegistro')
     # Esto es para ver los resultados en consolas para saber si funciona adecuadamente
     # imprime los loste con relacion con el id de detalleProducto y los cuentas con la funcion count()
     print("Los lotes encontrados: ", lotes.count())

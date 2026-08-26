@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer,CharField
-from .models import Productos,DetalleProductos,Registro_Producto
+from .models import Productos,DetalleProductos,RegistroProducto
 
 class ProductoSerializer (ModelSerializer):
     class Meta:
@@ -26,5 +26,5 @@ class Registro_ProductoSerializer(ModelSerializer):
  
  
  class Meta:
-    model=Registro_Producto
+    model=RegistroProducto
     fields= ['id','Cantidad','precioCompra','PrecioVenta','FechaRegistro','DetalleCompraId','nombreMarca','nombreMoto']

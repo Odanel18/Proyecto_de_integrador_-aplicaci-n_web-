@@ -1,7 +1,7 @@
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
 from apps.movimiento.compra.models import DetalleCompra
-from apps.movimiento.producto.models import Registro_Producto
+from apps.movimiento.producto.models import RegistroProducto
 
 
 
@@ -21,7 +21,7 @@ def validar_compra(datos):
 
 def aumentar_stock(detalle_ProductoId, cantidad, precio_unitario):
     precioVenta=0
-    nuevo_lote=Registro_Producto.objects.create(detalleProductoId_id=detalle_ProductoId,Cantidad=cantidad, precioCompra=precio_unitario, PrecioVenta=precioVenta)
+    nuevo_lote=RegistroProducto.objects.create(detalleProductoId_id=detalle_ProductoId,Cantidad=cantidad, precioCompra=precio_unitario, PrecioVenta=precioVenta)
 
     print(f'Nuevo lote creado: ID {nuevo_lote}, con {cantidad} unidades. ')
     return nuevo_lote

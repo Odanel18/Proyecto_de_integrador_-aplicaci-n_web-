@@ -1,4 +1,4 @@
-from apps.movimiento.producto.models import DetalleProductos, Registro_Producto
+from apps.movimiento.producto.models import DetalleProductos, RegistroProducto
 from apps.movimiento.compra.models import Compras, DetalleCompra
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
@@ -137,7 +137,7 @@ def aumentar_stock(detalle_producto_id, cantidad, precio_unitario, precio_venta=
     Cada compra genera un nuevo lote de inventario (Registro_Producto),
     igual que antes, pero ahora centralizado en el servicio.
     """
-    nuevo_lote = Registro_Producto.objects.create(
+    nuevo_lote = RegistroProducto.objects.create(
         detalleProductoId_id=detalle_producto_id,
         Cantidad=cantidad,
         precioCompra=precio_unitario,

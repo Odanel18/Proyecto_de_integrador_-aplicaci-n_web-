@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 class TipoMovimientoCaja (models.Model):
     Tipo=models.CharField(verbose_name='Tipo', max_length=50)
     estado=models.BooleanField(default=True)

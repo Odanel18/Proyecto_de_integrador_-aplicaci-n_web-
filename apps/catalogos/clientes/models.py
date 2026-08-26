@@ -1,8 +1,5 @@
 from django.db import models
 
-"""
-Clientes
-"""
 class Clientes(models.Model):
     Nombres = models.CharField(verbose_name='Nombres', max_length=100)
     Apellidos = models.CharField(verbose_name="Apellidos", max_length=100)

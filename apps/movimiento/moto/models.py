@@ -1,6 +1,6 @@
 from django.db import models
 from apps.movimiento.marca.models import Marcas
-# Create your models here.
+
 class Motos (models.Model):
     Modelo = models.CharField(verbose_name='Modelos',max_length=60)
     Año = models.DateField (verbose_name='Año')

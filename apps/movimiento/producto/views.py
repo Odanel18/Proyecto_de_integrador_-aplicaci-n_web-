@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Productos, DetalleProductos,Registro_Producto
+from .models import Productos, DetalleProductos,RegistroProducto
 from .serialezers import ProductoSerializer,DetalleProductoSerializer,Registro_ProductoSerializer
 from drf_yasg.utils import swagger_auto_schema
 
@@ -88,7 +88,7 @@ class DetalleProductosIDAPIView(APIView):
 
 class Registro_ProductoApiView(APIView):
     def get(self, request):
-     Serializer= Registro_ProductoSerializer(Registro_Producto.objects.using('default').filter(estado=True).order_by('-id'), many=True)
+     Serializer= Registro_ProductoSerializer(RegistroProducto.objects.using('default').filter(estado=True).order_by('-id'), many=True)
      return Response(status=status.HTTP_200_OK, data=Serializer.data)
     
     @swagger_auto_schema(request_body=Registro_ProductoSerializer, responses={201: Registro_ProductoSerializer})
@@ -103,8 +103,8 @@ class Registro_ProductoIDAPIView(APIView):
     def patch(self, request, pk):
         
         try:
-            inventarioLote = Registro_Producto.objects.filter(estado=True).get(pk=pk)
-        except Registro_Producto.DoesNotExist:
+            inventarioLote = RegistroProducto.objects.filter(estado=True).get(pk=pk)
+        except RegistroProducto.DoesNotExist:
             return Response({'error': 'Lote no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = Registro_ProductoSerializer(inventarioLote, data=request.data, partial=True)
@@ -117,8 +117,8 @@ class Registro_ProductoIDAPIView(APIView):
     def delete(self, request, pk):
       
         try:
-            inventarioLote = Registro_Producto.objects.filter(estado=True).get(pk=pk)
-        except Registro_Producto.DoesNotExist:
+            inventarioLote = RegistroProducto.objects.filter(estado=True).get(pk=pk)
+        except RegistroProducto.DoesNotExist:
             return Response({'error': 'Lote no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         inventarioLote.estado=False # Eliminado logico

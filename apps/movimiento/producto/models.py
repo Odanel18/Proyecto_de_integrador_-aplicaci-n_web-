@@ -7,7 +7,7 @@ from apps.catalogos.ColorProducto.models import ColorProducto
 
 
 class Productos(models.Model):
-    Codigo = models.CharField(verbose_name='Código', max_length=30)
+    
     Nombre = models.CharField(verbose_name='Nombre', max_length=50)
     CategoriaId = models.ForeignKey(Categorias, verbose_name='Categoria', on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
@@ -20,6 +20,8 @@ class Productos(models.Model):
 
 
 class DetalleProductos(models.Model):
+
+    Codigo = models.CharField(verbose_name='Código', max_length=30, null=True, blank=True)
     producto = models.ForeignKey(Productos, verbose_name='Producto', on_delete=models.PROTECT)
     MarcaId = models.ForeignKey(Marcas, verbose_name='Marca', on_delete=models.PROTECT)
     MotoId = models.ForeignKey(Motos, verbose_name='Moto', on_delete=models.PROTECT)
@@ -33,16 +35,15 @@ class DetalleProductos(models.Model):
     def __str__(self):
         return f"Codigo del produto {self.producto.Codigo} - nombre {self.producto.Nombre} - marca del producto {self.MarcaId.Nombre} - modelo de moto {self.MotoId} - color {self.ColorId.Color}"
 
-#Lotes 
-class Registro_Producto(models.Model):
+class RegistroProducto(models.Model):
 
     Cantidad = models.IntegerField(verbose_name='Cantidad')
-    precioCompra = models.DecimalField(verbose_name='Precio de compra', max_digits=10, decimal_places=2)
+    precioCosto = models.DecimalField(verbose_name='Precio de costo', max_digits=10, decimal_places=2)
     PrecioVenta = models.DecimalField(verbose_name='Precio de venta', max_digits=10, decimal_places=2)
     FechaRegistro = models.DateTimeField(verbose_name='Fecha de registro',auto_now_add=True)
-    #detalleProductoId= models.ForeignKey(DetalleProductos, verbose_name='Descripción del producto', on_delete=models.PROTECT)
-    estado = models.BooleanField(default=True)
     DetalleCompraId = models.ForeignKey('compra.DetalleCompra', verbose_name='Detalle de compra', on_delete=models.PROTECT)
+    estado = models.BooleanField(default=True)
+    
 
     class Meta:
         verbose_name_plural = 'Registro de productos'

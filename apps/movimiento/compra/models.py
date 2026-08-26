@@ -3,15 +3,11 @@ from apps.catalogos.proveedor.models import Proveedores
 from apps.catalogos.condicionPago.models import CondicionPago
 from apps.catalogos.estadoCuenta.models import EstadoCuenta
 
-
-# Create your models here.
-
 class Compras (models.Model):
-    NumCompra= models.IntegerField(verbose_name='Número de compra')
+    NumCompra= models.CharField(verbose_name='Número de compra', max_length=100)
     Fecha= models.DateTimeField()
-    Total = models.IntegerField(verbose_name="Total de la compra")
+    Total = models.DecimalField(verbose_name="Total de la compra", max_digits=10, decimal_places=2)
     condicionId = models.ForeignKey(CondicionPago, verbose_name='Condición del pago', on_delete=models.PROTECT)
-    #estadoCuentaId= models.ForeignKey(EstadoCuenta, verbose_name='Estado de la factura', on_delete=models.PROTECT)
     ProveedoresId= models.ForeignKey(Proveedores,verbose_name='Proveedor',on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)
     
@@ -37,8 +33,6 @@ class DetalleCompra (models.Model):
         return f"{self.CompraId}"
 
 class ComprasCredito (models.Model):
-    #productoID se va a eliminar 
-    #ProveedoresId = models.ForeignKey(Proveedores, verbose_name='Proveedores', on_delete=models.PROTECT)
     CompraId= models.ForeignKey (Compras,verbose_name="Compra",on_delete=models.PROTECT)
     FechaInicioCredito = models.DateTimeField(verbose_name='Fecha de inicio')
     montoTotalCredito = models.DecimalField(verbose_name='Monto total del credito', max_digits=10, decimal_places=2)
