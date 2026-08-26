@@ -23,7 +23,7 @@ class CompraSerializer(ModelSerializer):
             'proveedor_nombre',
             'condicionId',
             'condicion_descripcion',
-            'estado_cuenta_descripcion',
+            #'estado_cuenta_descripcion',
             'detallesCompra'
         ]
 
@@ -49,9 +49,12 @@ class CompraSerializer(ModelSerializer):
 class DetalleCompraSerializer (ModelSerializer):
     class Meta:
         model = DetalleCompra
-        fields= ['id','Cantidad','detallProductoId','CompraId','PrecioUnitario','Subtotal']
+        fields= ['id','Cantidad','detallProductoId',
+                 'CompraId','PrecioUnitario','Subtotal']
 
 class CompraCreditoSerialezer (ModelSerializer):
     class Meta:
         model=ComprasCredito
-        fields=['id','CompraId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito','estadoCuentaId']
+        fields=['id','CompraId','FechaInicioCredito',
+                'montoTotalCredito','saldoPendiente',
+                'FechaLimiteCredito','estadoCuentaId']

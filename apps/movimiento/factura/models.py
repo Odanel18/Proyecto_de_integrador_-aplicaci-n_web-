@@ -6,7 +6,7 @@ from apps.movimiento.producto.models import RegistroProducto
 
 class Facturas(models.Model):
     NumFactura= models.IntegerField(verbose_name='Número de factura')
-    Fecha = models.DateTimeField(verbose_name='Fecha')
+    Fecha = models.DateTimeField(auto_now_add=True,verbose_name='Fecha')
     Total = models.DecimalField(verbose_name='Total',max_digits=10, decimal_places=2)
     ClienteId = models.ForeignKey(Clientes, verbose_name='Clientes', on_delete=models.PROTECT)
     condicionId = models.ForeignKey(CondicionPago, verbose_name='Condición del pago', on_delete=models.PROTECT)
@@ -21,8 +21,8 @@ class Facturas(models.Model):
 
 class DetalleFactura (models.Model):
     Cantidad = models.IntegerField(verbose_name="Cantidad")
-    PrecioUnitario = models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
-    Subtotal= models.DecimalField (verbose_name='Precio costo',max_digits=7, decimal_places=2)
+    PrecioUnitario = models.DecimalField (verbose_name='Precio unitario',max_digits=7, decimal_places=2)
+    Subtotal= models.DecimalField (verbose_name='Subtotal',max_digits=7, decimal_places=2)
     loteId = models.ForeignKey (RegistroProducto,verbose_name='Detalle de productos',on_delete=models.PROTECT)
     FacturaId= models.ForeignKey (Facturas,related_name='detalles',verbose_name="Factura",on_delete=models.PROTECT)
     estado = models.BooleanField(default=True)

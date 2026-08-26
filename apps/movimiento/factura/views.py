@@ -10,7 +10,7 @@ from.services.factura_service import descontar_stock,validar_existencia,Validar_
 from django.db import transaction
 
 from django.shortcuts import get_object_or_404
-from .models import Clientes, CondicionPago,EstadoCuenta
+from .models import Clientes, CondicionPago,EstadoCuenta,RegistroProducto
 
 
 #------------------------------
@@ -50,35 +50,40 @@ class FacturaAPIView (APIView):
                         #estadoCuentaId=estadofactura
                     )
                    
-                    # 3. Procesamos los artículos uno a uno
+                   # 3. Procesamos los artículos uno a uno
                     for item in detalles_data:
+                        id_prod = item["loteId"]
+                        canti = item["Cantidad"]
 
-                        id_prod = item["detalleProductoId"]
-                        canti = item['Cantidad']
-
+                        # Validaciones previas
                         Validar_datos(item)
                         validar_existencia(id_prod, canti)
-                        #subtotal = calcular_subtotal(id_prod, canti)  
-                        subtotal= item["Subtotal"]                      
 
+                        # ---> OBTENER EL PRECIO DIRECTO DEL LOTE <---
+                        lote = RegistroProducto.objects.get(id=id_prod)
+                        precio_unitario = lote.PrecioVenta
+                        subtotal_calculado = canti * precio_unitario
+
+                        # Crear el detalle con el precio real del lote
                         DetalleFactura.objects.create(
                             Cantidad=canti,
-                            Subtotal=subtotal,
-                            detalleProductoId_id=id_prod,
+                            PrecioUnitario=precio_unitario,     # <-- Usamos el del lote
+                            Subtotal=subtotal_calculado,        # <-- Calculado automáticamente
+                            loteId_id=id_prod,
                             FacturaId=factura
                         )
-                        
-                        descontar_stock(id_prod, canti)
 
+                        # Descontar stock
+                        descontar_stock(id_prod, canti)
                     # 4. Cálculo final del total de la factura
                     suma_total(factura.id)
-                    factura.refresh_from_db()
-                                            
-                # 5. Devolvemos la factura creada perfectamente limpia
-                venta_serializer = FacturaSerializer(factura)
-                #return Response(status=status.HTTP_201_CREATED,data=venta_serializer.data)
-                return Response(venta_serializer.data, status=status.HTTP_201_CREATED)
 
+                    # Cargar de nuevo la instancia para incluir las relaciones y subtotales actualizados
+                    factura.refresh_from_db()
+
+                    # 5. Devolvemos la factura creada con sus detalles incluidos
+                    venta_serializer = FacturaSerializer(factura)
+                    return Response(venta_serializer.data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({"Error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
                 

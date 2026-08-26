@@ -16,7 +16,7 @@ class Productos(models.Model):
         verbose_name_plural = "Productos"
 
     def __str__(self):
-        return f"{self.Codigo} - {self.Nombre}"
+        return f"{self.Nombre}"
 
 
 class DetalleProductos(models.Model):
@@ -33,7 +33,7 @@ class DetalleProductos(models.Model):
         verbose_name_plural = 'Detalles del producto'
 
     def __str__(self):
-        return f"Codigo del produto {self.producto.Codigo} - nombre {self.producto.Nombre} - marca del producto {self.MarcaId.Nombre} - modelo de moto {self.MotoId} - color {self.ColorId.Color}"
+        return f"Codigo del produto {self.Codigo} - nombre {self.producto.Nombre} - marca del producto {self.MarcaId.Nombre} - modelo de moto {self.MotoId} - color {self.ColorId.Color}"
 
 class RegistroProducto(models.Model):
 

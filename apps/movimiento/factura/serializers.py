@@ -2,12 +2,12 @@ from rest_framework.serializers import ModelSerializer,CharField,DateTimeField,J
 from .models import Facturas,DetalleFactura,FacturasCredito
 
 class DetalleFacturaSerializer (ModelSerializer):
-    #producto_nombre = CharField(source='detalleProductoId.producto', read_only=True)
+    producto_nombre = CharField(source='loteId.DetalleCompraId,detallProductoId.producto.Nombre', read_only=True)
     #factura_nombre = CharField(source='FacturaId.NumFactura',read_noly=True)
 
     class Meta:
         model = DetalleFactura
-        fields= ['Cantidad','loteId',]
+        fields= ['Cantidad','loteId','producto_nombre',]
 
 
 class FacturaSerializer (ModelSerializer):
@@ -23,8 +23,10 @@ class FacturaSerializer (ModelSerializer):
 
     class Meta:
         model = Facturas
-        fields= ['NumFactura','Fecha','fecha_formateada','ClienteId','condicionId'
-                 ,'cliente_nombre','cliente_cedula','condicion_nombre','detalles','Total']
+        fields= ['NumFactura','fecha_formateada',
+                 'ClienteId','condicionId'
+                 ,'cliente_nombre','cliente_cedula',
+                 'condicion_nombre','detalles',]
         #read_only_fields = ['id', 'Total', 'fecha_formateada']
 
 
