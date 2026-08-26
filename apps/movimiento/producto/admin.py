@@ -5,7 +5,7 @@ from apps.movimiento.producto.models import RegistroProducto
 
 @admin.register(Productos)
 class ProductoAdmin(admin.ModelAdmin):
-    search_fields = ['id', 'Codigo']
+    search_fields = ['id', 'Nombre']
     list_display = ['Nombre','CategoriaId']
 # Register your models here.
 

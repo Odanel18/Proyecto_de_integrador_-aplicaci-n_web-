@@ -16,8 +16,8 @@ def Validar_datos(datos_cantidad):
     
     return True
 
-def validar_existencia (detalle_Produto_Id, stock_solicitado):
-    resultado= RegistroProducto.objects.filter(detalleProductoId_id=detalle_Produto_Id, Cantidad__gt=0, PrecioVenta__gt=0).aggregate(total=Sum('Cantidad'))
+def validar_existencia (lote_id, stock_solicitado):
+    resultado= RegistroProducto.objects.filter(id=lote_id, Cantidad__gt=0, PrecioVenta__gt=0).aggregate(total=Sum('Cantidad'))
 
     total_stock=resultado['total'] or 0
 
@@ -39,8 +39,8 @@ def suma_total(factura_id):
         print('No se encontro factura')
 
 # se va omitir por el momento
-def calcular_subtotal (detalle_producto_id, cantidad):
-    lote = RegistroProducto.objects.filter(detalleProductoId_id = detalle_producto_id, PrecioVenta__gt=0).first()
+def calcular_subtotal (lote_id, cantidad):
+    lote = RegistroProducto.objects.filter(id = lote_id, PrecioVenta__gt=0).first()
 
 
     if not lote:
@@ -48,14 +48,12 @@ def calcular_subtotal (detalle_producto_id, cantidad):
     
     return cantidad * lote.PrecioVenta
     
-    
 
 
-def descontar_stock(detalle_producto_id, cantidad_vendida):
+def descontar_stock(lote_id, cantidad_vendida):
     #Buscar lotes antiguos
     # lotes es una variables= busca los productos solicitados en detalle de factura, busca los lotes con una cantidad mayor a 0
-    # Y todos estos registros ordenados por fecha de registro, que a parece en la tabla registro_Producto
-    lotes = RegistroProducto.objects.filter(detalleProductoId_id = detalle_producto_id, Cantidad__gt=0, PrecioVenta__gt=0).order_by('FechaRegistro')
+    lotes = RegistroProducto.objects.filter(id = lote_id, Cantidad__gt=0, PrecioVenta__gt=0).order_by('FechaRegistro')
     # Esto es para ver los resultados en consolas para saber si funciona adecuadamente
     # imprime los loste con relacion con el id de detalleProducto y los cuentas con la funcion count()
     print("Los lotes encontrados: ", lotes.count())
