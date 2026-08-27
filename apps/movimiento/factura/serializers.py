@@ -1,37 +1,84 @@
-from rest_framework.serializers import ModelSerializer,CharField,DateTimeField,JSONField
-from .models import Facturas,DetalleFactura,FacturasCredito
+from rest_framework import serializers
+from .models import Facturas, DetalleFactura, FacturasCredito
+from apps.movimiento.caja.models import MovimientoCaja
+from apps.movimiento.movimientoPago.models import MovimientoPago
 
-class DetalleFacturaSerializer (ModelSerializer):
-    producto_nombre = CharField(source='loteId.DetalleCompraId,detallProductoId.producto.Nombre', read_only=True)
-    #factura_nombre = CharField(source='FacturaId.NumFactura',read_noly=True)
+# --- SERIALIZERS PARA DETALLES ---
+
+class DetalleFacturaSerializer(serializers.ModelSerializer):
+    producto_nombre = serializers.CharField(
+        source='loteId.DetalleCompraId.detallProductoId.producto.Nombre', 
+        read_only=True
+    )
 
     class Meta:
         model = DetalleFactura
-        fields= ['Cantidad','loteId','producto_nombre',]
+        fields = ['id', 'Cantidad', 'PrecioUnitario', 'Subtotal', 'loteId', 'producto_nombre']
+        read_only_fields = ['id', 'PrecioUnitario', 'Subtotal']
 
 
-class FacturaSerializer (ModelSerializer):
-    cliente_nombre = CharField(source='ClienteId.Nombres', read_only=True)
-    cliente_cedula = CharField(source='ClienteId.NumCedula', read_only=True)
-    condicion_nombre= CharField(source="condicionId.descripcion", read_only=True)
-    #estadoCuenta_nommbre= CharField(source='estadoCuentaId.descripcion', read_only=True )
-    fecha_formateada= DateTimeField(source='Fecha',format='%d/%m/%Y %I:%M:%S %p',read_only=True)
-    #facturaId = CharField(source='id', read_only=True)
+# --- SERIALIZERS COMPLEMENTARIOS PARA LA RESPUESTA ---
 
-    #detalles= DetalleFacturaSerializer(many=True)
-    detalles= JSONField(write_only=True, required=False)
+class FacturaCreditoSerializer(serializers.ModelSerializer):
+    estado_cuenta_nombre = serializers.CharField(source='estadoCuentaId.descripcion', read_only=True)
+
+    class Meta:
+        model = FacturasCredito
+        fields = [
+            'id', 'FechaInicioCredito', 'montoTotalCredito', 
+            'saldoPendiente', 'FechaLimiteCredito', 
+            'estadoCuentaId', 'estado_cuenta_nombre'
+        ]
+        read_only_fields = ['id', 'FechaInicioCredito', 'montoTotalCredito', 'saldoPendiente']
+
+
+class MovimientoPagoResponseSerializer(serializers.ModelSerializer):
+    metodo_pago_nombre = serializers.CharField(source='metodoPagoId.descripcion', read_only=True)
+
+    class Meta:
+        model = MovimientoPago
+        fields = ['id', 'monto', 'metodoPagoId', 'metodo_pago_nombre']
+
+
+class MovimientoCajaResponseSerializer(serializers.ModelSerializer):
+    pagos = MovimientoPagoResponseSerializer(source='movimientopago_set', many=True, read_only=True)
+    tipo_movimiento_nombre = serializers.CharField(source='tipoMovimientoCajaId.descripcion', read_only=True)
+
+    class Meta:
+        model = MovimientoCaja
+        fields = ['id', 'fecha', 'descripcion', 'monto', 'tipoMovimientoCajaId', 'tipo_movimiento_nombre', 'turnoCajaId', 'pagos']
+
+
+# --- SERIALIZER PRINCIPAL DE FACTURA ---
+
+class FacturaSerializer(serializers.ModelSerializer):
+    cliente_nombre = serializers.CharField(source='ClienteId.Nombres', read_only=True)
+    cliente_cedula = serializers.CharField(source='ClienteId.NumCedula', read_only=True)
+    condicion_nombre = serializers.CharField(source='condicionId.descripcion', read_only=True)
+    fecha_formateada = serializers.DateTimeField(source='Fecha', format='%d/%m/%Y %I:%M:%S %p', read_only=True)
+    
+    detalles = DetalleFacturaSerializer(many=True, read_only=True)
+    credito = serializers.SerializerMethodField()
+    movimiento_caja = serializers.SerializerMethodField()
 
     class Meta:
         model = Facturas
-        fields= ['NumFactura','fecha_formateada',
-                 'ClienteId','condicionId'
-                 ,'cliente_nombre','cliente_cedula',
-                 'condicion_nombre','detalles',]
-        #read_only_fields = ['id', 'Total', 'fecha_formateada']
+        fields = [
+            'id', 'NumFactura', 'fecha_formateada', 'Total',
+            'ClienteId', 'cliente_nombre', 'cliente_cedula',
+            'condicionId', 'condicion_nombre',
+            'detalles', 'credito', 'movimiento_caja'
+        ]
+        read_only_fields = ['id', 'Total', 'fecha_formateada']
 
+    def get_credito(self, obj):
+        credito_obj = FacturasCredito.objects.filter(FacturaId=obj).first()
+        if credito_obj:
+            return FacturaCreditoSerializer(credito_obj).data
+        return None
 
-class FacturaCreditoSerializer (ModelSerializer):
-    class Meta:
-        model= FacturasCredito
-        fields= ['FacturaId','FechaInicioCredito','montoTotalCredito','saldoPendiente','FechaLimiteCredito']
-        
+    def get_movimiento_caja(self, obj):
+        movimiento_obj = MovimientoCaja.objects.filter(facturaid=obj).first()
+        if movimiento_obj:
+            return MovimientoCajaResponseSerializer(movimiento_obj).data
+        return None
