@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, CharField, DateField, JSONField
+from rest_framework.serializers import ModelSerializer, CharField, DateField
 from rest_framework import serializers
 from .models import Compras, DetalleCompra, ComprasCredito
 from apps.movimiento.compra.service.validaciones import validar_compra
@@ -23,7 +23,12 @@ class DetalleCompraSerializer(ModelSerializer):
         
         read_only_fields = [
                                 'Subtotal',
-                                'CompraId',
+                            ]
+
+        write_only_fields = [
+                                'id',
+                                'DetalleProductoId',
+                                'CompraId'
                             ]
         
     def get_Detalle_Producto(self, obj):
@@ -61,15 +66,21 @@ class CompraSerializer(ModelSerializer):
         
         read_only_fields = [
                                 'Total',
-                                'id'
                             ]
-    
+
+        write_only_fields = [
+                                'id',
+                                'ProveedorId',
+                                'CondicionPagoId'
+                            ]
+
     def validate(self, data):
         validar_compra(data)
         return data
 
 class CompraCreditoSerializer(ModelSerializer):
 
+    estado_cuenta_nombre = CharField(source='EstadoCuentaId.descripcion', read_only=True)
     Compra_nombre = serializers.SerializerMethodField()
 
     class Meta:
@@ -82,14 +93,19 @@ class CompraCreditoSerializer(ModelSerializer):
                     'FechaVencimiento',
                     'CompraId',
                     'Compra_nombre',
-                    'EstadoCuentaId'
+                    'EstadoCuentaId',
+                    'estado_cuenta_nombre'
                 ]
         
         read_only_fields = [
                                 'FechaInicio',
                                 'SaldoPendiente',
-                                'CompraId',
                                 'MontoTotal'
+                            ]
+
+        write_only_fields = [
+                                'CompraId',
+                                'EstadoCuentaId'
                             ]
         
         
