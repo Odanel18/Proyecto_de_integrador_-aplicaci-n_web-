@@ -6,11 +6,14 @@ from .serializers import FacturaSerializer,DetalleFacturaSerializer,FacturaCredi
 from drf_yasg.utils import swagger_auto_schema
 #logica validacines
 from rest_framework.exceptions import ValidationError
-from.services.factura_service import descontar_stock,validar_existencia,Validar_datos,suma_total,calcular_subtotal
+#from.services.factura_service import descontar_stock,validar_existencia,Validar_datos,suma_total,calcular_subtotal
+
+from .services.crear_factura_completa import crear_factura_completa
+
 from django.db import transaction
 
 from django.shortcuts import get_object_or_404
-from .models import Clientes, CondicionPago,EstadoCuenta,RegistroProducto
+#from .models import Clientes, CondicionPago,EstadoCuenta,RegistroProducto
 
 
 #------------------------------
@@ -24,72 +27,59 @@ class FacturaAPIView (APIView):
     
     @swagger_auto_schema(request_body=FacturaSerializer)
     def post(self, request):
-        # 1. Pasamos los datos para validar tipos de datos y estructuras básicas
         serializer = FacturaSerializer(data=request.data)
-
         if serializer.is_valid():
             try:
-                with transaction.atomic():
-                    # Extraemos las instancias validadas por Django
-                    cliente = serializer.validated_data.get('ClienteId')
-                    condicion = serializer.validated_data.get('condicionId')
-                    #estadofactura = serializer.validated_data.get('estadoCuentaId')
-                    numFactura = serializer.validated_data.get('NumFactura')
-                    fecha = serializer.validated_data.get('Fecha')
-                    
-                    # Extraemos los detalles directo del request
-                    detalles_data = request.data.get('detalles', [])
+                datos_factura = serializer.validated_data
+                detalles_data = request.data.get('detalles', [])
+                pagos_data = request.data.get('pagos', [])
+                datos_credito = request.data.get('datos_credito', None)
+                turno_caja_id = request.data.get('turnoCajaId', None)
+                tipo_movimiento_id = request.data.get('tipoMovimientoCajaId', None)
 
-                    # 2. Creamos la factura a mano. 
-                    factura = Facturas.objects.create(
-                        NumFactura=numFactura, 
-                        Fecha=fecha, 
-                        ClienteId=cliente, 
-                        Total=0, 
-                        condicionId=condicion,
-                        #estadoCuentaId=estadofactura
+                # 1. El detalle de productos SIEMPRE es obligatorio
+                if not detalles_data:
+                    return Response(
+                        {"error": "Se requiere al menos un detalle de producto."}, 
+                        status=status.HTTP_400_BAD_REQUEST
                     )
-                   
-                   # 3. Procesamos los artículos uno a uno
-                    for item in detalles_data:
-                        id_prod = item["loteId"]
-                        canti = item["Cantidad"]
 
-                        # Validaciones previas
-                        Validar_datos(item)
-                        validar_existencia(id_prod, canti)
+                # Obtener la condición para saber si exige pagos o crédito
+                condicion_obj = datos_factura.get('condicionId')
+                condicion_id = condicion_obj.id if hasattr(condicion_obj, 'id') else condicion_obj
 
-                        # ---> OBTENER EL PRECIO DIRECTO DEL LOTE <---
-                        lote = RegistroProducto.objects.get(id=id_prod)
-                        precio_unitario = lote.PrecioVenta
-                        subtotal_calculado = canti * precio_unitario
+                # 2. Si es AL CONTADO (1), exigimos los pagos
+                if condicion_id == 1 and not pagos_data:
+                    return Response(
+                        {"error": "Para ventas al contado se requiere registrar el pago."}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
-                        # Crear el detalle con el precio real del lote
-                        DetalleFactura.objects.create(
-                            Cantidad=canti,
-                            PrecioUnitario=precio_unitario,     # <-- Usamos el del lote
-                            Subtotal=subtotal_calculado,        # <-- Calculado automáticamente
-                            loteId_id=id_prod,
-                            FacturaId=factura
-                        )
+                # 3. Si es AL CRÉDITO (2), exigimos los datos del crédito
+                if condicion_id == 2 and not datos_credito:
+                    return Response(
+                        {"error": "Para ventas a crédito se requieren los datos_credito."}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
-                        # Descontar stock
-                        descontar_stock(id_prod, canti)
-                    # 4. Cálculo final del total de la factura
-                    suma_total(factura.id)
+                # Ejecutamos el servicio
+                factura = crear_factura_completa(
+                    datos_factura=datos_factura,
+                    detalles_data=detalles_data,
+                    pagos_data=pagos_data,
+                    datos_credito=datos_credito,
+                    turno_caja_id=turno_caja_id,
+                    tipo_movimiento_id=tipo_movimiento_id
+                )
 
-                    # Cargar de nuevo la instancia para incluir las relaciones y subtotales actualizados
-                    factura.refresh_from_db()
+                response_serializer = FacturaSerializer(factura)
+                return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
-                    # 5. Devolvemos la factura creada con sus detalles incluidos
-                    venta_serializer = FacturaSerializer(factura)
-                    return Response(venta_serializer.data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({"Error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
                 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+    
 class FacturaIDAPIView(APIView):
     
     @swagger_auto_schema(request_body=FacturaSerializer, responses={200: FacturaSerializer})
