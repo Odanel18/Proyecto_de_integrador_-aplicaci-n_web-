@@ -4,4 +4,4 @@ from .models import Size
 class SizeSerializer (ModelSerializer):
     class Meta:
         model = Size
-        fields = ['Tamaño']
+        fields = ['id', 'Tamaño']

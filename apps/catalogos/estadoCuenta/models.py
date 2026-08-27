@@ -5,8 +5,7 @@ class EstadoCuenta (models.Model):
     estado= models.BooleanField(default=True)
 
     class Meta:
-        verbose_name_plural:'EstadoCuenta'
+        verbose_name_plural: 'EstadoCuenta'
 
-    def __str__ (selt):
-        return f'{selt.descripcion}'
-
+    def __str__ (self):
+        return f'{self.descripcion}'

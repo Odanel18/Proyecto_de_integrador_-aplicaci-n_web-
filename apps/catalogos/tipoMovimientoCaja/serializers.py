@@ -4,4 +4,4 @@ from .models import TipoMovimientoCaja
 class TipoMovimientoCajaSerializer (ModelSerializer):
     class Meta :
         model= TipoMovimientoCaja
-        fields=['Tipo']
+        fields=['id', 'Tipo']

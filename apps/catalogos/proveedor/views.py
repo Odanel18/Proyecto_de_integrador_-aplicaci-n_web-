@@ -19,8 +19,6 @@ class ProveedorAPIView (APIView):
         return Response(data=serializer.data)
    
 class ProveedorIDAPIView(APIView):
-
-
     @swagger_auto_schema(request_body=ProveedorSerializer, responses={200: ProveedorSerializer})
     def patch(self, request, pk):
    

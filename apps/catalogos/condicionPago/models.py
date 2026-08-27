@@ -7,6 +7,6 @@ class CondicionPago (models.Model):
     class Meta:
         verbose_name_plural:'CondicionPago'
 
-    def __str__ (selt):
-        return f'{selt.descripcion}'
+    def __str__ (self):
+        return f'{self.descripcion}'
 

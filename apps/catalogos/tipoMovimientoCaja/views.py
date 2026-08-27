@@ -19,11 +19,8 @@ class TipoMovimientoCajaAPIView (APIView):
         return Response(data=serializer.data)
    
 class TipoMovimientoCajaIDAPIView(APIView):
-
-
     @swagger_auto_schema(request_body=TipoMovimientoCajaSerializer, responses={200: TipoMovimientoCajaSerializer})
     def patch(self, request, pk):
-   
         try:
             tipoCJ = TipoMovimientoCaja.objects.filter(estado=True).get(pk=pk)
         except TipoMovimientoCaja.DoesNotExist:

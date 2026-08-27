@@ -1,60 +1,102 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField,JSONField
-from .models import Compras,DetalleCompra,ComprasCredito
+from rest_framework.serializers import ModelSerializer, CharField, DateField, JSONField
+from rest_framework import serializers
+from .models import Compras, DetalleCompra, ComprasCredito
+from apps.movimiento.compra.service.validaciones import validar_compra
 
+class DetalleCompraSerializer(ModelSerializer):
+
+    PrecioVenta = serializers.DecimalField(max_digits=7, decimal_places=2, write_only=True)
+    Detalle_Producto = serializers.SerializerMethodField()
+
+    class Meta:
+        
+        model = DetalleCompra
+        fields = [  'id',
+                    'Cantidad',
+                    'PrecioUnitario',
+                    'Subtotal',
+                    'CompraId',
+                    'DetalleProductoId',
+                    'Detalle_Producto',
+                    'PrecioVenta'
+                   ]
+        
+        read_only_fields = [
+                                'Subtotal',
+                                'CompraId',
+                            ]
+        
+    def get_Detalle_Producto(self, obj):
+        if obj.DetalleProductoId:
+            detalle_producto = obj.DetalleProductoId
+            producto = detalle_producto.producto.Nombre
+            marca = detalle_producto.MarcaId.Nombre
+            moto = detalle_producto.MotoId.Modelo
+
+            return f"{producto} - {marca} - {moto}"
 
 class CompraSerializer(ModelSerializer):
-    # Devuelve el nombre del proveedor en lugar del ID
-    proveedor_nombre = SerializerMethodField()
-    # Devuelve la descripción de la condición de pago en lugar del ID
-    condicion_descripcion = SerializerMethodField()
-    # Devuelve la descripción del estado de cuenta en lugar del ID
-    #estado_cuenta_descripcion = SerializerMethodField()
 
-    detallesCompra = JSONField(write_only=True, required=False)  # Campo para recibir los detalles de la compra
+    Proveedor_nombre = CharField(source='ProveedorId.Nombre', read_only=True)
+    CondicionPago_nombre = CharField(source='CondicionPagoId.descripcion', read_only=True)
+    Fecha = DateField(required=True, input_formats=['%Y-%m-%d'], format='%Y-%m-%d')
+    detalles_Compra = DetalleCompraSerializer(many=True, source='detallesCompra', required=True)
+    FechaVencimiento = DateField(required=False, write_only=True, input_formats=['%Y-%m-%d'], format='%Y-%m-%d')
 
     class Meta:
+        
         model = Compras
         fields = [
-            'id',
-            'NumCompra',
-            'Fecha',
-            'Total',
-            'ProveedoresId',
-            'proveedor_nombre',
-            'condicionId',
-            'condicion_descripcion',
-            #'estado_cuenta_descripcion',
-            'detallesCompra'
-        ]
+                    'id',
+                    'Fecha',
+                    'NumCompra',
+                    'Total',
+                    'ProveedorId',
+                    'CondicionPagoId',
+                    'Proveedor_nombre',
+                    'CondicionPago_nombre',
+                    'detalles_Compra',
+                    'FechaVencimiento'
+                  ]
+        
+        read_only_fields = [
+                                'Total',
+                                'id'
+                            ]
+    
+    def validate(self, data):
+        validar_compra(data)
+        return data
 
-    def get_proveedor_nombre(self, obj):
-        # Retorna el nombre del proveedor relacionado
-        if obj.ProveedoresId:
-            return obj.ProveedoresId.Nombre
-        return '-'
+class CompraCreditoSerializer(ModelSerializer):
 
-    def get_condicion_descripcion(self, obj):
-        # Retorna la descripción de la condición de pago relacionada
-        if obj.condicionId:
-            return obj.condicionId.descripcion
-        return '-'
+    Compra_nombre = serializers.SerializerMethodField()
 
-    #def get_estado_cuenta_descripcion(self, obj):
-        # Retorna la descripción del estado de cuenta relacionado
-        if obj.estadoCuentaId:
-            # Ajusta el nombre del campo según tu modelo EstadoCuenta
-            return str(obj.estadoCuentaId)
-        return '-'
-
-class DetalleCompraSerializer (ModelSerializer):
     class Meta:
-        model = DetalleCompra
-        fields= ['id','Cantidad','detallProductoId',
-                 'CompraId','PrecioUnitario','Subtotal']
-
-class CompraCreditoSerialezer (ModelSerializer):
-    class Meta:
-        model=ComprasCredito
-        fields=['id','CompraId','FechaInicioCredito',
-                'montoTotalCredito','saldoPendiente',
-                'FechaLimiteCredito','estadoCuentaId']
+        
+        model = ComprasCredito
+        fields = [
+                    'MontoTotal',
+                    'SaldoPendiente',
+                    'FechaInicio',
+                    'FechaVencimiento',
+                    'CompraId',
+                    'Compra_nombre',
+                    'EstadoCuentaId'
+                ]
+        
+        read_only_fields = [
+                                'FechaInicio',
+                                'SaldoPendiente',
+                                'CompraId',
+                                'MontoTotal'
+                            ]
+        
+        
+    
+    def get_Compra_nombre(self, obj):
+        if obj.CompraId:
+            compra = obj.CompraId
+            num_compra = compra.NumCompra
+            proveedor_nombre = compra.ProveedorId.Nombre
+            return f"Compra {num_compra} - {proveedor_nombre}"

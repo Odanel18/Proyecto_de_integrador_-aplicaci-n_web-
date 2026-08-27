@@ -4,4 +4,4 @@ from .models import MetodoPago
 class MetodoPagoSerializer (ModelSerializer):
     class Meta:
         model = MetodoPago
-        fields=['Tipo']
+        fields=['id', 'Tipo']

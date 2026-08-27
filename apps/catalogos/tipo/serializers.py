@@ -4,4 +4,4 @@ from .models import Tipo
 class TipoSerializer (ModelSerializer):
     class Meta :
         model=Tipo
-        fields=['TipoMarca']
+        fields=['id', 'TipoMarca']

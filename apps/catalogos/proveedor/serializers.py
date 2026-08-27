@@ -4,5 +4,5 @@ from .models import Proveedores
 class ProveedorSerializer(ModelSerializer):
     class Meta:
         model = Proveedores
-        fields= ['Nombre','Telefono',]
+        fields= ['id', 'Nombre','Telefono',]
      
