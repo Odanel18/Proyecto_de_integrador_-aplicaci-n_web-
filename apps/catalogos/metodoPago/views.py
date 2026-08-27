@@ -10,6 +10,13 @@ class MetodoPagoAPIView (APIView):
         selializer= MetodoPagoSerializer(MetodoPago.objects.filter(estado=True), many=True)
         return Response (status=status.HTTP_200_OK, data=selializer.data)
 
+    @swagger_auto_schema(request_body=MetodoPagoSerializer, responses={201: MetodoPagoSerializer})
+    def post(self,request):
+        serializer=MetodoPagoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED,data=serializer.data)
+
 class MetodoPagoIDAPIView(APIView):   
     @swagger_auto_schema(request_body=MetodoPagoSerializer, responses={200: MetodoPagoSerializer})
     def patch(self, request, pk):

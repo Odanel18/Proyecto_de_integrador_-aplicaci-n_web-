@@ -1,147 +1,143 @@
-from apps.movimiento.producto.models import DetalleProductos, RegistroProducto
-from apps.movimiento.compra.models import Compras, DetalleCompra
-from django.db import transaction
-from rest_framework.exceptions import ValidationError
-from django.db.models import Sum, Q
+from rest_framework.validators import ValidationError
+from apps.catalogos.proveedor.models import Proveedores
+from apps.catalogos.condicionPago.models import CondicionPago
+from apps.movimiento.producto.models import DetalleProductos
+
+from datetime import date
 
 
-# ------------------------------------------------------------------
-# VALIDACIONES BÁSICAS DEL ITEM (igual filosofía que factura_service)
-# ------------------------------------------------------------------
-def validar_datos(item):
-    """
-    Valida que la cantidad y el precio unitario vengan correctos.
-    'item' es el diccionario que llega directo desde el request (uno por
-    cada producto que se está comprando).
-    """
-    cantidad = item.get('Cantidad')
-    precio_unitario = item.get('PrecioUnitario')
+def validar_compra(data):
 
-    if cantidad is None:
-        raise ValidationError({"Cantidad": "La cantidad es obligatoria"})
+    # Validar que la fecha de compra no esté vacía
+    fecha_compra = data.get('Fecha')
 
-    if cantidad <= 0:
-        raise ValidationError({"Cantidad": "La cantidad no puede ser menor o igual a cero"})
-
-    if precio_unitario is not None and precio_unitario <= 0:
-        raise ValidationError({"PrecioUnitario": "El precio unitario no puede ser menor o igual a cero"})
-
-    return True
-
-
-# ------------------------------------------------------------------
-# BÚSQUEDA DE PRODUCTO POR NOMBRE / CÓDIGO (en lugar del id)
-# ------------------------------------------------------------------
-def resolver_detalle_producto(item):
-    """
-    Permite que el usuario identifique el producto que está comprando sin
-    tener que conocer el id interno de DetalleProductos.
-
-    El front puede enviar cualquiera de estas formas en cada item:
-
-    1) Por id (forma "clásica", se sigue soportando):
-       {"detallProductoId": 5, "Cantidad": 10, "PrecioUnitario": 25}
-
-    2) Por nombre / código del producto:
-       {"producto": "Casco MT", "Cantidad": 10, "PrecioUnitario": 25}
-       {"producto": "CAS-001", "Cantidad": 10, "PrecioUnitario": 25}
-
-    3) Si ese producto tiene varias variantes (distinta marca, moto o talla)
-       hay que desambiguar agregando uno o varios de estos campos:
-       {"producto": "Casco MT", "marca": "MT Helmets", "moto": "Pulsar 200",
-        "size": "M", "Cantidad": 10, "PrecioUnitario": 25}
-
-    Devuelve la instancia de DetalleProductos encontrada, o lanza
-    ValidationError con un mensaje claro si no se encuentra o es ambiguo.
-    """
-
-    # 1) Si ya viene el id, lo respetamos (compatibilidad hacia atrás)
-    detalle_id = item.get('detallProductoId')
-    if detalle_id:
-        try:
-            return DetalleProductos.objects.get(pk=detalle_id, estado=True)
-        except DetalleProductos.DoesNotExist:
-            raise ValidationError({"detallProductoId": f"No existe un producto con id {detalle_id}"})
-
-    # 2) Buscamos por nombre o código de producto
-    nombre_producto = item.get('producto') or item.get('Producto')
-
-    if not nombre_producto:
+    if not fecha_compra:
         raise ValidationError({
-            "producto": "Debes indicar el producto a comprar (por nombre, código o id)."
+            "Fecha": "La fecha de compra es obligatoria."
         })
 
-    queryset = DetalleProductos.objects.filter(estado=True).filter(
-        Q(producto__Nombre__iexact=nombre_producto) | Q(producto__Codigo__iexact=nombre_producto)
-    )
-
-    # 3) Filtros opcionales para desambiguar variantes del mismo producto
-    marca = item.get('marca') or item.get('Marca')
-    moto = item.get('moto') or item.get('Moto')
-    size = item.get('size') or item.get('Size') or item.get('talla')
-
-    if marca:
-        queryset = queryset.filter(MarcaId__Nombre__iexact=marca)
-    if moto:
-        queryset = queryset.filter(MotoId__Modelo__iexact=moto)
-    if size:
-        queryset = queryset.filter(size__descripcion__iexact=size)
-
-    total = queryset.count()
-
-    if total == 0:
+    # Validar que la fecha de compra no sea mayor a la fecha actual
+    if fecha_compra > date.today():
         raise ValidationError({
-            "producto": f"No se encontró el producto '{nombre_producto}'. "
-                        f"Verifica el nombre/código o agrega marca, moto y/o talla."
+            "Fecha": "La fecha de compra no puede ser mayor a la fecha actual."
         })
 
-    if total > 1:
-        opciones = [
-            f"id {d.id} ({d.MarcaId.Nombre} - {d.MotoId.Modelo}"
-            f"{' - ' + d.size.descripcion if d.size else ''})"
-            for d in queryset
-        ]
+    # Validar que el número de compra no esté vacío
+    if not data.get('NumCompra'):
         raise ValidationError({
-            "producto": f"El producto '{nombre_producto}' tiene varias variantes, "
-                        f"especifica marca, moto y/o talla para identificarlo. "
-                        f"Opciones encontradas: {', '.join(opciones)}"
+            "NumCompra": "El número de compra no puede estar vacío."
         })
 
-    return queryset.first()
+    # Validar que el proveedor no esté vacío
+    proveedor = data.get('ProveedorId')
 
+    if not proveedor:
+        raise ValidationError({
+            "ProveedorId": "El proveedor es obligatorio."
+        })
 
-# ------------------------------------------------------------------
-# CÁLCULOS Y MOVIMIENTOS DE STOCK
-# ------------------------------------------------------------------
-def calcular_subtotal(cantidad, precio_unitario):
-    return cantidad * precio_unitario
+    # Validar que el proveedor exista y esté activo
+    if not Proveedores.objects.filter(
+        id=proveedor.id,
+        estado=True
+    ).exists():
 
+        raise ValidationError({
+            "ProveedorId": "El proveedor seleccionado no existe."
+        })
 
-def suma_total(compra_id):
-    resultado = DetalleCompra.objects.filter(CompraId=compra_id, estado=True).aggregate(
-        total_calculado=Sum('Subtotal')
-    )
-    nuevo_total = resultado['total_calculado'] or 0
+    # Validar que la condición de pago no esté vacía
+    condicion_pago = data.get('CondicionPagoId')
 
-    compra = Compras.objects.filter(id=compra_id).first()
-    if compra:
-        compra.Total = nuevo_total
-        compra.save()
-        print(f'Compra {compra_id} actualizada. Nuevo total: {compra.Total}')
-    else:
-        print('No se encontró la compra')
+    if not condicion_pago:
+        raise ValidationError({
+            "CondicionPagoId": "La condición de pago es obligatoria."
+        })
 
+    # Validar que la condición de pago exista y esté activa
+    if not CondicionPago.objects.filter(
+        id=condicion_pago.id,
+        estado=True
+    ).exists():
 
-def aumentar_stock(detalle_producto_id, cantidad, precio_unitario, precio_venta=0):
-    """
-    Cada compra genera un nuevo lote de inventario (Registro_Producto),
-    igual que antes, pero ahora centralizado en el servicio.
-    """
-    nuevo_lote = RegistroProducto.objects.create(
-        detalleProductoId_id=detalle_producto_id,
-        Cantidad=cantidad,
-        precioCompra=precio_unitario,
-        PrecioVenta=precio_venta,
-    )
-    print(f'Nuevo lote creado: ID {nuevo_lote.id}, con {cantidad} unidades.')
-    return nuevo_lote
+        raise ValidationError({
+            "CondicionPagoId": "La condición de pago seleccionada no existe."
+        })
+
+    # Si la condición de pago es crédito
+    if condicion_pago.descripcion.strip().lower() == 'credito':
+
+        fecha_vencimiento = data.get('FechaVencimiento')
+
+        if not fecha_vencimiento:
+            raise ValidationError({
+                "FechaVencimiento":
+                "La fecha de vencimiento es obligatoria para compras a crédito."
+            })
+
+        # Validar que la fecha de vencimiento sea mayor que la fecha de compra
+        if fecha_vencimiento <= fecha_compra:
+            raise ValidationError({
+                "FechaVencimiento":
+                "La fecha de vencimiento debe ser mayor a la fecha de compra."
+            })
+
+    # Validar que haya por lo menos un detalle
+    detalles = data.get('detallesCompra', [])
+
+    if not detalles or not isinstance(detalles, list):
+        raise ValidationError({
+            "detalles_Compra":
+            "Una compra debe tener al menos un producto en el detalle."
+        })
+
+    # Obtener los productos
+    idproductos = [
+        d.get('DetalleProductoId').id
+        for d in detalles
+        if d.get('DetalleProductoId')
+    ]
+
+    # No permitir productos repetidos
+    if len(idproductos) != len(set(idproductos)):
+        raise ValidationError({
+            "detalles_Compra":
+            "No se pueden repetir productos en el detalle de la compra."
+        })
+
+    # Validar cada detalle
+    for index, detalle in enumerate(detalles):
+
+        producto = detalle.get('DetalleProductoId')
+
+        if not producto:
+            raise ValidationError({
+                f"detalles_Compra[{index}].DetalleProductoId":
+                "El producto es obligatorio."
+            })
+
+        # Validar que el producto exista y esté activo
+        if not DetalleProductos.objects.filter(
+            id=producto.id,
+            estado=True
+        ).exists():
+
+            raise ValidationError({
+                f"detalles_Compra[{index}].DetalleProductoId":
+                "El producto seleccionado no existe."
+            })
+
+        cantidad = detalle.get('Cantidad')
+        precio_unitario = detalle.get('PrecioUnitario')
+
+        if cantidad is None or cantidad <= 0:
+            raise ValidationError({
+                f"detalles_Compra[{index}].Cantidad":
+                "La cantidad debe ser mayor a cero."
+            })
+
+        if precio_unitario is None or precio_unitario <= 0:
+            raise ValidationError({
+                f"detalles_Compra[{index}].PrecioUnitario":
+                "El precio unitario debe ser mayor a cero."
+            })

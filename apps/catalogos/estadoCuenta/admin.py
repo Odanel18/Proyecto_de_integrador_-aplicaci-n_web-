@@ -5,4 +5,3 @@ from apps.catalogos.estadoCuenta.models import EstadoCuenta
 class EstadoCuentaAdmin(admin.ModelAdmin):
     search_fields = ['id']
     list_display = ['descripcion']
-# Register your models here.
