@@ -10,4 +10,4 @@ class MotoSerializer (ModelSerializer):
         model = Motos
         fields= ['id','Modelo','Año','MarcaId', 'marca_nombre']
 
-        write_only_fields = ['MarcaId', 'id']
+        extra_kwargs = {'MarcaId': {'write_only': True}}

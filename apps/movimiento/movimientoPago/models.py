@@ -6,6 +6,7 @@ class MovimientoPago(models.Model):
     monto = models.DecimalField (verbose_name='Monto',max_digits=10, decimal_places=2)
     metodoPagoId = models.ForeignKey(MetodoPago, verbose_name='Metodo de pago', on_delete=models.PROTECT)
     MovimientoCajaId = models.ForeignKey(MovimientoCaja, verbose_name='Movimiento de caja', on_delete=models.PROTECT)
+    MovCaja = models.BooleanField(default=True)
     estado = models.BooleanField(default=True)
 
     class Meta:
