@@ -10,7 +10,7 @@ class ProductoSerializer (ModelSerializer):
         model = Productos
         fields = ['id', 'Nombre','CategoriaId', 'categoria_nombre']
 
-        write_only_fields = ['CategoriaId', 'id']
+        extra_kwargs = {'CategoriaId': {'write_only': True}}
 
 class DetalleProductoSerializer (ModelSerializer):
     
@@ -35,7 +35,7 @@ class DetalleProductoSerializer (ModelSerializer):
                   'Codigo'
                   ]
 
-        write_only_fields = ['producto', 'MarcaId', 'MotoId', 'ColorId', 'id']
+        extra_kwargs = {'producto': {'write_only': True}, 'MarcaId': {'write_only': True}, 'MotoId': {'write_only': True}, 'ColorId': {'write_only': True}}
 
     def get_moto_modelo(self, obj):
        if obj.MotoId:
@@ -59,7 +59,7 @@ class Registro_ProductoSerializer(ModelSerializer):
                  'DetalleCompraId', 
                  'detalle_producto']
 
-        write_only_fields = ['DetalleCompraId', 'id']
+        extra_kwargs = {'DetalleCompraId': {'write_only': True}}
 
         read_only_fields = ['FechaRegistro']
 

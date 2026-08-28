@@ -16,14 +16,14 @@ class Caja (models.Model):
     
 class TurnoCaja (models.Model):
     SaldoInicial= models.DecimalField(verbose_name='Saldo inicial',  max_digits=10,decimal_places=2)
-    Egresos = models.DecimalField(verbose_name='Egresos',  max_digits=10,decimal_places=2)
-    SaldoFinal = models.DecimalField (verbose_name='Saldo final',  max_digits=10,decimal_places=2)
+    Egresos = models.DecimalField(verbose_name='Egresos',  max_digits=10,decimal_places=2, null=True, blank=True)
+    SaldoFinal = models.DecimalField (verbose_name='Saldo final',  max_digits=10,decimal_places=2, null=True, blank=True)
     FechaApertura = models.DateTimeField(verbose_name='Fecha de apertura de la caja')
-    FechaCierre = models.DateTimeField(verbose_name='Fecha de cierre de la caja')
+    FechaCierre = models.DateTimeField(verbose_name='Fecha de cierre de la caja', null=True, blank=True)
     NumCajaid= models.ForeignKey(Caja, verbose_name='Numero de caja', on_delete=models.PROTECT)
     EmpleadoId = models.ForeignKey(Empleados,verbose_name='Empleados', on_delete=models.PROTECT)
-    Din_efectivo = models.DecimalField (verbose_name='Dinero en efectivo',max_digits=10, decimal_places=2)
-    Din_digital = models.DecimalField (verbose_name='Dinero en digital',max_digits=10, decimal_places=2)
+    Din_efectivo = models.DecimalField (verbose_name='Dinero en efectivo',max_digits=10, decimal_places=2 , null=True, blank=True)
+    Din_digital = models.DecimalField (verbose_name='Dinero en digital',max_digits=10, decimal_places=2, null=True, blank=True)
     estado = models.BooleanField(default=True)
     
     class Meta:

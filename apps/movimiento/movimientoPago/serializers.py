@@ -11,7 +11,7 @@ class MovimientoPagoSerializer(ModelSerializer):
         model = MovimientoPago
         fields = ['id', 'monto', 'metodoPagoId', 'MovimientoCajaId', 'metodoPago_nombre', 'movimientocaja_nombre']
 
-        write_only_fields = ['metodoPagoId', 'MovimientoCajaId', 'id']
+        extra_kwargs = {'metodoPagoId': {'write_only': True}, 'MovimientoCajaId': {'write_only': True}}
 
     def get_movimientocaja_nombre(self, obj):
         if obj.MovimientoCajaId:

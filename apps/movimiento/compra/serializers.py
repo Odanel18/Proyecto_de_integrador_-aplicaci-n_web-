@@ -2,6 +2,9 @@ from rest_framework.serializers import ModelSerializer, CharField, DateField
 from rest_framework import serializers
 from .models import Compras, DetalleCompra, ComprasCredito
 from apps.movimiento.compra.service.validaciones import validar_compra
+from apps.movimiento.movimientoPago.models import MetodoPago
+from apps.movimiento.movimientoPago.models import MovimientoPago
+
 
 class DetalleCompraSerializer(ModelSerializer):
 
@@ -25,11 +28,10 @@ class DetalleCompraSerializer(ModelSerializer):
                                 'Subtotal',
                             ]
 
-        write_only_fields = [
-                                'id',
-                                'DetalleProductoId',
-                                'CompraId'
-                            ]
+        extra_kwargs = {
+                                'DetalleProductoId': {'write_only': True},
+                                'CompraId': {'write_only': True, 'required': False}
+        }
         
     def get_Detalle_Producto(self, obj):
         if obj.DetalleProductoId:
@@ -39,6 +41,15 @@ class DetalleCompraSerializer(ModelSerializer):
             moto = detalle_producto.MotoId.Modelo
 
             return f"{producto} - {marca} - {moto}"
+        
+class PagoCompraSerializer(ModelSerializer):
+
+    metodo_pago_nombre = CharField(source='metodoPagoId.Tipo', read_only=True)
+    metodoPagoId = serializers.PrimaryKeyRelatedField (queryset=MetodoPago.objects.all(), write_only=True)
+
+    class Meta:
+        model = MovimientoPago
+        fields = ['metodoPagoId', 'monto', 'metodo_pago_nombre']
 
 class CompraSerializer(ModelSerializer):
 
@@ -46,7 +57,8 @@ class CompraSerializer(ModelSerializer):
     CondicionPago_nombre = CharField(source='CondicionPagoId.descripcion', read_only=True)
     Fecha = DateField(required=True, input_formats=['%Y-%m-%d'], format='%Y-%m-%d')
     detalles_Compra = DetalleCompraSerializer(many=True, source='detallesCompra', required=True)
-    FechaVencimiento = DateField(required=False, write_only=True, input_formats=['%Y-%m-%d'], format='%Y-%m-%d')
+    movimientos_pagos = PagoCompraSerializer(many=True, write_only=True, required=False, default=[])
+    FechaVencimiento = DateField(required=False, write_only=True, input_formats=['%Y-%m-%d'], format='%Y-%m-%d', allow_null=True)
 
     class Meta:
         
@@ -61,6 +73,7 @@ class CompraSerializer(ModelSerializer):
                     'Proveedor_nombre',
                     'CondicionPago_nombre',
                     'detalles_Compra',
+                    'movimientos_pagos',
                     'FechaVencimiento'
                   ]
         
@@ -68,11 +81,10 @@ class CompraSerializer(ModelSerializer):
                                 'Total',
                             ]
 
-        write_only_fields = [
-                                'id',
-                                'ProveedorId',
-                                'CondicionPagoId'
-                            ]
+        extra_kwargs = {
+                            'ProveedorId': {'write_only': True},
+                            'CondicionPagoId': {'write_only': True}
+                        }
 
     def validate(self, data):
         validar_compra(data)
@@ -103,11 +115,11 @@ class CompraCreditoSerializer(ModelSerializer):
                                 'MontoTotal'
                             ]
 
-        write_only_fields = [
-                                'CompraId',
-                                'EstadoCuentaId'
-                            ]
-        
+        extra_kwargs = {
+                            'CompraId': {'write_only': True},
+                            'EstadoCuentaId': {'write_only': True}
+                        }
+
         
     
     def get_Compra_nombre(self, obj):

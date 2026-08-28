@@ -9,4 +9,4 @@ class MarcaSerializer (ModelSerializer):
         model=Marcas
         fields=['id','Nombre','TipoId', 'tipo_nombre']
 
-        write_only_fields = ['TipoId', 'id']
+        extra_kwargs = {'TipoId': {'write_only': True}}
