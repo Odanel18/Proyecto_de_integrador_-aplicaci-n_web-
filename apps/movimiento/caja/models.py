@@ -6,6 +6,7 @@ from apps.movimiento.compra.models import Compras,ComprasCredito
 
 class Caja (models.Model):
     NumCaja= models.IntegerField(verbose_name='Numero de caja')
+    abierta = models.BooleanField(default=True)
     estado = models.BooleanField(default=True)
     
     class Meta:
@@ -24,6 +25,7 @@ class TurnoCaja (models.Model):
     EmpleadoId = models.ForeignKey(Empleados,verbose_name='Empleados', on_delete=models.PROTECT)
     Din_efectivo = models.DecimalField (verbose_name='Dinero en efectivo',max_digits=10, decimal_places=2 , null=True, blank=True)
     Din_digital = models.DecimalField (verbose_name='Dinero en digital',max_digits=10, decimal_places=2, null=True, blank=True)
+    abierto = models.BooleanField(default=True, verbose_name='¿Turno Abierto?')
     estado = models.BooleanField(default=True)
     
     class Meta:
