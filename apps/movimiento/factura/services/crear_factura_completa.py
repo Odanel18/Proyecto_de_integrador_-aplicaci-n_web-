@@ -12,11 +12,36 @@ from apps.movimiento.producto.models import RegistroProducto
 
 from .factura_service import Validar_datos, validar_existencia, descontar_stock
 
+from decimal import Decimal
+
 @transaction.atomic
 def crear_factura_completa(datos_factura, detalles_data, pagos_data=None, datos_credito=None, turno_caja_id=None, tipo_movimiento_id=None):
     condicion_id = datos_factura['condicionId'].id if hasattr(datos_factura['condicionId'], 'id') else datos_factura['condicionId']
 
-    # 1. Crear la Factura cabecera
+    # --------------------------------------------------------------------------
+    # 0. VALIDACIÓN E INCREMENTO CON Bloqueo (select_for_update)
+    # --------------------------------------------------------------------------
+    turno = None
+    if turno_caja_id:
+        # Bloqueamos el turno en la DB para prevenir condiciones de carrera
+        turno = TurnoCaja.objects.select_for_update().filter(
+            id=turno_caja_id, 
+            abierto=True, 
+            estado=True,
+            NumCajaid__abierta=True,
+            NumCajaid__estado=True
+        ).first()
+        
+        if not turno:
+            raise ValidationError({
+                "turno_caja": "El turno seleccionado no existe, está cerrado o la caja física está inactiva."
+            })
+    elif condicion_id == 1:
+        raise ValidationError({"turno_caja": "Debe proporcionar un turno de caja activo para ventas al contado."})
+
+    # --------------------------------------------------------------------------
+    # 1. Crear Cabecera
+    # --------------------------------------------------------------------------
     factura = Facturas.objects.create(
         NumFactura=datos_factura['NumFactura'],
         ClienteId=datos_factura['ClienteId'],
@@ -26,15 +51,17 @@ def crear_factura_completa(datos_factura, detalles_data, pagos_data=None, datos_
 
     total_acumulado = 0
 
-    # 2. Registrar Detalles y descontar Stock
+    # --------------------------------------------------------------------------
+    # 2. Registrar Detalles y Inventario
+    # --------------------------------------------------------------------------
     for item in detalles_data:
         Validar_datos(item)
         lote_id = item['loteId']
         cantidad = item['Cantidad']
         
         validar_existencia(lote_id, cantidad)
-        
         lote = RegistroProducto.objects.get(id=lote_id)
+        
         precio_unitario = lote.PrecioVenta
         subtotal = cantidad * precio_unitario
         total_acumulado += subtotal
@@ -49,14 +76,15 @@ def crear_factura_completa(datos_factura, detalles_data, pagos_data=None, datos_
 
         descontar_stock(lote_id, cantidad)
 
-    # Actualizar Total real de Factura
     factura.Total = total_acumulado
     factura.save()
 
+    # --------------------------------------------------------------------------
     # 3. Flujo Al Contado (ID 1)
+    # --------------------------------------------------------------------------
     if condicion_id == 1:
-        if not pagos_data or not turno_caja_id or not tipo_movimiento_id:
-            raise ValidationError({"error": "Las ventas al contado requieren turno de caja, tipo de movimiento y pagos."})
+        if not pagos_data or not tipo_movimiento_id:
+            raise ValidationError({"error": "Las ventas al contado requieren tipo de movimiento y pagos."})
 
         total_pagos = sum(pago['monto'] for pago in pagos_data)
         if total_pagos != total_acumulado:
@@ -64,7 +92,6 @@ def crear_factura_completa(datos_factura, detalles_data, pagos_data=None, datos_
                 "Pagos": f"El total pagado ({total_pagos}) no coincide con el total de la factura ({total_acumulado})."
             })
 
-        turno = TurnoCaja.objects.get(id=turno_caja_id)
         tipo_mov = TipoMovimientoCaja.objects.get(id=tipo_movimiento_id)
 
         movimiento_caja = MovimientoCaja.objects.create(
@@ -76,22 +103,40 @@ def crear_factura_completa(datos_factura, detalles_data, pagos_data=None, datos_
             turnoCajaId=turno
         )
 
+        # Registrar los desgloses de pago y actualizar el TurnoCaja activo
         for pago in pagos_data:
             metodo = MetodoPago.objects.get(id=pago['metodoPagoId'])
+            
+            # Convertimos explícitamente a Decimal
+            monto_pago = Decimal(str(pago['monto']))
+            
             MovimientoPago.objects.create(
-                monto=pago['monto'],
+                monto=monto_pago,
                 metodoPagoId=metodo,
                 MovimientoCajaId=movimiento_caja
             )
- 
+
+            # Ahora sí coincide Decimal + Decimal
+            if metodo.id == 1 or metodo.Tipo.strip().lower() == 'efectivo':
+                turno.Din_efectivo += monto_pago
+            else:
+                turno.Din_digital += monto_pago
+                # Evaluación directa por ID 
+
+
+        # Recalcular saldo final del turno
+        turno.SaldoFinal = turno.SaldoInicial + turno.Din_efectivo + turno.Din_digital - turno.Egresos
+        turno.save()
+
+    # --------------------------------------------------------------------------
     # 4. Flujo Al Crédito (ID 2)
+    # --------------------------------------------------------------------------
     elif condicion_id == 2:
         if not datos_credito:
             raise ValidationError({"credito": "Faltan los datos necesarios para registrar el crédito."})
 
         estado_cuenta = EstadoCuenta.objects.get(id=datos_credito['estadoCuentaId'])
 
-        # Crear primero el registro de crédito
         credito = FacturasCredito.objects.create(
             FacturaId=factura,
             FechaInicioCredito=timezone.now(),
@@ -101,18 +146,15 @@ def crear_factura_completa(datos_factura, detalles_data, pagos_data=None, datos_
             estadoCuentaId=estado_cuenta
         )
 
-        # Registrar el movimiento informativo en caja si se envía el turno
-        if turno_caja_id and tipo_movimiento_id:
-            turno = TurnoCaja.objects.get(id=turno_caja_id)
+        # Movimiento 0.00 informativo. NO altera dinero en turno.
+        if turno and tipo_movimiento_id:
             tipo_mov = TipoMovimientoCaja.objects.get(id=tipo_movimiento_id)
-
             MovimientoCaja.objects.create(
                 fecha=timezone.now(),
                 descripcion=f"Venta Crédito Factura #{factura.NumFactura}",
-                monto=0.00,  # 0.00 para no sumar en efectivo de caja, o total_acumulado según prefieras
+                monto=Decimal('0.00'),
                 tipoMovimientoCajaId=tipo_mov,
-                facturaid=factura,
-                facturaCreditoId=credito,  # Enlazamos el ID de la factura a crédito
+                facturaCreditoId=credito,
                 turnoCajaId=turno
             )
 

@@ -16,7 +16,7 @@ class Facturas(models.Model):
         verbose_name_plural = 'Facturas'
 
     def __str__(self):
-        return f"Facturara {self.NumFactura} -  al cliente {self.ClienteId}"
+        return f"Factura {self.NumFactura} -  al cliente {self.ClienteId}"
     
 
 class DetalleFactura (models.Model):
@@ -44,4 +44,4 @@ class FacturasCredito (models.Model):
         verbose_name_plural = 'FacturasCredito'
     
     def __str__(self):
-        return f'Factura al credito codigo {self.FacturaId.NumFactura}'
+        return f'Número de factura al crédito {self.FacturaId.NumFactura} - al cliente {self.FacturaId.ClienteId}'
