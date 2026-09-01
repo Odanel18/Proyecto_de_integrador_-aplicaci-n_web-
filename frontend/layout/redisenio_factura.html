@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rediseño de factura</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #0f172a, #1e293b 34%, #334155 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .demo-shell {
+        width: min(1320px, 92vw);
+        padding: 28px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-shell">
+      <div class="modal-overlay activo" style="position: relative; display: flex; background: rgba(15, 23, 42, 0.18);">
+        <div class="modal_detalles" style="width: min(1200px, 100%); height: auto; min-height: 760px;">
+          <div class="modal-header">
+            <div class="modal-header__title">
+              <span class="modal-badge">Factura</span>
+              <h3>Nueva factura</h3>
+            </div>
+            <button class="modal-cerrar" type="button">✕</button>
+          </div>
+
+          <div class="contenedor-detalle">
+            <div class="modal-body-detalle">
+              <div class="text-encabezado">
+                <span class="texto-encabezado">Datos de factura</span>
+              </div>
+              <div class="modal-formulario">
+                <div>
+                  <div class="form-grupo">
+                    <input type="number" class="input-nombre" value="1004" />
+                    <label class="lbl-nombre"><span class="text-nomb">N° de factura</span></label>
+                  </div>
+                  <div class="form-grupo">
+                    <select class="input-nombre">
+                      <option>-- Seleccione un cliente --</option>
+                    </select>
+                  </div>
+                  <div class="form-grupo">
+                    <input type="date" class="input-nombre" value="2026-08-31" />
+                    <label class="lbl-nombre"><span class="text-nomb">Fecha</span></label>
+                  </div>
+                </div>
+                <div>
+                  <div class="form-grupo">
+                    <select class="input-nombre">
+                      <option>-- Seleccione una condicion --</option>
+                    </select>
+                  </div>
+                  <div class="form-grupo">
+                    <select class="input-nombre">
+                      <option>-- Seleccione un estado --</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-body-detalle">
+              <div class="text-encabezado">
+                <span class="texto-encabezado">Agregar detalles a la factura</span>
+              </div>
+              <div class="modal-formulario">
+                <div>
+                  <div class="form-grupo">
+                    <select class="input-nombre">
+                      <option>-- Seleccione un producto --</option>
+                    </select>
+                  </div>
+                  <div class="form-grupo">
+                    <input type="number" class="input-nombre" value="2" />
+                    <label class="lbl-nombre"><span class="text-nomb">Cantidad</span></label>
+                  </div>
+                  <div class="form-grupo">
+                    <input type="number" class="input-nombre" value="250" />
+                    <label class="lbl-nombre"><span class="text-nomb">Precio unitario</span></label>
+                  </div>
+                </div>
+              </div>
+              <div class="factura-payment-actions">
+                <button class="btn btn-primario btn-inline" type="button">+ Agregar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="factura-payment-panel">
+            <div class="factura-payment-header">
+              <span class="texto-encabezado">Pago</span>
+              <span class="factura-total-pill">C$ 500.00</span>
+            </div>
+
+            <div class="factura-payment-grid">
+              <div class="form-grupo compact-grupo">
+                <select class="input-nombre">
+                  <option>-- Método de pago --</option>
+                  <option>Efectivo</option>
+                  <option>Tarjeta</option>
+                </select>
+              </div>
+              <div class="form-grupo compact-grupo">
+                <input type="number" class="input-nombre" value="500" />
+                <label class="lbl-nombre"><span class="text-nomb">Monto</span></label>
+              </div>
+            </div>
+
+            <div class="factura-payment-grid factura-payment-extra">
+              <div class="form-grupo compact-grupo">
+                <select class="input-nombre">
+                  <option>-- Turno caja --</option>
+                  <option>Turno 01</option>
+                </select>
+              </div>
+              <div class="form-grupo compact-grupo">
+                <select class="input-nombre">
+                  <option>-- Tipo movimiento --</option>
+                  <option>Venta</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="factura-payment-actions">
+              <button class="btn btn-primario btn-inline" type="button">+ Añadir pago</button>
+            </div>
+
+            <div class="factura-payment-list">
+              <div class="factura-payment-item">
+                <span><strong>Efectivo</strong> · C$ 500.00</span>
+                <button type="button">Quitar</button>
+              </div>
+              <div class="factura-payment-item">
+                <span><strong>Restante</strong> · C$ 0.00</span>
+                <span>Pendiente</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="TablaDetalleFac" class="contenador_tabla_detalleProducto" style="display: block;">
+            <div class="tabla_detalleCompra_producto">
+              <table class="tabla visible" style="display: table;">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                    <th>Quitar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Motor eléctrico</td>
+                    <td>2</td>
+                    <td>C$ 250.00</td>
+                    <td>C$ 500.00</td>
+                    <td>🗑</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="5" style="text-align:right; font-weight:700; color:#fefefe;">TOTAL:</td>
+                    <td style="font-weight:700; color:#fefefe;">C$ 500.00</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <div class="class-footer btn_detales">
+            <button class="btn btn-secundario" type="button">🚫 Anular factura</button>
+            <button class="btn btn-primario" type="button">💾 Guardar factura</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

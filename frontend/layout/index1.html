@@ -444,7 +444,10 @@
                     <div class="modal_detalles">
                         
                         <div class="modal-header">
-                            <h3 id="modalTextCompra">Nueva factura</h3>
+                            <div class="modal-header__title">
+                                <span class="modal-badge">Factura</span>
+                                <h3 id="modalTextCompra">Nueva factura</h3>
+                            </div>
                             <button class="modal-cerrar" onclick="cerrarModalFactura('modalfactura')">✕</button>
                         </div>
 
@@ -478,7 +481,7 @@
                                                     <span class="text-nomb">Fecha</span>
                                                 </label>
                                             </div>
-                                                                                       
+                                                                                    
                                         </div>
                                         
                                         <div>
@@ -494,7 +497,7 @@
                                                 </select>
                                             </div>
                                             
-                                           
+                                            
                                         </div>
                                     </div>
 
@@ -502,7 +505,7 @@
                                 </div>
 
 
-                                
+                                 
                                 <p class="form-error" id="errorfactura"></p>
                             </div>
 
@@ -556,6 +559,49 @@
                                 <p class="form-error" id="errorCompra"></p>
                             </div>
                         </div>
+
+                        <div class="factura-payment-panel">
+                            <div class="factura-payment-header">
+                                <span class="texto-encabezado">Pago</span>
+                                <span class="factura-total-pill" id="facturaTotalResumen">C$ 0.00</span>
+                            </div>
+
+                            <div class="factura-payment-grid">
+                                <div class="form-grupo compact-grupo">
+                                    <select id="facturaMetodoPago" class="input-nombre">
+                                        <option value="">-- Método de pago --</option>
+                                    </select>
+                                </div>
+                                <div class="form-grupo compact-grupo">
+                                    <input type="number" step="0.01" min="0" class="input-nombre" id="facturaMontoPago" autocomplete="off">
+                                    <label for="facturaMontoPago" class="lbl-nombre">
+                                        <span class="text-nomb">Monto</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="factura-payment-grid factura-payment-extra">
+                                <div class="form-grupo compact-grupo">
+                                    <select id="facturaTurnoCaja" class="input-nombre">
+                                        <option value="">-- Turno caja --</option>
+                                    </select>
+                                </div>
+                                <div class="form-grupo compact-grupo">
+                                    <select id="facturaTipoMovimiento" class="input-nombre">
+                                        <option value="">-- Tipo movimiento --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="factura-payment-actions">
+                                <button class="btn btn-primario btn-inline" onclick="agregarPagoFactura()">+ Añadir pago</button>
+                            </div>
+
+                            <div class="factura-payment-list" id="facturaListaPagos">
+                                <div class="factura-payment-empty">Sin pagos registrados.</div>
+                            </div>
+                        </div>
+
                         <div id="TablaDetalleFac" class="contenador_tabla_detalleProducto">
                             <div class="tabla_detalleCompra_producto">
 

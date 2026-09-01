@@ -599,6 +599,82 @@ async function cargarOpcionesDetalles () {
   }
 }
 
+async function cargarOpcionesMetodosPago() {
+  const select = document.getElementById('facturaMetodoPago');
+  if (!select) return;
+
+  select.innerHTML = '<option value="">-- Método de pago --</option>';
+
+  try {
+    const respuesta = await fetchConAutenticacion('catalogos/metodopago/');
+    const datos = await respuesta.json();
+    const metodos = Array.isArray(datos) ? datos : datos.results;
+
+    for (const metodo of metodos) {
+      const option = document.createElement('option');
+      option.value = metodo.id;
+      option.textContent = metodo.Tipo || metodo.tipo || metodo.descripcion || 'Método';
+      select.appendChild(option);
+    }
+  } catch (error) {
+    console.error('No se pudieron cargar los métodos de pago:', error);
+  }
+}
+
+async function cargarOpcionesTurnoCaja() {
+  const select = document.getElementById('facturaTurnoCaja');
+  if (!select) return;
+
+  select.innerHTML = '<option value="">-- Turno caja --</option>';
+
+  try {
+    const respuesta = await fetchConAutenticacion('movimiento/caja/');
+    const datos = await respuesta.json();
+    const turnos = Array.isArray(datos) ? datos : datos.results;
+
+    for (const turno of turnos) {
+      const option = document.createElement('option');
+      option.value = turno.id;
+      option.textContent = turno.NumCaja || turno.NumCajaId || `Turno #${turno.id}`;
+      select.appendChild(option);
+    }
+
+    if (!select.value && turnos.length) {
+      select.value = turnos[0].id;
+    }
+  } catch (error) {
+    console.error('No se pudieron cargar los turnos de caja:', error);
+    select.innerHTML = '<option value="1">Turno por defecto</option>';
+  }
+}
+
+async function cargarOpcionesTipoMovimientoCaja() {
+  const select = document.getElementById('facturaTipoMovimiento');
+  if (!select) return;
+
+  select.innerHTML = '<option value="">-- Tipo movimiento --</option>';
+
+  try {
+    const respuesta = await fetchConAutenticacion('catalogos/tipomovimientocaja/');
+    const datos = await respuesta.json();
+    const tipos = Array.isArray(datos) ? datos : datos.results;
+
+    for (const tipo of tipos) {
+      const option = document.createElement('option');
+      option.value = tipo.id;
+      option.textContent = tipo.Tipo || tipo.tipo || tipo.descripcion || 'Movimiento';
+      select.appendChild(option);
+    }
+
+    if (!select.value && tipos.length) {
+      select.value = tipos[0].id;
+    }
+  } catch (error) {
+    console.error('No se pudieron cargar los tipos de movimiento:', error);
+    select.innerHTML = '<option value="1">Venta</option>';
+  }
+}
+
 
 
 // Abrir modal compra (crear / editar)
@@ -615,6 +691,9 @@ window.abrirModalfactura = async function(modo, id, numFactura, clienteId, Fecha
     await cargarOpcionesCondicion();
     await cargarOpcionesEstados();
     await cargarOpcionesDetalles();
+    await cargarOpcionesMetodosPago();
+    await cargarOpcionesTurnoCaja();
+    await cargarOpcionesTipoMovimientoCaja();
 
     // 2. Ahora que las opciones ya existen en el HTML, asignamos los valores de forma segura
     document.getElementById('facturaNumero').value    = numFactura  || '';
@@ -627,14 +706,17 @@ window.abrirModalfactura = async function(modo, id, numFactura, clienteId, Fecha
     document.getElementById('facturaEstado').value    = estadoId    || '';
     
     FacturaID = modo === 'editar' ? id : null;
+    facturaPagosTemp = [];
+    document.getElementById('facturaListaPagos').innerHTML = '<div class="factura-payment-empty">Sin pagos registrados.</div>';
+    document.getElementById('facturaTotalResumen').textContent = ncMoneda(0);
 
     document.getElementById('modalfactura').classList.add('activo');
 };
 
 
 window.cerrarModalFactura = function(modalfactura) {
-
-
+ 
+ 
   let confirmar = window.confirm(`Seguro que quieres salirte`);
   if (!confirmar) return;
 
@@ -644,23 +726,63 @@ window.cerrarModalFactura = function(modalfactura) {
   //document.getElementById('facturaTotal').value = '';
   document.getElementById('facturaCondicion').value    = '';
   document.getElementById('facturaEstado').value    =  '';
+ document.getElementById('facturaMetodoPago').value    =  '';
+ document.getElementById('facturaMontoPago').value     =  '';
+ document.getElementById('facturaTurnoCaja').value     =  '';
+ document.getElementById('facturaTipoMovimiento').value = '';
   
-  const errorEl = document.getElementById('error');
-  if (errorEl) errorEl.textContent = '';
+ const errorEl = document.getElementById('error');
+ if (errorEl) errorEl.textContent = '';
 
-  const errorProducto= document.getElementById('errorMensajeFacturaProducto');
-  if (errorProducto) errorProducto.textContent='';
+ const errorProducto= document.getElementById('errorMensajeFacturaProducto');
+ if (errorProducto) errorProducto.textContent='';
+
+ facturaPagosTemp = [];
+ ncFacturaProductosTemp = [];
+ if (typeof ncRedibujarTablaDetalleFac === 'function') ncRedibujarTablaDetalleFac();
+ const pagoList = document.getElementById('facturaListaPagos');
+ if (pagoList) pagoList.innerHTML = '<div class="factura-payment-empty">Sin pagos registrados.</div>';
   
-  document.getElementById(modalfactura).classList.remove('activo');
+ document.getElementById(modalfactura).classList.remove('activo');
 }
 
 
 let ncFacturaProductosTemp = [];   // [ { prodId, nombre, cantidad, precio, subtotal } ]
+let facturaPagosTemp = [];         // [ { metodoPagoId, monto, nombreMetodo } ]
 let ncFacturaContadorFila = 0;
+
+function actualizarResumenFacturas() {
+    const totalFactura = ncFacturaProductosTemp.reduce((acc, p) => acc + p.subtotal, 0);
+    const totalPagado = facturaPagosTemp.reduce((acc, pago) => acc + Number(pago.monto || 0), 0);
+    const resumen = document.getElementById('facturaTotalResumen');
+    if (resumen) resumen.textContent = ncMoneda(totalFactura);
+
+    const pagoList = document.getElementById('facturaListaPagos');
+    if (!pagoList) return;
+
+    if (facturaPagosTemp.length === 0) {
+        pagoList.innerHTML = '<div class="factura-payment-empty">Sin pagos registrados.</div>';
+        return;
+    }
+
+    pagoList.innerHTML = facturaPagosTemp.map((pago) => `
+        <div class="factura-payment-item">
+            <span><strong>${pago.nombreMetodo}</strong> · ${ncMoneda(pago.monto)}</span>
+            <button type="button" onclick="quitarPagoFactura(${pago._key})">Quitar</button>
+        </div>
+    `).join('');
+
+    const restante = totalFactura - totalPagado;
+    const restanteItem = document.createElement('div');
+    restanteItem.className = 'factura-payment-item';
+    restanteItem.innerHTML = `<span><strong>Restante</strong> · ${ncMoneda(Math.max(restante, 0))}</span><span>${totalPagado > totalFactura ? 'Exceso' : 'Pendiente'}</span>`;
+    pagoList.appendChild(restanteItem);
+}
 
 function ActualizarTotalFac() {
     const total = ncFacturaProductosTemp.reduce((acc, p) => acc + p.subtotal, 0);
     document.getElementById('facTotal').textContent = ncMoneda(total);
+    actualizarResumenFacturas();
 }
 
 /** Redibuja todas las filas de la tabla temporal */
@@ -765,6 +887,48 @@ window.ncQuitarProductoFactura = function(key) {
     ncRedibujarTablaDetalleFac();
 };
 
+window.agregarPagoFactura = function() {
+    const metodoPagoSelect = document.getElementById('facturaMetodoPago');
+    const montoInput = document.getElementById('facturaMontoPago');
+    const totalFactura = ncFacturaProductosTemp.reduce((acc, p) => acc + p.subtotal, 0);
+
+    const metodoPagoId = metodoPagoSelect.value;
+    const nombreMetodo = metodoPagoSelect.options[metodoPagoSelect.selectedIndex]?.text || 'Método';
+    const monto = Number(montoInput.value);
+
+    if (!metodoPagoId) {
+        alert('Seleccione un método de pago.');
+        return;
+    }
+
+    if (!monto || monto <= 0) {
+        alert('Ingrese un monto válido para el pago.');
+        return;
+    }
+
+    const totalPagado = facturaPagosTemp.reduce((acc, pago) => acc + Number(pago.monto || 0), 0);
+    if (totalPagado + monto > totalFactura + 0.01) {
+        alert('El monto ingresado supera el total de la factura.');
+        return;
+    }
+
+    facturaPagosTemp.push({
+        _key: Date.now() + Math.random(),
+        metodoPagoId: Number(metodoPagoId),
+        monto: Number(monto.toFixed(2)),
+        nombreMetodo: nombreMetodo
+    });
+
+    metodoPagoSelect.value = '';
+    montoInput.value = '';
+    actualizarResumenFacturas();
+};
+
+window.quitarPagoFactura = function(key) {
+    facturaPagosTemp = facturaPagosTemp.filter(pago => pago._key !== key);
+    actualizarResumenFacturas();
+};
+
 // ── Guardar: envía cabecera + detalles a la API ───────────────
 
 window.guardarNuevaFactura = async function() {
@@ -793,9 +957,18 @@ window.guardarNuevaFactura = async function() {
         return;
     }
 
-    // Calcular total directamente desde la tabla temporal
     const totalCalculado = ncFacturaProductosTemp.reduce((acc, p) => acc + p.subtotal, 0);
-    //const totalSu
+    const totalPagado = facturaPagosTemp.reduce((acc, pago) => acc + Number(pago.monto || 0), 0);
+
+    if (parseInt(condicionId) === 1 && facturaPagosTemp.length === 0) {
+        errorEl.textContent = '⚠️ Para una venta al contado debe registrar al menos un pago.';
+        return;
+    }
+
+    if (parseInt(condicionId) === 1 && Math.abs(totalPagado - totalCalculado) > 0.01) {
+        errorEl.textContent = `⚠️ El total pagado (${ncMoneda(totalPagado)}) debe coincidir con el total de la factura (${ncMoneda(totalCalculado)}).`;
+        return;
+    }
 
     const detallesFormateados = ncFacturaProductosTemp.map(p => ({
         detalleProductoId: parseInt(p.prodId),
@@ -810,7 +983,13 @@ window.guardarNuevaFactura = async function() {
         condicionId:    parseInt(condicionId),    
         estadoCuentaId: parseInt(estadoId),       
         Total:          totalCalculado.toFixed(2), 
-        detalles:       detallesFormateados
+        detalles:       detallesFormateados,
+        pagos:          facturaPagosTemp.map(pago => ({
+            metodoPagoId: Number(pago.metodoPagoId),
+            monto: Number(pago.monto.toFixed(2))
+        })),
+        turnoCajaId:    Number(document.getElementById('facturaTurnoCaja').value || 1),
+        tipoMovimientoCajaId: Number(document.getElementById('facturaTipoMovimiento').value || 1)
     };
 
     try {
